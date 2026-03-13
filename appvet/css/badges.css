@@ -1,16 +1,17 @@
 .badge{
 
-padding:4px 8px;
+padding:4px 10px;
+
 border-radius:20px;
 
 font-size:12px;
-font-weight:500;
+font-weight:600;
 
 }
 
 .badge-info{
 
-background:#E0F2FE;
-color:#0369A1;
+background:#E6F4EA;
+color:#2D6A4F;
 
 }
