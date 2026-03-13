@@ -5,7 +5,6 @@ border-collapse:collapse;
 
 }
 
-
 .table th{
 
 text-align:left;
@@ -13,32 +12,35 @@ font-weight:600;
 
 font-size:14px;
 
-padding:12px;
+padding:14px;
 border-bottom:1px solid var(--color-border);
 
 }
 
-
 .table td{
 
-padding:12px;
+padding:14px;
 border-bottom:1px solid var(--color-border);
 
 font-size:14px;
 
 }
 
+.table tbody tr:nth-child(even){
 
-.table tr:hover{
-
-background:#F9FAFB;
+background:#FAFBFC;
 
 }
 
+.table tr:hover{
+
+background:#F3F4F6;
+
+}
 
 .table-actions{
 
 display:flex;
-gap:6px;
+gap:8px;
 
 }
