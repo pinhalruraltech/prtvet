@@ -1,1 +1,44 @@
+.table{
 
+width:100%;
+border-collapse:collapse;
+
+}
+
+
+.table th{
+
+text-align:left;
+font-weight:600;
+
+font-size:14px;
+
+padding:12px;
+border-bottom:1px solid var(--color-border);
+
+}
+
+
+.table td{
+
+padding:12px;
+border-bottom:1px solid var(--color-border);
+
+font-size:14px;
+
+}
+
+
+.table tr:hover{
+
+background:#F9FAFB;
+
+}
+
+
+.table-actions{
+
+display:flex;
+gap:6px;
+
+}
