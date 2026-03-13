@@ -10,9 +10,6 @@
 
 <link rel="stylesheet" href="../css/variables.css">
 <link rel="stylesheet" href="../css/layout.css">
-<link rel="stylesheet" href="../css/sidebar.css">
-<link rel="stylesheet" href="../css/topbar.css">
-
 <link rel="stylesheet" href="../css/cards.css">
 <link rel="stylesheet" href="../css/forms.css">
 <link rel="stylesheet" href="../css/buttons.css">
@@ -39,189 +36,156 @@
         <!-- PAGE -->
         <div class="page">
 
-            <!-- PAGE HEADER -->
+            <!-- HEADER -->
             <div class="page-header">
 
                 <div class="page-title">
                     <h1>Clientes</h1>
-                    <p>Gerenciamento de clientes da clínica</p>
+                    <p>Gerencie proprietários e seus animais</p>
                 </div>
 
-                <div class="page-actions">
-                    <button class="btn-primary">
-                        + Novo Cliente
-                    </button>
-                </div>
+                <button class="btn-primary">
+                    + Novo Cliente
+                </button>
 
             </div>
 
 
-            <!-- PAGE CONTENT -->
-            <div class="page-content">
 
-                <!-- CARD -->
-                <div class="card">
+            <!-- CARD -->
+            <div class="card">
 
-                    <!-- CARD HEADER -->
-                    <div class="card-header">
+                <!-- TOOLBAR -->
+                <div class="card-header toolbar">
 
-                        <!-- SEARCH -->
-                        <div class="search-bar">
+                    <div class="toolbar-left">
 
-                            <input 
-                                type="text" 
-                                class="input-search"
-                                placeholder="Buscar cliente por nome, telefone ou CPF"
-                            >
-
-                        </div>
-
-                        <!-- FILTERS -->
-                        <div class="filters">
-
-                            <select class="form-select">
-                                <option value="">Cidade</option>
-                            </select>
-
-                            <select class="form-select">
-                                <option value="">Possui animais</option>
-                                <option value="sim">Sim</option>
-                                <option value="nao">Não</option>
-                            </select>
-
-                            <button class="btn-outline">
-                                Limpar filtros
-                            </button>
-
-                        </div>
+                        <input
+                        type="text"
+                        class="input-search"
+                        placeholder="Buscar cliente ou animal..."
+                        >
 
                     </div>
 
 
-                    <!-- CARD BODY -->
-                    <div class="card-body">
+                    <div class="toolbar-right">
 
-                        <table class="table">
+                        <select class="form-select">
+                            <option>Cidade</option>
+                        </select>
 
-                            <thead>
+                        <select class="form-select">
+                            <option>Possui animais</option>
+                            <option>Sim</option>
+                            <option>Não</option>
+                        </select>
 
-                                <tr>
-
-                                    <th>Nome</th>
-                                    <th>Telefone</th>
-                                    <th>Cidade</th>
-                                    <th>Animais</th>
-                                    <th>Última visita</th>
-                                    <th>Ações</th>
-
-                                </tr>
-
-                            </thead>
-
-
-                            <tbody>
-
-                                <!-- EXEMPLO LINHA -->
-
-                                <tr>
-
-                                    <td>João Silva</td>
-
-                                    <td>(35) 99999-9999</td>
-
-                                    <td>Monte Belo</td>
-
-                                    <td>
-                                        <span class="badge badge-info">
-                                            3 animais
-                                        </span>
-                                    </td>
-
-                                    <td>10/03/2026</td>
-
-                                    <td class="table-actions">
-
-                                        <button class="btn-icon">
-                                            👁
-                                        </button>
-
-                                        <button class="btn-icon">
-                                            ✏
-                                        </button>
-
-                                        <button class="btn-icon btn-danger">
-                                            🗑
-                                        </button>
-
-                                    </td>
-
-                                </tr>
-
-
-                                <tr>
-
-                                    <td>Maria Oliveira</td>
-
-                                    <td>(35) 98888-8888</td>
-
-                                    <td>Alfenas</td>
-
-                                    <td>
-                                        <span class="badge badge-info">
-                                            1 animal
-                                        </span>
-                                    </td>
-
-                                    <td>02/03/2026</td>
-
-                                    <td class="table-actions">
-
-                                        <button class="btn-icon">
-                                            👁
-                                        </button>
-
-                                        <button class="btn-icon">
-                                            ✏
-                                        </button>
-
-                                        <button class="btn-icon btn-danger">
-                                            🗑
-                                        </button>
-
-                                    </td>
-
-                                </tr>
-
-
-                            </tbody>
-
-                        </table>
+                        <button class="btn-outline">
+                            Limpar filtros
+                        </button>
 
                     </div>
 
+                </div>
 
-                    <!-- CARD FOOTER -->
-                    <div class="card-footer">
 
-                        <div class="pagination-info">
-                            Mostrando 1–10 de 230 clientes
-                        </div>
 
-                        <div class="pagination">
+                <!-- TABELA -->
+                <div class="card-body">
 
-                            <button class="btn-page">‹</button>
+                    <table class="table">
 
-                            <button class="btn-page active">1</button>
-                            <button class="btn-page">2</button>
-                            <button class="btn-page">3</button>
-                            <button class="btn-page">4</button>
+                        <thead>
 
-                            <button class="btn-page">›</button>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Telefone</th>
+                            <th>Cidade</th>
+                            <th>Animais</th>
+                            <th>Última visita</th>
+                            <th></th>
+                        </tr>
 
-                        </div>
+                        </thead>
 
+
+                        <tbody>
+
+                        <tr>
+
+                            <td>João Silva</td>
+                            <td>(35) 99999-9999</td>
+                            <td>Monte Belo</td>
+
+                            <td>
+                                <span class="badge badge-info">
+                                    🐾 3
+                                </span>
+                            </td>
+
+                            <td>10/03/2026</td>
+
+                            <td class="table-actions">
+
+                                <button class="btn-icon">👁</button>
+                                <button class="btn-icon">✏</button>
+                                <button class="btn-icon btn-danger">🗑</button>
+
+                            </td>
+
+                        </tr>
+
+
+                        <tr>
+
+                            <td>Maria Oliveira</td>
+                            <td>(35) 98888-8888</td>
+                            <td>Alfenas</td>
+
+                            <td>
+                                <span class="badge badge-info">
+                                    🐾 1
+                                </span>
+                            </td>
+
+                            <td>02/03/2026</td>
+
+                            <td class="table-actions">
+
+                                <button class="btn-icon">👁</button>
+                                <button class="btn-icon">✏</button>
+                                <button class="btn-icon btn-danger">🗑</button>
+
+                            </td>
+
+                        </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+
+                <!-- PAGINAÇÃO -->
+                <div class="card-footer">
+
+                    <div class="pagination-info">
+                        Mostrando 1–10 de 230 clientes
                     </div>
 
+                    <div class="pagination">
+
+                        <button class="btn-page">‹</button>
+                        <button class="btn-page active">1</button>
+                        <button class="btn-page">2</button>
+                        <button class="btn-page">3</button>
+                        <button class="btn-page">4</button>
+                        <button class="btn-page">›</button>
+
+                    </div>
 
                 </div>
 
@@ -233,12 +197,5 @@
 
 </div>
 
-
-<!-- JS -->
-<script type="module" src="../js/firebase-init.js"></script>
-<script type="module" src="../js/auth.js"></script>
-<script type="module" src="../js/load-components.js"></script>
-
 </body>
-
 </html>
