@@ -1,32 +1,109 @@
-.login-container{
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 
-height:100vh;
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+
+font-family:var(--font-family);
+background:var(--color-bg);
+color:var(--color-text);
+
+}
+
+
+/* APP LAYOUT */
+
+.app{
+
+display:flex;
+min-height:100vh;
+
+}
+
+
+/* SIDEBAR */
+
+#sidebar{
+
+width:240px;
+background:#1F2933;
+color:white;
+
+}
+
+
+/* MAIN */
+
+.main{
+
+flex:1;
+display:flex;
+flex-direction:column;
+
+}
+
+
+/* TOPBAR */
+
+#topbar{
+
+height:60px;
+background:white;
+border-bottom:1px solid var(--color-border);
+
 display:flex;
 align-items:center;
-justify-content:center;
-background:var(--fundo);
+padding:0 var(--space-lg);
 
 }
 
-.login-box{
 
-background:var(--card);
-padding:40px;
-border-radius:10px;
-width:350px;
-box-shadow:0 4px 10px rgba(0,0,0,0.05);
+/* PAGE */
 
-}
+.page{
 
-.login-box h1{
-
-margin-bottom:10px;
+padding:var(--space-xl);
 
 }
 
-.login-box p{
 
-color:var(--texto-secundario);
-margin-bottom:30px;
+/* PAGE HEADER */
+
+.page-header{
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+
+margin-bottom:var(--space-lg);
+
+}
+
+.page-title h1{
+
+font-size:28px;
+font-weight:600;
+
+}
+
+.page-title p{
+
+color:var(--color-text-light);
+margin-top:4px;
+
+}
+
+
+/* PAGE CONTENT */
+
+.page-content{
+
+display:flex;
+flex-direction:column;
+gap:var(--space-lg);
 
 }
