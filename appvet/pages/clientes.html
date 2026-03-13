@@ -44,7 +44,7 @@
                     <p>Gerencie proprietários e seus animais</p>
                 </div>
 
-                <button class="btn-primary">
+                <button class="btn-primary" id="btnNovoCliente">
                     + Novo Cliente
                 </button>
 
@@ -53,7 +53,7 @@
 
 
             <!-- CARD -->
-            <div class="card">
+            <div class="card clientes-card">
 
                 <!-- TOOLBAR -->
                 <div class="card-header toolbar">
@@ -61,7 +61,7 @@
                     <div class="toolbar-left">
 
                         <input
-                        type="text"
+                        type="search"
                         class="input-search"
                         placeholder="Buscar cliente ou animal..."
                         >
@@ -104,13 +104,13 @@
                             <th>Cidade</th>
                             <th>Animais</th>
                             <th>Última visita</th>
-                            <th></th>
+                            <th>Ações</th>
                         </tr>
 
                         </thead>
 
 
-                        <tbody>
+                        <tbody id="clientesTable">
 
                         <tr>
 
@@ -128,9 +128,9 @@
 
                             <td class="table-actions">
 
-                                <button class="btn-icon">👁</button>
-                                <button class="btn-icon">✏</button>
-                                <button class="btn-icon btn-danger">🗑</button>
+                                <button class="btn-icon" title="Visualizar">👁</button>
+                                <button class="btn-icon" title="Editar">✏</button>
+                                <button class="btn-icon btn-danger" title="Excluir">🗑</button>
 
                             </td>
 
@@ -153,9 +153,9 @@
 
                             <td class="table-actions">
 
-                                <button class="btn-icon">👁</button>
-                                <button class="btn-icon">✏</button>
-                                <button class="btn-icon btn-danger">🗑</button>
+                                <button class="btn-icon" title="Visualizar">👁</button>
+                                <button class="btn-icon" title="Editar">✏</button>
+                                <button class="btn-icon btn-danger" title="Excluir">🗑</button>
 
                             </td>
 
@@ -176,7 +176,7 @@
                         Mostrando 1–10 de 230 clientes
                     </div>
 
-                    <div class="pagination">
+                    <div class="pagination" id="paginationClientes">
 
                         <button class="btn-page">‹</button>
                         <button class="btn-page active">1</button>
