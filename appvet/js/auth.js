@@ -1,54 +1,58 @@
 import { auth, db } from "./firebase-init.js";
 
 import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
 import { collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-const btnLogin = document.getElementById("btnLogin");
+document.addEventListener("DOMContentLoaded", () => {
 
-btnLogin.addEventListener("click", async () => {
+    const btnLogin = document.getElementById("btnLogin");
 
-```
-const email = document.getElementById("email").value;
-const senha = document.getElementById("senha").value;
+    btnLogin.addEventListener("click", async () => {
 
-try {
+        const email = document.getElementById("email").value;
+        const senha = document.getElementById("senha").value;
 
-    const cred = await signInWithEmailAndPassword(auth, email, senha);
+        try {
 
-    const uid = cred.user.uid;
+            const cred = await signInWithEmailAndPassword(auth, email, senha);
 
-    const q = query(collection(db, "usuarios"), where("uid", "==", uid));
+            const uid = cred.user.uid;
 
-    const querySnapshot = await getDocs(q);
+            const q = query(
+                collection(db, "usuarios"),
+                where("uid", "==", uid)
+            );
 
-    if (querySnapshot.empty) {
+            const querySnapshot = await getDocs(q);
 
-        alert("Usuário não encontrado no sistema.");
-        return;
+            if (querySnapshot.empty) {
 
-    }
+                alert("Usuário não encontrado no sistema.");
+                return;
 
-    const dadosUsuario = querySnapshot.docs[0].data();
+            }
 
-    if (!dadosUsuario.ativo) {
+            const dadosUsuario = querySnapshot.docs[0].data();
 
-        alert("Usuário desativado.");
-        return;
+            if (!dadosUsuario.ativo) {
 
-    }
+                alert("Usuário desativado.");
+                return;
 
-    localStorage.setItem("clinicaId", dadosUsuario.clinicaId);
-    localStorage.setItem("papel", dadosUsuario.papel);
-    localStorage.setItem("uid", uid);
+            }
 
-    window.location.href = "pages/dashboard.html";
+            localStorage.setItem("clinicaId", dadosUsuario.clinicaId);
+            localStorage.setItem("papel", dadosUsuario.papel);
+            localStorage.setItem("uid", uid);
 
-} catch (erro) {
+            window.location.href = "pages/dashboard.html";
 
-    alert("Erro no login: " + erro.message);
+        } catch (erro) {
 
-}
-```
+            alert("Erro no login: " + erro.message);
+
+        }
+
+    });
 
 });
