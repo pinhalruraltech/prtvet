@@ -6,11 +6,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Dashboard - APPVET</title>
+<title>Dashboard | APPVET</title>
 
 <link rel="stylesheet" href="../css/variables.css">
 <link rel="stylesheet" href="../css/layout.css">
 <link rel="stylesheet" href="../css/cards.css">
+<link rel="stylesheet" href="../css/buttons.css">
 <link rel="stylesheet" href="../css/menu.css">
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -19,30 +20,128 @@
 
 <body>
 
-<div id="menu"></div>
+<div class="app">
 
-<div class="main">
+    <!-- SIDEBAR -->
+    <aside id="sidebar"></aside>
 
-<h1>Dashboard</h1>
 
-<div class="cards">
+    <!-- MAIN -->
+    <main class="main">
 
-<div class="card">
-<h3>Atendimentos hoje</h3>
-<p>0</p>
-</div>
+        <!-- PAGE -->
+        <div class="page">
 
-<div class="card">
-<h3>Animais cadastrados</h3>
-<p>0</p>
-</div>
+            <!-- HEADER -->
+            <div class="page-header">
 
-<div class="card">
-<h3>Clientes</h3>
-<p>0</p>
-</div>
+                <div class="page-title">
+                    <h1>Dashboard</h1>
+                    <p>Visão geral da clínica veterinária</p>
+                </div>
 
-</div>
+            </div>
+
+
+            <!-- CARDS DE INDICADORES -->
+            <div class="dashboard-cards">
+
+                <div class="card stat-card">
+
+                    <div class="stat-title">
+                        Atendimentos hoje
+                    </div>
+
+                    <div class="stat-number">
+                        0
+                    </div>
+
+                </div>
+
+
+                <div class="card stat-card">
+
+                    <div class="stat-title">
+                        Animais cadastrados
+                    </div>
+
+                    <div class="stat-number">
+                        0
+                    </div>
+
+                </div>
+
+
+                <div class="card stat-card">
+
+                    <div class="stat-title">
+                        Clientes
+                    </div>
+
+                    <div class="stat-number">
+                        0
+                    </div>
+
+                </div>
+
+
+                <div class="card stat-card">
+
+                    <div class="stat-title">
+                        Consultas agendadas
+                    </div>
+
+                    <div class="stat-number">
+                        0
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ÁREA PRINCIPAL -->
+            <div class="dashboard-grid">
+
+
+                <!-- AGENDA DO DIA -->
+                <div class="card">
+
+                    <div class="card-header">
+                        Agenda de hoje
+                    </div>
+
+                    <div class="card-body">
+
+                        <p>Nenhuma consulta agendada.</p>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- ALERTAS -->
+                <div class="card">
+
+                    <div class="card-header">
+                        Alertas
+                    </div>
+
+                    <div class="card-body">
+
+                        <p>Sem alertas no momento.</p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
 
 </div>
 
@@ -54,5 +153,4 @@
 <script type="module" src="../js/load-components.js"></script>
 
 </body>
-
 </html>
