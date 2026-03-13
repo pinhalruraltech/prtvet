@@ -5,19 +5,28 @@ import { collection, query, where, getDocs } from "https://www.gstatic.com/fireb
 
 document.addEventListener("DOMContentLoaded", () => {
 
+    const form = document.getElementById("loginForm");
+    const erroDiv = document.getElementById("erroLogin");
     const btnLogin = document.getElementById("btnLogin");
 
-    btnLogin.addEventListener("click", async () => {
+    form.addEventListener("submit", async (e) => {
 
-        const email = document.getElementById("email").value;
-        const senha = document.getElementById("senha").value;
+        e.preventDefault();
+
+        const email = document.getElementById("email").value.trim();
+        const senha = document.getElementById("senha").value.trim();
+
+        erroDiv.innerText = "";
+        btnLogin.disabled = true;
+        btnLogin.innerText = "Entrando...";
 
         try {
 
+            // login firebase
             const cred = await signInWithEmailAndPassword(auth, email, senha);
-
             const uid = cred.user.uid;
 
+            // buscar usuario no firestore
             const q = query(
                 collection(db, "usuarios"),
                 where("uid", "==", uid)
@@ -27,7 +36,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (querySnapshot.empty) {
 
-                alert("Usuário não encontrado no sistema.");
+                erroDiv.innerText = "Usuário não encontrado no sistema.";
+                btnLogin.disabled = false;
+                btnLogin.innerText = "Entrar";
                 return;
 
             }
@@ -36,20 +47,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (!dadosUsuario.ativo) {
 
-                alert("Usuário desativado.");
+                erroDiv.innerText = "Usuário desativado.";
+                btnLogin.disabled = false;
+                btnLogin.innerText = "Entrar";
                 return;
 
             }
 
+            // salvar sessão
             localStorage.setItem("clinicaId", dadosUsuario.clinicaId);
             localStorage.setItem("papel", dadosUsuario.papel);
             localStorage.setItem("uid", uid);
 
+            // redirecionar
             window.location.href = "pages/dashboard.html";
 
         } catch (erro) {
 
-            alert("Erro no login: " + erro.message);
+            erroDiv.innerText = "Erro no login: " + erro.message;
+
+            btnLogin.disabled = false;
+            btnLogin.innerText = "Entrar";
 
         }
 
