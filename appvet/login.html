@@ -8,7 +8,7 @@
 
 <title>Login | APPVET</title>
 
-<link rel="stylesheet" href="appvet/css/variables.css">
+<link rel="stylesheet" href="css/variables.css">
 
 <style>
 
@@ -22,14 +22,11 @@ font-family:'Inter',sans-serif;
 }
 
 .login-container{
-
 background:#fff;
 padding:40px;
 border-radius:10px;
 box-shadow:0 4px 20px rgba(0,0,0,0.05);
-
 width:360px;
-
 }
 
 .login-logo{
@@ -60,33 +57,22 @@ margin-bottom:5px;
 }
 
 input{
-
 width:100%;
 padding:10px;
-
 border:1px solid #E3E8EE;
 border-radius:6px;
-
 }
 
 button{
-
 width:100%;
 padding:12px;
-
 background:#2E7D6B;
 border:none;
-
 color:#fff;
-
 border-radius:8px;
-
 font-weight:500;
-
 cursor:pointer;
-
 margin-top:10px;
-
 }
 
 button:hover{
@@ -94,12 +80,10 @@ background:#25675A;
 }
 
 .login-footer{
-
 margin-top:20px;
 font-size:12px;
 text-align:center;
 color:#6B7280;
-
 }
 
 </style>
@@ -111,9 +95,7 @@ color:#6B7280;
 <div class="login-container">
 
 <div class="login-logo">
-
-<img src="appvet/assets/images/logo-appvet.png" id="logoClinica">
-
+<img src="assets/images/logo-appvet.png" id="logoClinica">
 </div>
 
 <div class="login-title" id="nomeClinica">
@@ -123,19 +105,13 @@ Sistema de Gestão Veterinária
 <form id="loginForm">
 
 <div class="form-group">
-
 <label>Email</label>
-
 <input type="email" id="email" required>
-
 </div>
 
 <div class="form-group">
-
 <label>Senha</label>
-
 <input type="password" id="senha" required>
-
 </div>
 
 <button type="submit">Entrar</button>
@@ -150,7 +126,7 @@ Powered by PRT
 
 <script type="module">
 
-import { auth, db } from "./appvet/js/firebase-init.js";
+import { auth, db } from "./js/firebase-init.js";
 
 import { signInWithEmailAndPassword }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -164,19 +140,15 @@ const nomeClinica = document.getElementById("nomeClinica");
 let clinicaId = null;
 
 /* =============================
-   IDENTIFICAR SUBDOMÍNIO
+CARREGAR CLÍNICA PELO SUBDOMÍNIO
 ============================= */
 
 async function carregarClinica(){
 
 const host = window.location.hostname;
-
 const subdomain = host.split(".")[0];
 
-/* evitar pegar www ou domínio raiz */
-
-if(subdomain === "www" || subdomain === "appvet"){
-console.log("Login padrão APPVET");
+if(subdomain === "www" || subdomain === "pinhalruraltech"){
 return;
 }
 
@@ -190,56 +162,41 @@ where("slug","==",subdomain)
 const snapshot = await getDocs(q);
 
 if(snapshot.empty){
-
-console.warn("Clínica não encontrada para:", subdomain);
+console.warn("Clínica não encontrada:", subdomain);
 return;
-
 }
 
 const clinicaDoc = snapshot.docs[0];
-
 const clinica = clinicaDoc.data();
 
 clinicaId = clinicaDoc.id;
-
-/* aplicar logo */
 
 if(clinica.logoUrl){
 logoClinica.src = clinica.logoUrl;
 }
 
-/* aplicar nome */
-
 if(clinica.nome){
 nomeClinica.innerText = clinica.nome;
 }
 
-/* aplicar cores */
-
 if(clinica.corPrimaria){
-
 document.documentElement.style.setProperty(
 "--color-primary",
 clinica.corPrimaria
 );
-
 }
 
 if(clinica.corSecundaria){
-
 document.documentElement.style.setProperty(
 "--color-secondary",
 clinica.corSecundaria
 );
-
 }
 
 sessionStorage.setItem("clinicaId",clinicaId);
 
 }catch(error){
-
 console.error("Erro ao carregar clínica:", error);
-
 }
 
 }
@@ -247,7 +204,7 @@ console.error("Erro ao carregar clínica:", error);
 await carregarClinica();
 
 /* =============================
-   LOGIN
+LOGIN
 ============================= */
 
 const form = document.getElementById("loginForm");
@@ -266,20 +223,14 @@ await signInWithEmailAndPassword(auth,email,senha);
 
 const uid = userCredential.user.uid;
 
-/* buscar usuário */
-
 const userDoc = await getDoc(doc(db,"usuarios",uid));
 
 if(!userDoc.exists()){
-
 alert("Usuário não encontrado no sistema");
 return;
-
 }
 
 const userData = userDoc.data();
-
-/* verificar clínica */
 
 if(!clinicaId){
 clinicaId = userData.clinicaId;
@@ -289,9 +240,9 @@ sessionStorage.setItem("usuarioId",uid);
 sessionStorage.setItem("clinicaId",clinicaId);
 sessionStorage.setItem("grupo",userData.grupo);
 
-/* redirecionar */
+/* REDIRECIONAMENTO */
 
-window.location.href = "/app/dashboard.html";
+window.location.href = "pages/dashboard.html";
 
 }catch(error){
 
