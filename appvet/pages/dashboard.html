@@ -10,147 +10,160 @@
 
 <link rel="stylesheet" href="../css/variables.css">
 <link rel="stylesheet" href="../css/layout.css">
+<link rel="stylesheet" href="../css/sidebar.css">
+<link rel="stylesheet" href="../css/topbar.css">
 <link rel="stylesheet" href="../css/cards.css">
-<link rel="stylesheet" href="../css/buttons.css">
-<link rel="stylesheet" href="../css/menu.css">
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/tables.css">
 
 </head>
 
-<body>
+<body style="display:none">
 
-<div class="app">
+<script type="module">
 
-    <!-- SIDEBAR -->
-    <aside id="sidebar"></aside>
+/* =============================
+PERMISSÃO DA PÁGINA
+============================= */
 
+window.PERMISSAO_PAGINA = "app.dashboard";
 
-    <!-- MAIN -->
-    <main class="main">
+</script>
 
-        <!-- PAGE -->
-        <div class="page">
+<script type="module" src="../js/firebase-init.js"></script>
+<script type="module" src="../js/auth-guard.js"></script>
 
-            <!-- HEADER -->
-            <div class="page-header">
+<div class="layout">
 
-                <div class="page-title">
-                    <h1>Dashboard</h1>
-                    <p>Visão geral da clínica veterinária</p>
-                </div>
+<!-- SIDEBAR -->
+<div id="sidebar-container"></div>
 
-            </div>
+<!-- CONTEÚDO -->
+<div class="content">
 
+<!-- TOPBAR -->
+<div id="topbar-container"></div>
 
-            <!-- CARDS DE INDICADORES -->
-            <div class="dashboard-cards">
+<main class="dashboard">
 
-                <div class="card stat-card">
+<h1>Dashboard</h1>
 
-                    <div class="stat-title">
-                        Atendimentos hoje
-                    </div>
+<!-- CARDS -->
+<section class="card-grid">
 
-                    <div class="stat-number">
-                        0
-                    </div>
+<div class="card">
 
-                </div>
-
-
-                <div class="card stat-card">
-
-                    <div class="stat-title">
-                        Animais cadastrados
-                    </div>
-
-                    <div class="stat-number">
-                        0
-                    </div>
-
-                </div>
-
-
-                <div class="card stat-card">
-
-                    <div class="stat-title">
-                        Clientes
-                    </div>
-
-                    <div class="stat-number">
-                        0
-                    </div>
-
-                </div>
-
-
-                <div class="card stat-card">
-
-                    <div class="stat-title">
-                        Consultas agendadas
-                    </div>
-
-                    <div class="stat-number">
-                        0
-                    </div>
-
-                </div>
-
-            </div>
-
-
-
-            <!-- ÁREA PRINCIPAL -->
-            <div class="dashboard-grid">
-
-
-                <!-- AGENDA DO DIA -->
-                <div class="card">
-
-                    <div class="card-header">
-                        Agenda de hoje
-                    </div>
-
-                    <div class="card-body">
-
-                        <p>Nenhuma consulta agendada.</p>
-
-                    </div>
-
-                </div>
-
-
-
-                <!-- ALERTAS -->
-                <div class="card">
-
-                    <div class="card-header">
-                        Alertas
-                    </div>
-
-                    <div class="card-body">
-
-                        <p>Sem alertas no momento.</p>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </main>
+<div class="card-header">Consultas hoje</div>
+<div id="consultasHoje">0</div>
 
 </div>
 
+<div class="card">
 
-<!-- segurança -->
-<script src="../js/auth-guard.js"></script>
+<div class="card-header">Clientes</div>
+<div id="totalClientes">0</div>
 
-<!-- carrega menu -->
-<script type="module" src="../js/load-components.js"></script>
+</div>
+
+<div class="card">
+
+<div class="card-header">Animais</div>
+<div id="totalAnimais">0</div>
+
+</div>
+
+<div class="card">
+
+<div class="card-header">Vacinas pendentes</div>
+<div id="vacinasPendentes">0</div>
+
+</div>
+
+</section>
+
+<!-- AGENDA -->
+
+<section class="card mt-20">
+
+<div class="card-header">
+Agenda de Hoje
+</div>
+
+<table class="table">
+
+<thead>
+<tr>
+<th>Hora</th>
+<th>Animal</th>
+<th>Procedimento</th>
+</tr>
+</thead>
+
+<tbody id="agendaHoje">
+
+<tr>
+<td colspan="3">Nenhum atendimento hoje</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</section>
+
+</main>
+
+</div>
+
+</div>
+
+<script type="module">
+
+import { db } from "../js/firebase-init.js";
+
+import {
+collection,
+query,
+where,
+getDocs
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+/* =============================
+CARREGAR DADOS DO DASHBOARD
+============================= */
+
+async function carregarDashboard(){
+
+const clinicaId = sessionStorage.getItem("clinicaId");
+
+if(!clinicaId){
+return;
+}
+
+/* CLIENTES */
+
+const clientesSnapshot = await getDocs(
+query(collection(db,"clientes"),where("clinicaId","==",clinicaId))
+);
+
+document.getElementById("totalClientes").innerText =
+clientesSnapshot.size;
+
+/* ANIMAIS */
+
+const animaisSnapshot = await getDocs(
+query(collection(db,"animais"),where("clinicaId","==",clinicaId))
+);
+
+document.getElementById("totalAnimais").innerText =
+animaisSnapshot.size;
+
+}
+
+carregarDashboard();
+
+</script>
 
 </body>
+
 </html>
