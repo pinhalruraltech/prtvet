@@ -48,34 +48,27 @@ window.PERMISSAO_PAGINA = "app.dashboard";
 <h1>Dashboard</h1>
 
 <!-- CARDS -->
+
 <section class="card-grid">
 
 <div class="card">
-
 <div class="card-header">Consultas hoje</div>
 <div id="consultasHoje">0</div>
-
 </div>
 
 <div class="card">
-
 <div class="card-header">Clientes</div>
 <div id="totalClientes">0</div>
-
 </div>
 
 <div class="card">
-
 <div class="card-header">Animais</div>
 <div id="totalAnimais">0</div>
-
 </div>
 
 <div class="card">
-
 <div class="card-header">Vacinas pendentes</div>
 <div id="vacinasPendentes">0</div>
-
 </div>
 
 </section>
@@ -122,11 +115,29 @@ import { db } from "../js/firebase-init.js";
 
 import {
 collection,
-query,
-where,
 getDocs
 }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+/* =============================
+CARREGAR COMPONENTES
+============================= */
+
+async function carregarComponentes(){
+
+const sidebar = await fetch("../components/sidebar.html");
+const sidebarHtml = await sidebar.text();
+
+document.getElementById("sidebar-container").innerHTML =
+sidebarHtml;
+
+const topbar = await fetch("../components/topbar.html");
+const topbarHtml = await topbar.text();
+
+document.getElementById("topbar-container").innerHTML =
+topbarHtml;
+
+}
 
 /* =============================
 CARREGAR DADOS DO DASHBOARD
@@ -134,33 +145,41 @@ CARREGAR DADOS DO DASHBOARD
 
 async function carregarDashboard(){
 
-const clinicaId = sessionStorage.getItem("clinicaId");
-
-if(!clinicaId){
-return;
-}
-
 /* CLIENTES */
 
-const clientesSnapshot = await getDocs(
-query(collection(db,"clientes"),where("clinicaId","==",clinicaId))
-);
+const clientesSnapshot =
+await getDocs(collection(db,"clientes"));
 
 document.getElementById("totalClientes").innerText =
 clientesSnapshot.size;
 
 /* ANIMAIS */
 
-const animaisSnapshot = await getDocs(
-query(collection(db,"animais"),where("clinicaId","==",clinicaId))
-);
+const animaisSnapshot =
+await getDocs(collection(db,"animais"));
 
 document.getElementById("totalAnimais").innerText =
 animaisSnapshot.size;
 
 }
 
-carregarDashboard();
+/* =============================
+INICIAR
+============================= */
+
+async function iniciar(){
+
+await carregarComponentes();
+
+await carregarDashboard();
+
+/* MOSTRAR TELA */
+
+document.body.style.display = "block";
+
+}
+
+iniciar();
 
 </script>
 
