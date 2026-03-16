@@ -95,10 +95,10 @@ color:#6B7280;
 <div class="login-container">
 
 <div class="login-logo">
-<img src="assets/images/logo-appvet.png" id="logoClinica">
+<img src="assets/images/logo-appvet.png">
 </div>
 
-<div class="login-title" id="nomeClinica">
+<div class="login-title">
 Sistema de Gestão Veterinária
 </div>
 
@@ -131,81 +131,8 @@ import { auth, db } from "./js/firebase-init.js";
 import { signInWithEmailAndPassword }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-import { collection, query, where, getDocs, doc, getDoc }
+import { doc, getDoc }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-const logoClinica = document.getElementById("logoClinica");
-const nomeClinica = document.getElementById("nomeClinica");
-
-let clinicaId = null;
-
-/* =============================
-CARREGAR CLÍNICA PELO SUBDOMÍNIO
-============================= */
-
-async function carregarClinica(){
-
-const host = window.location.hostname;
-const subdomain = host.split(".")[0];
-
-if(subdomain === "www" || subdomain === "pinhalruraltech"){
-return;
-}
-
-try{
-
-const q = query(
-collection(db,"clinicas"),
-where("slug","==",subdomain)
-);
-
-const snapshot = await getDocs(q);
-
-if(snapshot.empty){
-console.warn("Clínica não encontrada:", subdomain);
-return;
-}
-
-const clinicaDoc = snapshot.docs[0];
-const clinica = clinicaDoc.data();
-
-clinicaId = clinicaDoc.id;
-
-if(clinica.logoUrl){
-logoClinica.src = clinica.logoUrl;
-}
-
-if(clinica.nome){
-nomeClinica.innerText = clinica.nome;
-}
-
-if(clinica.corPrimaria){
-document.documentElement.style.setProperty(
-"--color-primary",
-clinica.corPrimaria
-);
-}
-
-if(clinica.corSecundaria){
-document.documentElement.style.setProperty(
-"--color-secondary",
-clinica.corSecundaria
-);
-}
-
-sessionStorage.setItem("clinicaId",clinicaId);
-
-}catch(error){
-console.error("Erro ao carregar clínica:", error);
-}
-
-}
-
-await carregarClinica();
-
-/* =============================
-LOGIN
-============================= */
 
 const form = document.getElementById("loginForm");
 
@@ -218,29 +145,35 @@ const senha = document.getElementById("senha").value;
 
 try{
 
+/* LOGIN FIREBASE */
+
 const userCredential =
 await signInWithEmailAndPassword(auth,email,senha);
 
 const uid = userCredential.user.uid;
 
+/* BUSCAR USUÁRIO NO FIRESTORE */
+
 const userDoc = await getDoc(doc(db,"usuarios",uid));
 
 if(!userDoc.exists()){
-alert("Usuário não encontrado no sistema");
+alert("Usuário não cadastrado no sistema");
 return;
 }
 
 const userData = userDoc.data();
 
-if(!clinicaId){
-clinicaId = userData.clinicaId;
+if(userData.ativo === false){
+alert("Usuário inativo");
+return;
 }
 
+/* SALVAR SESSÃO */
+
 sessionStorage.setItem("usuarioId",uid);
-sessionStorage.setItem("clinicaId",clinicaId);
 sessionStorage.setItem("grupo",userData.grupo);
 
-/* REDIRECIONAMENTO */
+/* REDIRECIONAR */
 
 window.location.href = "pages/dashboard.html";
 
