@@ -74,9 +74,17 @@ max-width:380px;
 padding:30px;
 }
 
-.login-box h2{
+.login-title{
+display:flex;
+align-items:center;
+gap:10px;
 margin-bottom:25px;
 color:#1F2933;
+}
+
+.login-title svg{
+width:22px;
+height:22px;
 }
 
 /* INPUTS */
@@ -100,18 +108,21 @@ border-radius:8px;
 font-size:14px;
 }
 
-/* SENHA COM OLHO */
+/* SENHA */
 
 .password-wrapper{
 position:relative;
 }
 
-.password-wrapper span{
+.password-wrapper svg{
 position:absolute;
 right:10px;
 top:50%;
 transform:translateY(-50%);
 cursor:pointer;
+width:18px;
+height:18px;
+color:#6B7280;
 }
 
 /* CHECKBOX */
@@ -153,13 +164,24 @@ color:#2F80ED;
 text-decoration:none;
 }
 
-/* ERRO */
+/* ALERTA */
 
-.error{
-color:#E63946;
+.alert{
 font-size:13px;
 margin-bottom:10px;
+padding:10px;
+border-radius:6px;
 display:none;
+}
+
+.alert.error{
+background:#fdecea;
+color:#E63946;
+}
+
+.alert.success{
+background:#e6f4ea;
+color:#2D6A4F;
 }
 
 /* FOOTER */
@@ -175,15 +197,12 @@ border-top:1px solid #E3E8EE;
 /* RESPONSIVO */
 
 @media(max-width:768px){
-
 .container{
 flex-direction:column;
 }
-
 .left{
 padding:20px;
 }
-
 }
 
 </style>
@@ -194,24 +213,32 @@ padding:20px;
 
 <div class="container">
 
-<!-- LADO ESQUERDO -->
+<!-- ESQUERDA -->
 
 <div class="left">
-
 <h1>APPVET</h1>
 <p>Gestão Veterinária Inteligente</p>
-
 </div>
 
-<!-- LADO DIREITO -->
+<!-- DIREITA -->
 
 <div class="right">
 
 <div class="login-box">
 
-<h2>🔐 Login</h2>
+<div class="login-title">
 
-<div class="error" id="errorMsg"></div>
+<!-- ICONE LOGIN -->
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+<rect x="3" y="11" width="18" height="11" rx="2"/>
+<path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+</svg>
+
+<h2>Login</h2>
+
+</div>
+
+<div id="alert" class="alert"></div>
 
 <div class="form-group">
 <label>Email</label>
@@ -223,7 +250,13 @@ padding:20px;
 
 <div class="password-wrapper">
 <input type="password" id="senha">
-<span onclick="toggleSenha()">👁️</span>
+
+<!-- OLHO -->
+<svg onclick="toggleSenha()" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+<circle cx="12" cy="12" r="3"/>
+</svg>
+
 </div>
 
 </div>
@@ -246,7 +279,7 @@ padding:20px;
 </div>
 
 <div class="footer">
-Versão 1.0 | Suporte | Termos
+Versão 1.0 | Suporte | Termos | Desenvolvido por PRT Soluções
 </div>
 
 <!-- FIREBASE -->
@@ -275,16 +308,18 @@ appId: "1:26046923372:web:fdbe180eadced87018e49"
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-/* LOGIN */
+function showAlert(msg, type){
+const alert = document.getElementById("alert");
+alert.innerText = msg;
+alert.className = "alert " + type;
+alert.style.display = "block";
+}
 
 window.login = async function(){
 
 const email = document.getElementById('email').value;
 const senha = document.getElementById('senha').value;
 const lembrar = document.getElementById('lembrar').checked;
-const erro = document.getElementById('errorMsg');
-
-erro.style.display = "none";
 
 try{
 
@@ -294,31 +329,40 @@ lembrar ? browserLocalPersistence : browserSessionPersistence
 
 await signInWithEmailAndPassword(auth, email, senha);
 
-/* REDIRECIONA */
+showAlert("Login realizado com sucesso!", "success");
 
+setTimeout(()=>{
 window.location.href = "appvet/dashboard.html";
+},1000);
 
 }catch(e){
 
-erro.innerText = "Email ou senha inválidos";
-erro.style.display = "block";
+switch(e.code){
+
+case "auth/user-not-found":
+showAlert("Usuário não encontrado", "error");
+break;
+
+case "auth/wrong-password":
+showAlert("Senha incorreta", "error");
+break;
+
+case "auth/invalid-email":
+showAlert("Email inválido", "error");
+break;
+
+default:
+showAlert("Email ou senha incorretos", "error");
 
 }
 
 }
 
-/* MOSTRAR SENHA */
+}
 
 window.toggleSenha = function(){
-
 const input = document.getElementById('senha');
-
-if(input.type === "password"){
-input.type = "text";
-}else{
-input.type = "password";
-}
-
+input.type = input.type === "password" ? "text" : "password";
 }
 
 </script>
