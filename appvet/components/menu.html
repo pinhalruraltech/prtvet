@@ -1,137 +1,159 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+
+<!-- LUCIDE ICONS -->
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<style>
+
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* SIDEBAR */
+.sidebar {
+  width: 240px;
+  height: 100vh;
+  background: #1F2933;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  left: 0;
+  top: 0;
+}
+
+/* LOGO */
+.sidebar .logo {
+  font-size: 20px;
+  font-weight: 600;
+  padding: 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+/* MENU */
+.sidebar nav {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 0;
+}
+
+/* LINKS */
+.sidebar nav a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  color: #9CA3AF;
+  text-decoration: none;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+/* ÍCONES */
+.sidebar nav a i {
+  width: 20px;
+  height: 20px;
+}
+
+/* HOVER */
+.sidebar nav a:hover {
+  background: rgba(255,255,255,0.05);
+  color: #FFFFFF;
+}
+
+/* ATIVO */
+.sidebar nav a.active {
+  background: rgba(45, 106, 79, 0.2);
+  color: #74C69D;
+}
+
+/* CONTEÚDO (pra não ficar atrás da sidebar) */
+.main {
+  margin-left: 240px;
+  padding: 20px;
+}
+
+</style>
+</head>
+
+<body>
+
 <div class="sidebar">
 
-    <!-- LOGO -->
-    <div class="sidebar-logo">
+  <div class="logo">
+    APPVET
+  </div>
 
-        <div class="logo-icon">🐾</div>
+  <nav>
 
-        <div class="logo-text">
-            <strong>APPVET</strong>
-            <span>Gestão Veterinária</span>
-        </div>
+    <a href="../pages/dashboard.html">
+      <i data-lucide="layout-dashboard"></i>
+      <span>Dashboard</span>
+    </a>
 
-    </div>
+    <a href="../pages/clientes.html">
+      <i data-lucide="users"></i>
+      <span>Clientes</span>
+    </a>
 
+    <a href="../pages/animais.html">
+      <i data-lucide="paw-print"></i>
+      <span>Animais</span>
+    </a>
 
+    <a href="../pages/agenda.html">
+      <i data-lucide="calendar"></i>
+      <span>Agenda</span>
+    </a>
 
-    <!-- MENU -->
-    <nav class="sidebar-menu">
+    <a href="#">
+      <i data-lucide="file-text"></i>
+      <span>Prontuário</span>
+    </a>
 
-        <a href="../pages/dashboard.html" class="menu-item">
+    <a href="#">
+      <i data-lucide="package"></i>
+      <span>Produtos</span>
+    </a>
 
-            <span class="menu-icon">📊</span>
-            <span class="menu-text">Dashboard</span>
+    <a href="#">
+      <i data-lucide="pill"></i>
+      <span>Medicamentos</span>
+    </a>
 
-        </a>
+    <a href="#">
+      <i data-lucide="dollar-sign"></i>
+      <span>Financeiro</span>
+    </a>
 
+    <a href="#">
+      <i data-lucide="bar-chart-3"></i>
+      <span>Relatórios</span>
+    </a>
 
-        <a href="../pages/clientes.html" class="menu-item active">
+    <a href="#">
+      <i data-lucide="user-cog"></i>
+      <span>Usuários</span>
+    </a>
 
-            <span class="menu-icon">👤</span>
-            <span class="menu-text">Clientes</span>
+    <a href="#">
+      <i data-lucide="settings"></i>
+      <span>Configurações</span>
+    </a>
 
-        </a>
-
-
-        <a href="../pages/animais.html" class="menu-item">
-
-            <span class="menu-icon">🐶</span>
-            <span class="menu-text">Animais</span>
-
-        </a>
-
-
-        <a href="../pages/agenda.html" class="menu-item">
-
-            <span class="menu-icon">📅</span>
-            <span class="menu-text">Agenda</span>
-
-        </a>
-
-
-        <a href="../pages/atendimentos.html" class="menu-item">
-
-            <span class="menu-icon">🩺</span>
-            <span class="menu-text">Atendimentos</span>
-
-        </a>
-
-
-        <a href="../pages/vacinas.html" class="menu-item">
-
-            <span class="menu-icon">💉</span>
-            <span class="menu-text">Vacinas</span>
-
-        </a>
-
-
-        <a href="../pages/internacao.html" class="menu-item">
-
-            <span class="menu-icon">🏥</span>
-            <span class="menu-text">Internação</span>
-
-        </a>
-
-
-        <a href="../pages/estoque.html" class="menu-item">
-
-            <span class="menu-icon">📦</span>
-            <span class="menu-text">Estoque</span>
-
-        </a>
-
-
-        <a href="../pages/financeiro.html" class="menu-item">
-
-            <span class="menu-icon">💰</span>
-            <span class="menu-text">Financeiro</span>
-
-        </a>
-
-
-        <a href="../pages/relatorios.html" class="menu-item">
-
-            <span class="menu-icon">📈</span>
-            <span class="menu-text">Relatórios</span>
-
-        </a>
-
-
-        <a href="../pages/usuarios.html" class="menu-item">
-
-            <span class="menu-icon">👥</span>
-            <span class="menu-text">Usuários</span>
-
-        </a>
-
-
-        <a href="../pages/config.html" class="menu-item">
-
-            <span class="menu-icon">⚙</span>
-            <span class="menu-text">Configurações</span>
-
-        </a>
-
-    </nav>
-
-
-
-    <!-- FOOTER -->
-    <div class="sidebar-footer">
-
-        <div class="user-box">
-
-            <div class="user-avatar">
-                V
-            </div>
-
-            <div class="user-info">
-                <strong>Venício</strong>
-                <span>Administrador</span>
-            </div>
-
-        </div>
-
-    </div>
+  </nav>
 
 </div>
+
+<script>
+  lucide.createIcons();
+</script>
+
+</body>
+</html>
