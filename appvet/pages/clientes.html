@@ -51,7 +51,6 @@
             </div>
 
 
-
             <!-- CARD -->
             <div class="card clientes-card">
 
@@ -88,7 +87,6 @@
                     </div>
 
                 </div>
-
 
 
                 <!-- TABELA -->
@@ -168,7 +166,6 @@
                 </div>
 
 
-
                 <!-- PAGINAÇÃO -->
                 <div class="card-footer">
 
@@ -196,6 +193,46 @@
     </main>
 
 </div>
+
+<!-- LUCIDE -->
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    // CARREGAR MENU
+    fetch("../components/menu.html")
+        .then(res => res.text())
+        .then(data => {
+
+            document.getElementById("sidebar").innerHTML = data;
+
+            // ATIVAR ÍCONES
+            lucide.createIcons();
+
+            // MARCAR LINK ATIVO
+            const links = document.querySelectorAll(".sidebar nav a");
+            const currentPage = window.location.pathname;
+
+            links.forEach(link => {
+                if (currentPage.includes(link.getAttribute("href"))) {
+                    link.classList.add("active");
+                }
+            });
+
+        });
+
+    // CARREGAR TOPBAR (opcional)
+    fetch("../components/topbar.html")
+        .then(res => res.text())
+        .then(data => {
+            document.getElementById("topbar").innerHTML = data;
+        });
+
+});
+
+</script>
 
 </body>
 </html>
