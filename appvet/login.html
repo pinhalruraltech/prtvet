@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
 
 <meta charset="UTF-8">
@@ -8,82 +7,183 @@
 
 <title>Login | APPVET</title>
 
-<link rel="stylesheet" href="css/variables.css">
-
 <style>
 
+/* RESET */
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+/* BODY */
+
 body{
-display:flex;
-align-items:center;
-justify-content:center;
-height:100vh;
+font-family: 'Inter', sans-serif;
 background:#F5F7F9;
-font-family:'Inter',sans-serif;
+height:100vh;
+display:flex;
+flex-direction:column;
 }
 
-.login-container{
-background:#fff;
+/* CONTAINER */
+
+.container{
+flex:1;
+display:flex;
+}
+
+/* LADO ESQUERDO */
+
+.left{
+flex:1;
+background:linear-gradient(135deg,#2D6A4F,#74C69D);
+color:#fff;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
 padding:40px;
-border-radius:10px;
-box-shadow:0 4px 20px rgba(0,0,0,0.05);
-width:360px;
-}
-
-.login-logo{
 text-align:center;
-margin-bottom:20px;
 }
 
-.login-logo img{
-height:60px;
+.left h1{
+font-size:32px;
+margin-bottom:10px;
 }
 
-.login-title{
-text-align:center;
+.left p{
+font-size:16px;
+opacity:0.9;
+}
+
+/* LADO DIREITO */
+
+.right{
+flex:1;
+display:flex;
+justify-content:center;
+align-items:center;
+background:#FFFFFF;
+}
+
+.login-box{
+width:100%;
+max-width:380px;
+padding:30px;
+}
+
+.login-box h2{
 margin-bottom:25px;
-font-weight:600;
 color:#1F2933;
 }
+
+/* INPUTS */
 
 .form-group{
 margin-bottom:15px;
 }
 
-label{
-font-size:13px;
-color:#6B7280;
+.form-group label{
 display:block;
+font-size:14px;
 margin-bottom:5px;
+color:#6B7280;
 }
 
-input{
+.form-group input{
 width:100%;
-padding:10px;
+padding:12px;
 border:1px solid #E3E8EE;
-border-radius:6px;
+border-radius:8px;
+font-size:14px;
 }
+
+/* SENHA COM OLHO */
+
+.password-wrapper{
+position:relative;
+}
+
+.password-wrapper span{
+position:absolute;
+right:10px;
+top:50%;
+transform:translateY(-50%);
+cursor:pointer;
+}
+
+/* CHECKBOX */
+
+.options{
+display:flex;
+align-items:center;
+margin-bottom:15px;
+font-size:14px;
+}
+
+/* BOTÃO */
 
 button{
 width:100%;
 padding:12px;
-background:#2E7D6B;
-border:none;
+background:#2D6A4F;
 color:#fff;
+border:none;
 border-radius:8px;
-font-weight:500;
 cursor:pointer;
-margin-top:10px;
+font-size:15px;
 }
 
 button:hover{
-background:#25675A;
+background:#1B4332;
 }
 
-.login-footer{
-margin-top:20px;
-font-size:12px;
+/* LINK */
+
+.link{
+margin-top:10px;
+font-size:13px;
 text-align:center;
+}
+
+.link a{
+color:#2F80ED;
+text-decoration:none;
+}
+
+/* ERRO */
+
+.error{
+color:#E63946;
+font-size:13px;
+margin-bottom:10px;
+display:none;
+}
+
+/* FOOTER */
+
+.footer{
+text-align:center;
+font-size:12px;
+padding:10px;
 color:#6B7280;
+border-top:1px solid #E3E8EE;
+}
+
+/* RESPONSIVO */
+
+@media(max-width:768px){
+
+.container{
+flex-direction:column;
+}
+
+.left{
+padding:20px;
+}
+
 }
 
 </style>
@@ -92,101 +192,136 @@ color:#6B7280;
 
 <body>
 
-<div class="login-container">
+<div class="container">
 
-<div class="login-logo">
-<img src="assets/images/logo-appvet.png">
+<!-- LADO ESQUERDO -->
+
+<div class="left">
+
+<h1>APPVET</h1>
+<p>Gestão Veterinária Inteligente</p>
+
 </div>
 
-<div class="login-title">
-Sistema de Gestão Veterinária
-</div>
+<!-- LADO DIREITO -->
 
-<form id="loginForm">
+<div class="right">
+
+<div class="login-box">
+
+<h2>🔐 Login</h2>
+
+<div class="error" id="errorMsg"></div>
 
 <div class="form-group">
 <label>Email</label>
-<input type="email" id="email" required>
+<input type="email" id="email">
 </div>
 
 <div class="form-group">
 <label>Senha</label>
-<input type="password" id="senha" required>
-</div>
 
-<button type="submit">Entrar</button>
-
-</form>
-
-<div class="login-footer">
-Powered by PRT
+<div class="password-wrapper">
+<input type="password" id="senha">
+<span onclick="toggleSenha()">👁️</span>
 </div>
 
 </div>
+
+<div class="options">
+<input type="checkbox" id="lembrar">
+<label style="margin-left:5px;">Lembrar de mim</label>
+</div>
+
+<button onclick="login()">Entrar</button>
+
+<div class="link">
+<a href="#">Esqueceu a senha?</a>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="footer">
+Versão 1.0 | Suporte | Termos
+</div>
+
+<!-- FIREBASE -->
 
 <script type="module">
 
-import { auth, db } from "./js/firebase-init.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 
-import { signInWithEmailAndPassword }
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+getAuth,
+signInWithEmailAndPassword,
+setPersistence,
+browserLocalPersistence,
+browserSessionPersistence
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-import { doc, getDoc }
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+const firebaseConfig = {
+apiKey: "YOUR_API_KEY",
+authDomain: "appvet-prt.firebaseapp.com",
+projectId: "appvet-prt",
+storageBucket: "appvet-prt.firebasestorage.app",
+messagingSenderId: "26046923372",
+appId: "1:26046923372:web:fdbe180eadced87018e49"
+};
 
-const form = document.getElementById("loginForm");
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 
-form.addEventListener("submit", async (e)=>{
+/* LOGIN */
 
-e.preventDefault();
+window.login = async function(){
 
-const email = document.getElementById("email").value;
-const senha = document.getElementById("senha").value;
+const email = document.getElementById('email').value;
+const senha = document.getElementById('senha').value;
+const lembrar = document.getElementById('lembrar').checked;
+const erro = document.getElementById('errorMsg');
+
+erro.style.display = "none";
 
 try{
 
-/* LOGIN FIREBASE */
+await setPersistence(auth,
+lembrar ? browserLocalPersistence : browserSessionPersistence
+);
 
-const userCredential =
-await signInWithEmailAndPassword(auth,email,senha);
+await signInWithEmailAndPassword(auth, email, senha);
 
-const uid = userCredential.user.uid;
+/* REDIRECIONA */
 
-/* BUSCAR USUÁRIO NO FIRESTORE */
+window.location.href = "appvet/dashboard.html";
 
-const userDoc = await getDoc(doc(db,"usuarios",uid));
+}catch(e){
 
-if(!userDoc.exists()){
-alert("Usuário não cadastrado no sistema");
-return;
-}
-
-const userData = userDoc.data();
-
-if(userData.ativo === false){
-alert("Usuário inativo");
-return;
-}
-
-/* SALVAR SESSÃO */
-
-sessionStorage.setItem("usuarioId",uid);
-sessionStorage.setItem("grupo",userData.grupo);
-
-/* REDIRECIONAR */
-
-window.location.href = "pages/dashboard.html";
-
-}catch(error){
-
-alert("Erro ao fazer login: " + error.message);
+erro.innerText = "Email ou senha inválidos";
+erro.style.display = "block";
 
 }
 
-});
+}
+
+/* MOSTRAR SENHA */
+
+window.toggleSenha = function(){
+
+const input = document.getElementById('senha');
+
+if(input.type === "password"){
+input.type = "text";
+}else{
+input.type = "password";
+}
+
+}
 
 </script>
 
 </body>
-
 </html>
