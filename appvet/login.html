@@ -7,6 +7,9 @@
 
 <title>Login | APPVET</title>
 
+<!-- FONTE PARA NOME -->
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+
 <style>
 
 /* VARIÁVEIS */
@@ -33,7 +36,8 @@ box-sizing:border-box;
 body{
 font-family: 'Inter', sans-serif;
 background:var(--color-bg);
-min-height:100vh;
+height:100vh;
+overflow:hidden;
 display:flex;
 flex-direction:column;
 }
@@ -43,7 +47,7 @@ flex-direction:column;
 .container{
 flex:1;
 display:flex;
-min-height:0;
+height:calc(100vh - 40px);
 }
 
 /* LADO ESQUERDO */
@@ -52,14 +56,36 @@ min-height:0;
 flex:1;
 background:linear-gradient(135deg,var(--color-primary),var(--color-secondary));
 display:flex;
+flex-direction:column;
 justify-content:center;
 align-items:center;
 padding:20px;
+text-align:center;
 }
 
+/* LOGO */
+
 .left img{
-max-width:320px;
-width:80%;
+max-width:420px;
+width:90%;
+margin-bottom:20px;
+}
+
+/* NOME */
+
+.nome{
+font-family:'Playfair Display', serif;
+color:#000;
+font-size:28px;
+letter-spacing:2px;
+margin-bottom:5px;
+}
+
+.subnome{
+font-family:'Playfair Display', serif;
+font-size:16px;
+color:#000;
+opacity:0.8;
 }
 
 /* LADO DIREITO */
@@ -72,7 +98,7 @@ align-items:center;
 padding:20px;
 }
 
-/* CARD LOGIN */
+/* CARD */
 
 .login-box{
 width:100%;
@@ -83,7 +109,7 @@ border-radius:12px;
 box-shadow:0 10px 25px rgba(0,0,0,0.08);
 }
 
-/* TÍTULO */
+/* TITULO */
 
 .login-title{
 display:flex;
@@ -93,11 +119,6 @@ margin-bottom:20px;
 color:var(--color-text);
 }
 
-.login-title svg{
-width:22px;
-height:22px;
-}
-
 /* INPUTS */
 
 .form-group{
@@ -105,9 +126,7 @@ margin-bottom:12px;
 }
 
 .form-group label{
-display:block;
 font-size:13px;
-margin-bottom:4px;
 color:var(--color-muted);
 }
 
@@ -116,7 +135,6 @@ width:100%;
 padding:10px;
 border:1px solid #E3E8EE;
 border-radius:8px;
-font-size:14px;
 }
 
 /* SENHA */
@@ -131,18 +149,6 @@ right:10px;
 top:50%;
 transform:translateY(-50%);
 cursor:pointer;
-width:18px;
-height:18px;
-color:#6B7280;
-}
-
-/* CHECKBOX */
-
-.options{
-display:flex;
-align-items:center;
-margin-bottom:12px;
-font-size:13px;
 }
 
 /* BOTÃO */
@@ -154,35 +160,35 @@ background:var(--color-primary);
 color:#fff;
 border:none;
 border-radius:8px;
-cursor:pointer;
-font-size:14px;
 }
 
 /* LINK */
 
 .link{
 margin-top:8px;
-font-size:12px;
 text-align:center;
+font-size:12px;
 }
 
-/* ALERTA */
+/* ALERT */
 
 .alert{
-font-size:12px;
+display:none;
 margin-bottom:10px;
+font-size:12px;
 padding:8px;
 border-radius:6px;
-display:none;
 }
 
-/* FOOTER */
+/* FOOTER FIXO */
 
 .footer{
-text-align:center;
+height:40px;
+display:flex;
+align-items:center;
+justify-content:center;
 font-size:11px;
-padding:8px;
-color:#6B7280;
+background:#fff;
 border-top:1px solid #E3E8EE;
 }
 
@@ -192,18 +198,29 @@ border-top:1px solid #E3E8EE;
 
 .container{
 flex-direction:column;
+height:calc(100vh - 40px);
 }
 
 .left{
-height:40vh;
+flex:none;
+height:45%;
 }
 
 .left img{
-max-width:220px;
+max-width:260px;
+}
+
+.nome{
+font-size:20px;
+}
+
+.subnome{
+font-size:13px;
 }
 
 .right{
-height:60vh;
+flex:none;
+height:55%;
 align-items:flex-start;
 }
 
@@ -224,7 +241,12 @@ margin-top:10px;
 <!-- ESQUERDA -->
 
 <div class="left">
-<img id="logoClinica" src="logo/logo_rafael.png">
+
+<img src="logo/logo_rafael.png">
+
+<div class="nome">RAFAEL FRUTUOSO</div>
+<div class="subnome">Médico Veterinário</div>
+
 </div>
 
 <!-- DIREITA -->
@@ -287,8 +309,6 @@ margin-top:10px;
 Versão 1.0 | Suporte | Termos | Desenvolvido por PRT Soluções
 </div>
 
-<!-- FIREBASE (INALTERADO) -->
-
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -313,54 +333,16 @@ appId: "1:26046923372:web:fdbe180eadced87018e49"
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-function showAlert(msg, type){
-const alert = document.getElementById("alert");
-alert.innerText = msg;
-alert.className = "alert " + type;
-alert.style.display = "block";
-}
-
 window.login = async function(){
 
 const email = document.getElementById('email').value;
 const senha = document.getElementById('senha').value;
-const lembrar = document.getElementById('lembrar').checked;
 
 try{
-
-await setPersistence(auth,
-lembrar ? browserLocalPersistence : browserSessionPersistence
-);
-
 await signInWithEmailAndPassword(auth, email, senha);
-
-showAlert("Login realizado com sucesso!", "success");
-
-setTimeout(()=>{
 window.location.href = "appvet/dashboard.html";
-},1000);
-
 }catch(e){
-
-switch(e.code){
-
-case "auth/user-not-found":
-showAlert("Usuário não encontrado", "error");
-break;
-
-case "auth/wrong-password":
-showAlert("Senha incorreta", "error");
-break;
-
-case "auth/invalid-email":
-showAlert("Email inválido", "error");
-break;
-
-default:
-showAlert("Email ou senha incorretos", "error");
-
-}
-
+alert("Erro ao fazer login");
 }
 
 }
