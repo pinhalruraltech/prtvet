@@ -4,7 +4,6 @@
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Clientes | APPVET</title>
 
 <script src="https://unpkg.com/lucide@latest"></script>
@@ -19,11 +18,11 @@ box-sizing:border-box;
 }
 
 body{
-font-family: Arial, sans-serif;
+font-family:Arial, sans-serif;
 background:#F5F7F9;
 }
 
-/* BOTÃO MENU MOBILE */
+/* BOTÃO MENU */
 #btnMenu{
 position:fixed;
 top:15px;
@@ -34,7 +33,6 @@ color:#fff;
 border:none;
 padding:10px;
 border-radius:8px;
-font-size:18px;
 }
 
 /* SIDEBAR */
@@ -42,51 +40,21 @@ font-size:18px;
 width:240px;
 height:100vh;
 background:#1F2933;
-color:#fff;
 position:fixed;
 top:0;
 left:0;
-transform:translateX(0);
 transition:0.3s;
 z-index:1000;
 }
 
-.sidebar .logo{
-padding:20px;
-font-weight:600;
-border-bottom:1px solid rgba(255,255,255,0.1);
-}
-
-.sidebar nav a{
-display:flex;
-align-items:center;
-gap:10px;
-padding:12px 20px;
-color:#9CA3AF;
-text-decoration:none;
-}
-
-.sidebar nav a:hover{
-background:rgba(255,255,255,0.05);
-color:#fff;
-}
-
-.sidebar nav a.active{
-background:rgba(45,106,79,0.2);
-color:#74C69D;
-}
-
 /* MOBILE */
 @media(max-width:768px){
-
 .sidebar{
 transform:translateX(-100%);
 }
-
 .sidebar.active{
 transform:translateX(0);
 }
-
 }
 
 /* MAIN */
@@ -101,6 +69,11 @@ margin-left:0;
 }
 }
 
+/* HEADER */
+.header{
+margin-bottom:20px;
+}
+
 /* CARD */
 .card{
 background:#fff;
@@ -109,11 +82,26 @@ border-radius:10px;
 box-shadow:0 4px 6px rgba(0,0,0,0.05);
 }
 
+/* FILTROS */
+.filters{
+display:flex;
+gap:10px;
+margin:10px 0;
+flex-wrap:wrap;
+}
+
+.filters select,
+.filters button{
+padding:10px;
+border-radius:8px;
+border:1px solid #ccc;
+background:#fff;
+}
+
 /* INPUT */
 input{
 width:100%;
 padding:12px;
-margin-bottom:10px;
 border-radius:8px;
 border:1px solid #ccc;
 }
@@ -122,19 +110,51 @@ border:1px solid #ccc;
 table{
 width:100%;
 border-collapse:collapse;
+margin-top:15px;
 }
 
 th, td{
 padding:12px;
-text-align:left;
 border-bottom:1px solid #eee;
 }
 
+/* BADGE */
 .badge{
 background:#E6F4EA;
 padding:5px 10px;
 border-radius:20px;
 font-size:12px;
+}
+
+/* AÇÕES */
+.actions{
+display:flex;
+gap:10px;
+}
+
+.actions button{
+border:none;
+background:#eee;
+padding:6px 10px;
+border-radius:6px;
+cursor:pointer;
+}
+
+/* PAGINAÇÃO */
+.pagination{
+margin-top:15px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.pagination button{
+padding:8px 12px;
+border:none;
+background:#2D6A4F;
+color:#fff;
+border-radius:6px;
+cursor:pointer;
 }
 
 </style>
@@ -143,21 +163,36 @@ font-size:12px;
 
 <body style="display:none">
 
-<!-- BOTÃO MENU -->
 <button id="btnMenu">☰</button>
 
-<!-- MENU -->
 <div id="menu-container"></div>
 
-<!-- CONTEÚDO -->
 <div class="main">
 
+<div class="header">
 <h1>Clientes</h1>
 <p>Gerencie proprietários e seus animais</p>
+</div>
 
 <div class="card">
 
 <input placeholder="Buscar cliente ou animal...">
+
+<div class="filters">
+<select>
+<option>Cidade</option>
+<option>Monte Belo</option>
+<option>Alfenas</option>
+</select>
+
+<select>
+<option>Possui animais</option>
+<option>Sim</option>
+<option>Não</option>
+</select>
+
+<button>Limpar filtros</button>
+</div>
 
 <table>
 <thead>
@@ -167,16 +202,22 @@ font-size:12px;
 <th>Cidade</th>
 <th>Animais</th>
 <th>Última visita</th>
+<th>Ações</th>
 </tr>
 </thead>
 
 <tbody>
+
 <tr>
 <td>João Silva</td>
 <td>(35) 99999-9999</td>
 <td>Monte Belo</td>
 <td><span class="badge">3</span></td>
 <td>10/03/2026</td>
+<td class="actions">
+<button>👁</button>
+<button>✏️</button>
+</td>
 </tr>
 
 <tr>
@@ -185,9 +226,25 @@ font-size:12px;
 <td>Alfenas</td>
 <td><span class="badge">1</span></td>
 <td>02/03/2026</td>
+<td class="actions">
+<button>👁</button>
+<button>✏️</button>
+</td>
 </tr>
+
 </tbody>
 </table>
+
+<div class="pagination">
+<span>Mostrando 1–10 de 230 clientes</span>
+
+<div>
+<button>‹</button>
+<button>1</button>
+<button>›</button>
+</div>
+
+</div>
 
 </div>
 
@@ -195,29 +252,26 @@ font-size:12px;
 
 <script type="module">
 
-// CARREGAR MENU
 fetch("../components/menu.html")
 .then(res => res.text())
 .then(html => {
 
 document.getElementById("menu-container").innerHTML = html;
 
-// ATIVAR ÍCONES
 lucide.createIcons();
 
-// MARCAR ATIVO
+// ATIVO
 document.querySelectorAll(".sidebar a").forEach(link=>{
 if(link.href === window.location.href){
 link.classList.add("active");
 }
 });
 
-// BOTÃO MENU
+// MENU MOBILE
 document.getElementById("btnMenu").addEventListener("click", ()=>{
-document.getElementById("sidebar").classList.toggle("active");
+document.querySelector(".sidebar").classList.toggle("active");
 });
 
-// LIBERAR TELA
 document.body.style.display = "block";
 
 });
