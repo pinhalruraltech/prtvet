@@ -9,6 +9,17 @@
 
 <style>
 
+/* VARIÁVEIS */
+
+:root{
+--color-primary:#2D6A4F;
+--color-secondary:#74C69D;
+--color-bg:#F5F7F9;
+--color-white:#FFFFFF;
+--color-text:#1F2933;
+--color-muted:#6B7280;
+}
+
 /* RESET */
 
 *{
@@ -21,7 +32,7 @@ box-sizing:border-box;
 
 body{
 font-family: 'Inter', sans-serif;
-background:#F5F7F9;
+background:var(--color-bg);
 height:100vh;
 display:flex;
 flex-direction:column;
@@ -38,7 +49,7 @@ display:flex;
 
 .left{
 flex:1;
-background:linear-gradient(135deg,#2D6A4F,#74C69D);
+background:linear-gradient(135deg,var(--color-primary),var(--color-secondary));
 color:#fff;
 display:flex;
 flex-direction:column;
@@ -48,9 +59,9 @@ padding:40px;
 text-align:center;
 }
 
-.left h1{
-font-size:32px;
-margin-bottom:10px;
+.left img{
+max-width:180px;
+margin-bottom:15px;
 }
 
 .left p{
@@ -65,7 +76,7 @@ flex:1;
 display:flex;
 justify-content:center;
 align-items:center;
-background:#FFFFFF;
+background:var(--color-white);
 }
 
 .login-box{
@@ -79,7 +90,7 @@ display:flex;
 align-items:center;
 gap:10px;
 margin-bottom:25px;
-color:#1F2933;
+color:var(--color-text);
 }
 
 .login-title svg{
@@ -97,7 +108,7 @@ margin-bottom:15px;
 display:block;
 font-size:14px;
 margin-bottom:5px;
-color:#6B7280;
+color:var(--color-muted);
 }
 
 .form-group input{
@@ -139,7 +150,7 @@ font-size:14px;
 button{
 width:100%;
 padding:12px;
-background:#2D6A4F;
+background:var(--color-primary);
 color:#fff;
 border:none;
 border-radius:8px;
@@ -181,7 +192,7 @@ color:#E63946;
 
 .alert.success{
 background:#e6f4ea;
-color:#2D6A4F;
+color:var(--color-primary);
 }
 
 /* FOOTER */
@@ -216,8 +227,10 @@ padding:20px;
 <!-- ESQUERDA -->
 
 <div class="left">
-<h1>APPVET</h1>
+
+<img id="logoClinica" src="appvet/logo/logo_rafael.png">
 <p>Gestão Veterinária Inteligente</p>
+
 </div>
 
 <!-- DIREITA -->
@@ -228,7 +241,6 @@ padding:20px;
 
 <div class="login-title">
 
-<!-- ICONE LOGIN -->
 <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
 <rect x="3" y="11" width="18" height="11" rx="2"/>
 <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
@@ -251,7 +263,6 @@ padding:20px;
 <div class="password-wrapper">
 <input type="password" id="senha">
 
-<!-- OLHO -->
 <svg onclick="toggleSenha()" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
 <circle cx="12" cy="12" r="3"/>
