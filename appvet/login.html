@@ -7,12 +7,9 @@
 
 <title>Login | APPVET</title>
 
-<!-- FONTE PARA NOME -->
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
 
 <style>
-
-/* VARIÁVEIS */
 
 :root{
 --color-primary:#2D6A4F;
@@ -23,15 +20,11 @@
 --color-muted:#6B7280;
 }
 
-/* RESET */
-
 *{
 margin:0;
 padding:0;
 box-sizing:border-box;
 }
-
-/* BODY */
 
 body{
 font-family: 'Inter', sans-serif;
@@ -42,15 +35,11 @@ display:flex;
 flex-direction:column;
 }
 
-/* CONTAINER */
-
 .container{
 flex:1;
 display:flex;
 height:calc(100vh - 40px);
 }
-
-/* LADO ESQUERDO */
 
 .left{
 flex:1;
@@ -63,15 +52,11 @@ padding:20px;
 text-align:center;
 }
 
-/* LOGO */
-
 .left img{
 max-width:420px;
 width:90%;
 margin-bottom:20px;
 }
-
-/* NOME */
 
 .nome{
 font-family:'Playfair Display', serif;
@@ -88,8 +73,6 @@ color:#000;
 opacity:0.8;
 }
 
-/* LADO DIREITO */
-
 .right{
 flex:1;
 display:flex;
@@ -97,8 +80,6 @@ justify-content:center;
 align-items:center;
 padding:20px;
 }
-
-/* CARD */
 
 .login-box{
 width:100%;
@@ -109,8 +90,6 @@ border-radius:12px;
 box-shadow:0 10px 25px rgba(0,0,0,0.08);
 }
 
-/* TITULO */
-
 .login-title{
 display:flex;
 align-items:center;
@@ -119,7 +98,28 @@ margin-bottom:20px;
 color:var(--color-text);
 }
 
-/* INPUTS */
+/* 🔥 CORREÇÃO AQUI */
+.login-title svg{
+width:22px;
+height:22px;
+flex-shrink:0;
+}
+
+.password-wrapper{
+position:relative;
+}
+
+/* 🔥 CORREÇÃO AQUI */
+.password-wrapper svg{
+position:absolute;
+right:10px;
+top:50%;
+transform:translateY(-50%);
+cursor:pointer;
+width:20px;
+height:20px;
+color:#6B7280;
+}
 
 .form-group{
 margin-bottom:12px;
@@ -137,22 +137,6 @@ border:1px solid #E3E8EE;
 border-radius:8px;
 }
 
-/* SENHA */
-
-.password-wrapper{
-position:relative;
-}
-
-.password-wrapper svg{
-position:absolute;
-right:10px;
-top:50%;
-transform:translateY(-50%);
-cursor:pointer;
-}
-
-/* BOTÃO */
-
 button{
 width:100%;
 padding:11px;
@@ -162,25 +146,11 @@ border:none;
 border-radius:8px;
 }
 
-/* LINK */
-
 .link{
 margin-top:8px;
 text-align:center;
 font-size:12px;
 }
-
-/* ALERT */
-
-.alert{
-display:none;
-margin-bottom:10px;
-font-size:12px;
-padding:8px;
-border-radius:6px;
-}
-
-/* FOOTER FIXO */
 
 .footer{
 height:40px;
@@ -192,8 +162,6 @@ background:#fff;
 border-top:1px solid #E3E8EE;
 }
 
-/* RESPONSIVO */
-
 @media(max-width:768px){
 
 .container{
@@ -202,7 +170,6 @@ height:calc(100vh - 40px);
 }
 
 .left{
-flex:none;
 height:45%;
 }
 
@@ -219,7 +186,6 @@ font-size:13px;
 }
 
 .right{
-flex:none;
 height:55%;
 align-items:flex-start;
 }
@@ -238,8 +204,6 @@ margin-top:10px;
 
 <div class="container">
 
-<!-- ESQUERDA -->
-
 <div class="left">
 
 <img src="logo/logo_rafael.png">
@@ -248,8 +212,6 @@ margin-top:10px;
 <div class="subnome">Médico Veterinário</div>
 
 </div>
-
-<!-- DIREITA -->
 
 <div class="right">
 
@@ -266,18 +228,16 @@ margin-top:10px;
 
 </div>
 
-<div id="alert" class="alert"></div>
-
 <div class="form-group">
 <label>Email</label>
-<input type="email" id="email">
+<input type="email">
 </div>
 
 <div class="form-group">
 <label>Senha</label>
 
 <div class="password-wrapper">
-<input type="password" id="senha">
+<input type="password">
 
 <svg onclick="toggleSenha()" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
@@ -288,12 +248,7 @@ margin-top:10px;
 
 </div>
 
-<div class="options">
-<input type="checkbox" id="lembrar">
-<label style="margin-left:5px;">Lembrar de mim</label>
-</div>
-
-<button onclick="login()">Entrar</button>
+<button>Entrar</button>
 
 <div class="link">
 <a href="#">Esqueceu a senha?</a>
@@ -309,49 +264,11 @@ margin-top:10px;
 Versão 1.0 | Suporte | Termos | Desenvolvido por PRT Soluções
 </div>
 
-<script type="module">
-
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-
-import {
-getAuth,
-signInWithEmailAndPassword,
-setPersistence,
-browserLocalPersistence,
-browserSessionPersistence
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
-const firebaseConfig = {
-apiKey: "YOUR_API_KEY",
-authDomain: "appvet-prt.firebaseapp.com",
-projectId: "appvet-prt",
-storageBucket: "appvet-prt.firebasestorage.app",
-messagingSenderId: "26046923372",
-appId: "1:26046923372:web:fdbe180eadced87018e49"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-
-window.login = async function(){
-
-const email = document.getElementById('email').value;
-const senha = document.getElementById('senha').value;
-
-try{
-await signInWithEmailAndPassword(auth, email, senha);
-window.location.href = "appvet/dashboard.html";
-}catch(e){
-alert("Erro ao fazer login");
-}
-
-}
-
-window.toggleSenha = function(){
-const input = document.getElementById('senha');
+<script>
+function toggleSenha(){
+const input = document.querySelector('input[type="password"]');
 input.type = input.type === "password" ? "text" : "password";
 }
-
 </script>
 
 </body>
