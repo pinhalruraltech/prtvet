@@ -60,8 +60,9 @@ text-align:center;
 }
 
 .left img{
-max-width:180px;
-margin-bottom:15px;
+max-width:260px;
+width:100%;
+margin-bottom:20px;
 }
 
 .left p{
@@ -76,14 +77,22 @@ flex:1;
 display:flex;
 justify-content:center;
 align-items:center;
-background:var(--color-white);
+background:var(--color-bg);
+padding:20px;
 }
+
+/* CARD LOGIN */
 
 .login-box{
 width:100%;
-max-width:380px;
+max-width:400px;
 padding:30px;
+background:var(--color-white);
+border-radius:12px;
+box-shadow:0 10px 25px rgba(0,0,0,0.08);
 }
+
+/* TÍTULO */
 
 .login-title{
 display:flex;
@@ -208,12 +217,28 @@ border-top:1px solid #E3E8EE;
 /* RESPONSIVO */
 
 @media(max-width:768px){
+
 .container{
 flex-direction:column;
 }
+
 .left{
+padding:30px 20px;
+}
+
+.left img{
+max-width:180px;
+}
+
+.right{
 padding:20px;
 }
+
+.login-box{
+max-width:100%;
+padding:25px;
+}
+
 }
 
 </style>
@@ -293,7 +318,7 @@ padding:20px;
 Versão 1.0 | Suporte | Termos | Desenvolvido por PRT Soluções
 </div>
 
-<!-- FIREBASE -->
+<!-- FIREBASE (NÃO ALTERADO) -->
 
 <script type="module">
 
