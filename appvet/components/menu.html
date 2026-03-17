@@ -1,159 +1,69 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
+<!-- SIDEBAR -->
+<aside class="sidebar">
 
-<!-- LUCIDE ICONS -->
-<script src="https://unpkg.com/lucide@latest"></script>
-
-<style>
-
-/* RESET */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-/* SIDEBAR */
-.sidebar {
-  width: 240px;
-  height: 100vh;
-  background: #1F2933;
-  color: #fff;
-  display: flex;
-  flex-direction: column;
-  position: fixed;
-  left: 0;
-  top: 0;
-}
-
-/* LOGO */
-.sidebar .logo {
-  font-size: 20px;
-  font-weight: 600;
-  padding: 20px;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
-}
-
-/* MENU */
-.sidebar nav {
-  display: flex;
-  flex-direction: column;
-  padding: 10px 0;
-}
-
-/* LINKS */
-.sidebar nav a {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 20px;
-  color: #9CA3AF;
-  text-decoration: none;
-  font-size: 14px;
-  transition: 0.2s;
-}
-
-/* ÍCONES */
-.sidebar nav a i {
-  width: 20px;
-  height: 20px;
-}
-
-/* HOVER */
-.sidebar nav a:hover {
-  background: rgba(255,255,255,0.05);
-  color: #FFFFFF;
-}
-
-/* ATIVO */
-.sidebar nav a.active {
-  background: rgba(45, 106, 79, 0.2);
-  color: #74C69D;
-}
-
-/* CONTEÚDO (pra não ficar atrás da sidebar) */
-.main {
-  margin-left: 240px;
-  padding: 20px;
-}
-
-</style>
-</head>
-
-<body>
-
-<div class="sidebar">
-
+  <!-- LOGO -->
   <div class="logo">
     APPVET
   </div>
 
-  <nav>
+  <!-- MENU -->
+  <nav class="menu">
 
-    <a href="../pages/dashboard.html">
+    <a href="/appvet/pages/dashboard.html" data-permissao="app.dashboard">
       <i data-lucide="layout-dashboard"></i>
       <span>Dashboard</span>
     </a>
 
-    <a href="../pages/clientes.html">
+    <a href="/appvet/pages/clientes.html" data-permissao="app.clientes">
       <i data-lucide="users"></i>
       <span>Clientes</span>
     </a>
 
-    <a href="../pages/animais.html">
+    <a href="/appvet/pages/animais.html" data-permissao="app.animais">
       <i data-lucide="paw-print"></i>
       <span>Animais</span>
     </a>
 
-    <a href="../pages/agenda.html">
+    <a href="/appvet/pages/agenda.html" data-permissao="app.agenda">
       <i data-lucide="calendar"></i>
       <span>Agenda</span>
     </a>
 
-    <a href="#">
+    <a href="/appvet/pages/prontuario.html" data-permissao="app.prontuario">
       <i data-lucide="file-text"></i>
       <span>Prontuário</span>
     </a>
 
-    <a href="#">
+    <a href="/appvet/pages/produtos.html" data-permissao="app.produtos">
       <i data-lucide="package"></i>
       <span>Produtos</span>
     </a>
 
-    <a href="#">
+    <a href="/appvet/pages/medicamentos.html" data-permissao="app.medicamentos">
       <i data-lucide="pill"></i>
       <span>Medicamentos</span>
     </a>
 
-    <a href="#">
+    <a href="/appvet/pages/financeiro.html" data-permissao="app.financeiro">
       <i data-lucide="dollar-sign"></i>
       <span>Financeiro</span>
     </a>
 
-    <a href="#">
+    <a href="/appvet/pages/relatorios.html" data-permissao="app.relatorios">
       <i data-lucide="bar-chart-3"></i>
       <span>Relatórios</span>
     </a>
 
-    <a href="#">
+    <a href="/appvet/pages/usuarios.html" data-permissao="app.usuarios">
       <i data-lucide="user-cog"></i>
       <span>Usuários</span>
     </a>
 
-    <a href="#">
+    <a href="/appvet/pages/configuracoes.html" data-permissao="app.config">
       <i data-lucide="settings"></i>
       <span>Configurações</span>
     </a>
 
   </nav>
 
-</div>
-
-<script>
-  lucide.createIcons();
-</script>
-
-</body>
-</html>
+</aside>
