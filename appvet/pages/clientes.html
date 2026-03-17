@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
 
 <meta charset="UTF-8">
@@ -8,227 +7,218 @@
 
 <title>Clientes | APPVET</title>
 
-<link rel="stylesheet" href="../css/variables.css">
-<link rel="stylesheet" href="../css/layout.css">
-<link rel="stylesheet" href="../css/cards.css">
-<link rel="stylesheet" href="../css/forms.css">
-<link rel="stylesheet" href="../css/buttons.css">
-<link rel="stylesheet" href="../css/tables.css">
-<link rel="stylesheet" href="../css/badges.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<style>
+
+/* RESET */
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family: Arial, sans-serif;
+background:#F5F7F9;
+}
+
+/* BOTÃO MENU MOBILE */
+#btnMenu{
+position:fixed;
+top:15px;
+left:15px;
+z-index:1100;
+background:#2D6A4F;
+color:#fff;
+border:none;
+padding:10px;
+border-radius:8px;
+font-size:18px;
+}
+
+/* SIDEBAR */
+.sidebar{
+width:240px;
+height:100vh;
+background:#1F2933;
+color:#fff;
+position:fixed;
+top:0;
+left:0;
+transform:translateX(0);
+transition:0.3s;
+z-index:1000;
+}
+
+.sidebar .logo{
+padding:20px;
+font-weight:600;
+border-bottom:1px solid rgba(255,255,255,0.1);
+}
+
+.sidebar nav a{
+display:flex;
+align-items:center;
+gap:10px;
+padding:12px 20px;
+color:#9CA3AF;
+text-decoration:none;
+}
+
+.sidebar nav a:hover{
+background:rgba(255,255,255,0.05);
+color:#fff;
+}
+
+.sidebar nav a.active{
+background:rgba(45,106,79,0.2);
+color:#74C69D;
+}
+
+/* MOBILE */
+@media(max-width:768px){
+
+.sidebar{
+transform:translateX(-100%);
+}
+
+.sidebar.active{
+transform:translateX(0);
+}
+
+}
+
+/* MAIN */
+.main{
+margin-left:240px;
+padding:20px;
+}
+
+@media(max-width:768px){
+.main{
+margin-left:0;
+}
+}
+
+/* CARD */
+.card{
+background:#fff;
+padding:20px;
+border-radius:10px;
+box-shadow:0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* INPUT */
+input{
+width:100%;
+padding:12px;
+margin-bottom:10px;
+border-radius:8px;
+border:1px solid #ccc;
+}
+
+/* TABLE */
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+th, td{
+padding:12px;
+text-align:left;
+border-bottom:1px solid #eee;
+}
+
+.badge{
+background:#E6F4EA;
+padding:5px 10px;
+border-radius:20px;
+font-size:12px;
+}
+
+</style>
 
 </head>
 
-<body>
+<body style="display:none">
 
-<div class="app">
+<!-- BOTÃO MENU -->
+<button id="btnMenu">☰</button>
 
-    <!-- SIDEBAR -->
-    <aside id="sidebar"></aside>
+<!-- MENU -->
+<div id="menu-container"></div>
 
+<!-- CONTEÚDO -->
+<div class="main">
 
-    <!-- MAIN -->
-    <main class="main">
+<h1>Clientes</h1>
+<p>Gerencie proprietários e seus animais</p>
 
-        <!-- TOPBAR -->
-        <div id="topbar"></div>
+<div class="card">
 
+<input placeholder="Buscar cliente ou animal...">
 
-        <!-- PAGE -->
-        <div class="page">
+<table>
+<thead>
+<tr>
+<th>Nome</th>
+<th>Telefone</th>
+<th>Cidade</th>
+<th>Animais</th>
+<th>Última visita</th>
+</tr>
+</thead>
 
-            <!-- HEADER -->
-            <div class="page-header">
+<tbody>
+<tr>
+<td>João Silva</td>
+<td>(35) 99999-9999</td>
+<td>Monte Belo</td>
+<td><span class="badge">3</span></td>
+<td>10/03/2026</td>
+</tr>
 
-                <div class="page-title">
-                    <h1>Clientes</h1>
-                    <p>Gerencie proprietários e seus animais</p>
-                </div>
-
-                <button class="btn-primary" id="btnNovoCliente">
-                    + Novo Cliente
-                </button>
-
-            </div>
-
-
-            <!-- CARD -->
-            <div class="card clientes-card">
-
-                <!-- TOOLBAR -->
-                <div class="card-header toolbar">
-
-                    <div class="toolbar-left">
-
-                        <input
-                        type="search"
-                        class="input-search"
-                        placeholder="Buscar cliente ou animal..."
-                        >
-
-                    </div>
-
-
-                    <div class="toolbar-right">
-
-                        <select class="form-select">
-                            <option>Cidade</option>
-                        </select>
-
-                        <select class="form-select">
-                            <option>Possui animais</option>
-                            <option>Sim</option>
-                            <option>Não</option>
-                        </select>
-
-                        <button class="btn-outline">
-                            Limpar filtros
-                        </button>
-
-                    </div>
-
-                </div>
-
-
-                <!-- TABELA -->
-                <div class="card-body">
-
-                    <table class="table">
-
-                        <thead>
-
-                        <tr>
-                            <th>Nome</th>
-                            <th>Telefone</th>
-                            <th>Cidade</th>
-                            <th>Animais</th>
-                            <th>Última visita</th>
-                            <th>Ações</th>
-                        </tr>
-
-                        </thead>
-
-
-                        <tbody id="clientesTable">
-
-                        <tr>
-
-                            <td>João Silva</td>
-                            <td>(35) 99999-9999</td>
-                            <td>Monte Belo</td>
-
-                            <td>
-                                <span class="badge badge-info">
-                                    🐾 3
-                                </span>
-                            </td>
-
-                            <td>10/03/2026</td>
-
-                            <td class="table-actions">
-
-                                <button class="btn-icon" title="Visualizar">👁</button>
-                                <button class="btn-icon" title="Editar">✏</button>
-                                <button class="btn-icon btn-danger" title="Excluir">🗑</button>
-
-                            </td>
-
-                        </tr>
-
-
-                        <tr>
-
-                            <td>Maria Oliveira</td>
-                            <td>(35) 98888-8888</td>
-                            <td>Alfenas</td>
-
-                            <td>
-                                <span class="badge badge-info">
-                                    🐾 1
-                                </span>
-                            </td>
-
-                            <td>02/03/2026</td>
-
-                            <td class="table-actions">
-
-                                <button class="btn-icon" title="Visualizar">👁</button>
-                                <button class="btn-icon" title="Editar">✏</button>
-                                <button class="btn-icon btn-danger" title="Excluir">🗑</button>
-
-                            </td>
-
-                        </tr>
-
-                        </tbody>
-
-                    </table>
-
-                </div>
-
-
-                <!-- PAGINAÇÃO -->
-                <div class="card-footer">
-
-                    <div class="pagination-info">
-                        Mostrando 1–10 de 230 clientes
-                    </div>
-
-                    <div class="pagination" id="paginationClientes">
-
-                        <button class="btn-page">‹</button>
-                        <button class="btn-page active">1</button>
-                        <button class="btn-page">2</button>
-                        <button class="btn-page">3</button>
-                        <button class="btn-page">4</button>
-                        <button class="btn-page">›</button>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </main>
+<tr>
+<td>Maria Oliveira</td>
+<td>(35) 98888-8888</td>
+<td>Alfenas</td>
+<td><span class="badge">1</span></td>
+<td>02/03/2026</td>
+</tr>
+</tbody>
+</table>
 
 </div>
 
-<!-- LUCIDE -->
-<script src="https://unpkg.com/lucide@latest"></script>
+</div>
 
-<script>
+<script type="module">
 
-document.addEventListener("DOMContentLoaded", () => {
+// CARREGAR MENU
+fetch("../components/menu.html")
+.then(res => res.text())
+.then(html => {
 
-    // CARREGAR MENU
-    fetch("../components/menu.html")
-        .then(res => res.text())
-        .then(data => {
+document.getElementById("menu-container").innerHTML = html;
 
-            document.getElementById("sidebar").innerHTML = data;
+// ATIVAR ÍCONES
+lucide.createIcons();
 
-            // ATIVAR ÍCONES
-            lucide.createIcons();
+// MARCAR ATIVO
+document.querySelectorAll(".sidebar a").forEach(link=>{
+if(link.href === window.location.href){
+link.classList.add("active");
+}
+});
 
-            // MARCAR LINK ATIVO
-            const links = document.querySelectorAll(".sidebar nav a");
-            const currentPage = window.location.pathname;
+// BOTÃO MENU
+document.getElementById("btnMenu").addEventListener("click", ()=>{
+document.getElementById("sidebar").classList.toggle("active");
+});
 
-            links.forEach(link => {
-                if (currentPage.includes(link.getAttribute("href"))) {
-                    link.classList.add("active");
-                }
-            });
-
-        });
-
-    // CARREGAR TOPBAR (opcional)
-    fetch("../components/topbar.html")
-        .then(res => res.text())
-        .then(data => {
-            document.getElementById("topbar").innerHTML = data;
-        });
+// LIBERAR TELA
+document.body.style.display = "block";
 
 });
 
