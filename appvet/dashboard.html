@@ -7,39 +7,18 @@
 <style>
 body {
   display:none;
-  background:#F5F7F9;
-  font-family:'Inter', sans-serif;
+  font-family:Arial;
 }
 
-/* CARDS */
 .cards {
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:15px;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
 }
-
 .card {
   background:#fff;
-  border:1px solid #E3E8EE;
-  border-radius:10px;
   padding:20px;
-}
-
-.card-title { font-size:14px; color:#6B7280; }
-.card-value { font-size:22px; font-weight:600; }
-
-/* SEÇÕES */
-.section {
-  margin-top:20px;
-  background:#fff;
-  border:1px solid #E3E8EE;
-  border-radius:10px;
-  padding:20px;
-}
-
-.list-item {
-  padding:10px 0;
-  border-bottom:1px solid #E3E8EE;
+  border:1px solid #ccc;
 }
 </style>
 </head>
@@ -48,22 +27,17 @@ body {
 
 <div id="menu-container"></div>
 
-<!-- 🔥 CONTEUDO -->
 <div id="conteudo">
-
   <div class="cards">
-    <div class="card"><div class="card-title">Atendimentos Hoje</div><div class="card-value">12</div></div>
-    <div class="card"><div class="card-title">Animais</div><div class="card-value">248</div></div>
-    <div class="card"><div class="card-title">Clientes</div><div class="card-value">132</div></div>
-    <div class="card"><div class="card-title">Vacinas Pendentes</div><div class="card-value">9</div></div>
+    <div class="card">12</div>
+    <div class="card">248</div>
+    <div class="card">132</div>
+    <div class="card">9</div>
   </div>
-
-  <div class="section">
-    <div class="list-item">09:00 - Consulta | Rex</div>
-    <div class="list-item">10:30 - Vacina | Mia</div>
-  </div>
-
 </div>
+
+<!-- LUCIDE -->
+<script src="https://unpkg.com/lucide@latest"></script>
 
 <script>
 fetch('./menu/menu.html')
@@ -71,14 +45,22 @@ fetch('./menu/menu.html')
 .then(html=>{
   document.getElementById('menu-container').innerHTML = html;
 
-  // 🔥 injeta conteúdo dentro do menu
+  // injeta conteúdo no layout
   document.getElementById('app-content')
-          .appendChild(document.getElementById('conteudo'));
+    .appendChild(document.getElementById('conteudo'));
 
-  // inicia menu
-  initMenu();
+  // 🔥 ATIVA LUCIDE
+  lucide.createIcons();
 
-  document.body.style.display="block";
+  // 🔥 TOGGLE MENU
+  document.getElementById('toggle-menu').onclick = ()=>{
+    document.getElementById('sidebar').classList.toggle('collapsed');
+  };
+
+  // 🔥 TITULO
+  document.getElementById('titulo-pagina').innerText = "Dashboard";
+
+  document.body.style.display = "block";
 });
 </script>
 
