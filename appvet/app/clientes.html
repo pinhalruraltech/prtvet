@@ -6,7 +6,6 @@
 <title>Clientes | AppVet</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-
 <script src="https://unpkg.com/lucide@latest"></script>
 
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -14,27 +13,8 @@
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
 <style>
-body {
-  margin:0;
-  font-family:'Inter', sans-serif;
-  background:#F5F7F9;
-  display:none;
-}
+body { margin:0; font-family:'Inter'; background:#F5F7F9; display:none; }
 
-/* BOTÃO MOBILE */
-#open-menu-mobile{
-  position:fixed;
-  top:15px;
-  left:15px;
-  z-index:20;
-  background:#2E7D6B;
-  color:white;
-  border:none;
-  padding:10px;
-  border-radius:8px;
-}
-
-/* CONTEÚDO */
 .page { padding:20px; max-width:1000px; margin:auto; }
 
 .card {
@@ -78,6 +58,43 @@ input {
   align-items:center;
 }
 
+.pagination {
+  display:flex;
+  justify-content:center;
+  gap:8px;
+  margin-top:15px;
+}
+
+.pagination button {
+  padding:8px 12px;
+  border:none;
+  border-radius:8px;
+  background:#E5E7EB;
+  cursor:pointer;
+}
+
+.pagination .active {
+  background:#2D6A4F;
+  color:white;
+}
+
+.modal {
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.4);
+  display:none;
+  align-items:center;
+  justify-content:center;
+}
+
+.modal-content {
+  background:white;
+  padding:20px;
+  border-radius:12px;
+  width:90%;
+  max-width:400px;
+}
+
 .footer {
   text-align:center;
   font-size:12px;
@@ -88,8 +105,6 @@ input {
 </head>
 
 <body>
-
-<button id="open-menu-mobile">☰</button>
 
 <div id="menu-container"></div>
 
@@ -105,6 +120,8 @@ const db = firebase.firestore();
 const auth = firebase.auth();
 
 let clientes = [];
+let pagina = 1;
+const porPagina = 6;
 
 auth.onAuthStateChanged(async (user)=>{
   if(!user){
@@ -118,46 +135,49 @@ auth.onAuthStateChanged(async (user)=>{
 });
 
 async function carregarMenu(){
-
   const res = await fetch("/prtvet/appvet/menu/menu.html");
   document.getElementById("menu-container").innerHTML = await res.text();
 
-  requestAnimationFrame(() => {
-    if(typeof initMenu==="function") initMenu();
-
-    const sidebar = document.getElementById("sidebar");
-    const overlay = document.getElementById("overlay");
-    const openBtn = document.getElementById("open-menu-mobile");
-
-    if(openBtn){
-      openBtn.onclick = () => {
-        sidebar.classList.add("open");
-        overlay.classList.add("show");
-      };
-    }
+  requestAnimationFrame(()=>{
+    initMenu();
   });
 
   const container = document.getElementById("app-content");
 
   container.innerHTML = `
-    <div class="page">
-      <div class="card">
+  <div class="page">
+    <div class="card">
 
-        <div class="header">
-          <h2><i data-lucide="users"></i> Clientes</h2>
-          <button class="btn">+ Novo</button>
-        </div>
-
-        <input placeholder="Buscar...">
-
-        <div id="listaClientes"></div>
-
+      <div class="header">
+        <h2><i data-lucide="users"></i> Clientes</h2>
+        <button class="btn" onclick="abrirModal()">+ Novo</button>
       </div>
 
-      <div class="footer">
-        Versão 1.0 | Suporte | Termos | Desenvolvido por PRT Soluções
+      <input id="busca" placeholder="Buscar..." oninput="filtrar()">
+
+      <div id="listaClientes"></div>
+
+      <div class="pagination" id="paginacao"></div>
+
+    </div>
+
+    <div class="footer">
+      Versão 1.0 | Suporte | Termos | Desenvolvido por PRT Soluções
+    </div>
+  </div>
+
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <h3>Novo Cliente</h3>
+      <input id="nome" placeholder="Nome">
+      <input id="telefone" placeholder="Telefone">
+
+      <div style="display:flex; gap:10px;">
+        <button onclick="fecharModal()">Cancelar</button>
+        <button class="btn" onclick="salvar()">Salvar</button>
       </div>
     </div>
+  </div>
   `;
 
   lucide.createIcons();
@@ -165,34 +185,76 @@ async function carregarMenu(){
 
 async function carregarClientes(){
   const snap = await db.collection("clientes").get();
-
   clientes = [];
   snap.forEach(doc => clientes.push({ id: doc.id, ...doc.data() }));
-
-  renderClientes();
+  render();
 }
 
-function renderClientes(){
+function render(lista = clientes){
+  const inicio = (pagina-1)*porPagina;
+  const dados = lista.slice(inicio, inicio+porPagina);
 
   const el = document.getElementById("listaClientes");
   el.innerHTML = "";
 
-  if(clientes.length === 0){
-    el.innerHTML = "<p>Nenhum cliente encontrado</p>";
-    return;
-  }
-
-  clientes.forEach(c=>{
+  dados.forEach(c=>{
     el.innerHTML += `
       <div class="cliente-card">
         <div>
-          <strong>${c.nome || "-"}</strong><br>
+          <strong>${c.nome}</strong><br>
           📞 ${c.telefone || "-"}
         </div>
-        <button class="btn">Ver</button>
+        <button class="btn" onclick="verCliente('${c.id}')">Ver</button>
       </div>
     `;
   });
+
+  renderPaginacao(lista.length);
+}
+
+function renderPaginacao(total){
+  const paginas = Math.ceil(total / porPagina);
+  const el = document.getElementById("paginacao");
+  el.innerHTML = "";
+
+  for(let i=1;i<=paginas;i++){
+    el.innerHTML += `
+      <button class="${i===pagina?'active':''}" onclick="irPagina(${i})">${i}</button>
+    `;
+  }
+}
+
+function irPagina(p){
+  pagina = p;
+  render();
+}
+
+function filtrar(){
+  const t = busca.value.toLowerCase();
+  pagina = 1;
+  render(clientes.filter(c => (c.nome||"").toLowerCase().includes(t)));
+}
+
+function verCliente(id){
+  alert("Abrir cliente: " + id);
+}
+
+function abrirModal(){
+  modal.style.display="flex";
+}
+
+function fecharModal(){
+  modal.style.display="none";
+}
+
+async function salvar(){
+  await db.collection("clientes").add({
+    nome: nome.value,
+    telefone: telefone.value
+  });
+
+  fecharModal();
+  carregarClientes();
 }
 </script>
 
