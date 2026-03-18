@@ -15,25 +15,32 @@
 
 <style>
 body {
-  margin: 0;
-  font-family: 'Inter', sans-serif;
-  background: #F5F7F9;
-  display: none;
+  margin:0;
+  font-family:'Inter', sans-serif;
+  background:#F5F7F9;
+  display:none;
 }
 
-.page { padding: 20px; }
+/* LAYOUT */
+.page {
+  padding:20px;
+  max-width:1000px;
+  margin:auto;
+}
 
 .card {
-  background: white;
-  border: 1px solid #E3E8EE;
-  border-radius: 12px;
-  padding: 20px;
+  background:#FFF;
+  border:1px solid #E3E8EE;
+  border-radius:12px;
+  padding:20px;
 }
 
+/* HEADER */
 .header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:15px;
 }
 
 .header h2 {
@@ -42,37 +49,69 @@ body {
   align-items:center;
 }
 
-button {
-  background: #2F80ED;
-  color: white;
-  border: none;
-  padding: 10px 14px;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-input {
-  padding:10px;
-  border:1px solid #E3E8EE;
+/* BOTÕES */
+.btn {
+  background:#2D6A4F;
+  color:white;
+  border:none;
+  padding:10px 16px;
   border-radius:8px;
-  margin-top:10px;
-  width:100%;
+  cursor:pointer;
 }
 
-/* LISTA */
-.cliente-item {
+.btn-sec {
+  background:#E5E7EB;
+  color:#111;
+}
+
+/* INPUT */
+input {
+  width:100%;
+  padding:10px;
+  border-radius:8px;
+  border:1px solid #E3E8EE;
+  margin-bottom:10px;
+}
+
+/* CARD CLIENTE */
+.cliente-card {
   border:1px solid #E3E8EE;
   border-radius:10px;
   padding:15px;
   margin-top:10px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
 }
 
-.cliente-item p {
-  margin:4px 0;
+.cliente-info {
+  display:flex;
+  flex-direction:column;
+  gap:5px;
 }
 
-.cliente-item strong {
+.cliente-info span {
+  font-size:14px;
+}
+
+.cliente-info strong {
   font-weight:600;
+}
+
+.btn-ver {
+  background:#2D6A4F;
+  color:white;
+  padding:8px 14px;
+  border-radius:8px;
+  border:none;
+}
+
+/* PAGINAÇÃO */
+.pagination {
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  margin-top:20px;
 }
 
 /* MODAL */
@@ -95,17 +134,11 @@ input {
   overflow:auto;
 }
 
-.modal-actions {
-  display:flex;
-  justify-content:flex-end;
-  gap:10px;
-  margin-top:10px;
-}
-
+/* FOOTER */
 .footer {
   text-align:center;
   font-size:12px;
-  padding:20px;
+  margin-top:20px;
   color:#6B7280;
 }
 </style>
@@ -126,6 +159,10 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const auth = firebase.auth();
 
+let clientes = [];
+let paginaAtual = 1;
+const porPagina = 6;
+
 auth.onAuthStateChanged(async (user)=>{
   if(!user){
     window.location.href="../login.html";
@@ -141,66 +178,54 @@ async function carregarMenu(){
   const res = await fetch("/prtvet/appvet/menu/menu.html");
   document.getElementById("menu-container").innerHTML = await res.text();
 
-  setTimeout(() => {
-    if (typeof initMenu === "function") initMenu();
-  }, 150);
+  setTimeout(()=>{
+    if(typeof initMenu==="function") initMenu();
+  },150);
 
-  const container = document.getElementById("app-content");
+  document.getElementById("app-content").innerHTML = `
+  <div class="page">
 
-  container.innerHTML = `
-    <div class="page">
+    <div class="card">
 
-      <div class="card">
-
-        <div class="header">
-          <h2><i data-lucide="users"></i> Clientes</h2>
-          <button onclick="abrirModal()"><i data-lucide="plus"></i> Novo</button>
-        </div>
-
-        <input id="busca" placeholder="Buscar..." oninput="filtrar()">
-
-        <div id="listaClientes"></div>
-
+      <div class="header">
+        <h2><i data-lucide="users"></i> Clientes</h2>
+        <button class="btn" onclick="abrirModal()">+ Novo</button>
       </div>
 
-      <div class="footer">
-        Versão 1.0 | Suporte | Termos | Desenvolvido por PRT Soluções
-      </div>
+      <input id="busca" placeholder="Buscar cliente..." oninput="filtrar()">
+
+      <div id="listaClientes"></div>
+
+      <div class="pagination" id="paginacao"></div>
 
     </div>
 
-    <!-- MODAL -->
-    <div class="modal" id="modal">
-      <div class="modal-content">
-
-        <h3>Novo Cliente</h3>
-
-        <input id="nome" placeholder="Nome completo">
-        <input id="cpf" placeholder="CPF">
-        <input id="nascimento" type="date">
-        <input id="telefone" placeholder="Telefone">
-        <input id="email" placeholder="Email">
-
-        <input id="logradouro" placeholder="Logradouro">
-        <input id="numero" placeholder="Número">
-        <input id="bairro" placeholder="Bairro">
-        <input id="cidade" placeholder="Cidade">
-        <input id="estado" placeholder="Estado">
-        <input id="cep" placeholder="CEP">
-
-        <div class="modal-actions">
-          <button onclick="confirmarCancelar()">Cancelar</button>
-          <button onclick="confirmarSalvar()">Salvar</button>
-        </div>
-
-      </div>
+    <div class="footer">
+      Versão 1.0 | Suporte | Termos | Desenvolvido por PRT Soluções
     </div>
+
+  </div>
+
+  <div class="modal" id="modal">
+    <div class="modal-content">
+
+      <h3>Novo Cliente</h3>
+
+      <input id="nome" placeholder="Nome completo">
+      <input id="telefone" placeholder="Telefone">
+      <input id="cidade" placeholder="Cidade">
+
+      <div style="display:flex; gap:10px; margin-top:10px;">
+        <button class="btn-sec" onclick="fecharModal()">Cancelar</button>
+        <button class="btn" onclick="salvarCliente()">Salvar</button>
+      </div>
+
+    </div>
+  </div>
   `;
 
   lucide.createIcons();
 }
-
-let clientes = [];
 
 async function carregarClientes(){
   const snap = await db.collection("clientes").get();
@@ -210,69 +235,72 @@ async function carregarClientes(){
 }
 
 function render(lista = clientes){
-  const el = document.getElementById("listaClientes");
-  el.innerHTML = "";
 
-  lista.forEach(c=>{
+  const inicio = (paginaAtual-1)*porPagina;
+  const paginados = lista.slice(inicio, inicio+porPagina);
+
+  const el = document.getElementById("listaClientes");
+  el.innerHTML="";
+
+  paginados.forEach(c=>{
     el.innerHTML += `
-      <div class="cliente-item">
-        <p><strong>Nome:</strong> ${c.nome || ""}</p>
-        <p><strong>Telefone:</strong> ${c.telefone || ""}</p>
-        <p><strong>Bairro:</strong> ${c.endereco?.bairro || ""}</p>
-        <p><strong>Cidade:</strong> ${c.endereco?.cidade || ""}</p>
-        <button onclick="abrirCliente('${c.id}')">Ver</button>
+      <div class="cliente-card">
+        <div class="cliente-info">
+          <span><strong>${c.nome || "-"}</strong></span>
+          <span>📞 ${c.telefone || "-"}</span>
+          <span>📍 ${c.endereco?.cidade || "-"}</span>
+        </div>
+        <button class="btn-ver" onclick="abrirCliente('${c.id}')">Ver</button>
       </div>
     `;
   });
+
+  renderPaginacao(lista.length);
+}
+
+function renderPaginacao(total){
+  const totalPaginas = Math.ceil(total / porPagina);
+  const el = document.getElementById("paginacao");
+  el.innerHTML="";
+
+  for(let i=1;i<=totalPaginas;i++){
+    el.innerHTML += `
+      <button onclick="irPagina(${i})">${i}</button>
+    `;
+  }
+}
+
+function irPagina(p){
+  paginaAtual = p;
+  render();
 }
 
 function filtrar(){
-  const t = document.getElementById("busca").value.toLowerCase();
+  const t = busca.value.toLowerCase();
+  paginaAtual = 1;
   render(clientes.filter(c => (c.nome||"").toLowerCase().includes(t)));
 }
 
 function abrirCliente(id){
-  window.location.href = "cliente.html?id=" + id;
+  window.location.href="cliente.html?id="+id;
 }
 
 function abrirModal(){
-  document.getElementById("modal").style.display="flex";
+  modal.style.display="flex";
 }
 
-function confirmarCancelar(){
-  if(confirm("Deseja cancelar?")){
-    document.getElementById("modal").style.display="none";
-  }
-}
-
-function confirmarSalvar(){
-  if(confirm("Salvar cliente?")){
-    salvarCliente();
-  }
+function fecharModal(){
+  modal.style.display="none";
 }
 
 async function salvarCliente(){
-
   await db.collection("clientes").add({
-    nome: nome.value,
-    cpf: cpf.value,
-    nascimento: nascimento.value,
-    telefone: telefone.value,
-    email: email.value,
-    situacao:"ativo",
-    endereco:{
-      logradouro:logradouro.value,
-      numero:numero.value,
-      bairro:bairro.value,
-      cidade:cidade.value,
-      estado:estado.value,
-      cep:cep.value
-    },
-    animais:[],
-    createdAt:new Date()
+    nome:nome.value,
+    telefone:telefone.value,
+    endereco:{ cidade:cidade.value }
   });
 
-  modal.style.display="none";
+  fecharModal();
   carregarClientes();
 }
 </script>
