@@ -1,4 +1,3 @@
-e
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -177,8 +176,6 @@ background:#fff;
 border-top:1px solid #E3E8EE;
 }
 
-/* MOBILE */
-
 @media(max-width:768px){
 
 .container{
@@ -282,19 +279,14 @@ margin-top:10px;
 Versão 1.0 | Suporte | Termos | Desenvolvido por PRT Soluções
 </div>
 
-<!-- FIREBASE -->
-
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-import {
-getAuth,
-signInWithEmailAndPassword
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
+/* 🔴 COLE SUA API KEY AQUI */
 const firebaseConfig = {
-apiKey: "YOUR_API_KEY",
+apiKey: "AIzaSyDR69colU9JHvemBpab3x8PLHqaUm_5EM0",
 authDomain: "appvet-prt.firebaseapp.com",
 projectId: "appvet-prt",
 storageBucket: "appvet-prt.firebasestorage.app",
@@ -343,8 +335,12 @@ case "auth/invalid-email":
 showAlert("Email inválido", "error");
 break;
 
+case "auth/invalid-api-key":
+showAlert("API Key inválida", "error");
+break;
+
 default:
-showAlert("Erro ao fazer login", "error");
+showAlert("Erro: " + e.code, "error");
 
 }
 
