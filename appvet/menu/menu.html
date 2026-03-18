@@ -3,7 +3,6 @@
   <!-- SIDEBAR -->
   <aside class="sidebar" id="sidebar">
 
-    <!-- LOGO -->
     <div class="logo">
       <img src="../logo/logo_rafael.png" alt="Logo">
       <div class="logo-text">
@@ -12,36 +11,15 @@
       </div>
     </div>
 
-    <!-- MENU -->
     <nav class="menu">
 
-      <a href="../dashboard.html" class="menu-item" data-area="app" data-chave="dashboard">
-        <i data-lucide="home"></i><span>Dashboard</span>
-      </a>
-
-      <a href="../clientes.html" class="menu-item" data-area="app" data-chave="clientes">
-        <i data-lucide="users"></i><span>Clientes</span>
-      </a>
-
-      <a href="../animais.html" class="menu-item" data-area="app" data-chave="animais">
-        <i data-lucide="paw-print"></i><span>Animais</span>
-      </a>
-
-      <a href="../atendimentos.html" class="menu-item" data-area="app" data-chave="atendimentos">
-        <i data-lucide="stethoscope"></i><span>Atendimentos</span>
-      </a>
-
-      <a href="../agenda.html" class="menu-item" data-area="app" data-chave="agenda">
-        <i data-lucide="calendar"></i><span>Agenda</span>
-      </a>
-
-      <a href="../estoque.html" class="menu-item" data-area="app" data-chave="estoque">
-        <i data-lucide="package"></i><span>Estoque</span>
-      </a>
-
-      <a href="../financeiro.html" class="menu-item" data-area="app" data-chave="financeiro">
-        <i data-lucide="dollar-sign"></i><span>Financeiro</span>
-      </a>
+      <a href="../dashboard.html" class="menu-item"><i data-lucide="home"></i><span>Dashboard</span></a>
+      <a href="../clientes.html" class="menu-item"><i data-lucide="users"></i><span>Clientes</span></a>
+      <a href="../animais.html" class="menu-item"><i data-lucide="paw-print"></i><span>Animais</span></a>
+      <a href="../atendimentos.html" class="menu-item"><i data-lucide="stethoscope"></i><span>Atendimentos</span></a>
+      <a href="../agenda.html" class="menu-item"><i data-lucide="calendar"></i><span>Agenda</span></a>
+      <a href="../estoque.html" class="menu-item"><i data-lucide="package"></i><span>Estoque</span></a>
+      <a href="../financeiro.html" class="menu-item"><i data-lucide="dollar-sign"></i><span>Financeiro</span></a>
 
       <a href="../internacao.html" class="menu-item"><i data-lucide="activity"></i><span>Internação</span></a>
       <a href="../documentos.html" class="menu-item"><i data-lucide="file-text"></i><span>Documentos</span></a>
@@ -61,7 +39,6 @@
     <!-- TOPBAR -->
     <header class="topbar">
 
-      <!-- LEFT -->
       <div class="top-left">
         <button id="toggle-menu">
           <i data-lucide="menu"></i>
@@ -70,9 +47,7 @@
         <h1 id="titulo-pagina">Dashboard</h1>
       </div>
 
-      <!-- RIGHT -->
       <div class="top-right">
-
         <i data-lucide="bell" class="icon"></i>
 
         <a href="../perfil.html" class="user">
@@ -81,15 +56,12 @@
         </a>
 
         <button id="btn-logout">Sair</button>
-
       </div>
 
     </header>
 
-    <!-- CONTENT -->
-    <main class="content">
-      <!-- conteúdo da página -->
-    </main>
+    <!-- 🔥 AQUI É ONDE O DASH VAI ENTRAR -->
+    <main class="content" id="app-content"></main>
 
   </div>
 
@@ -99,172 +71,98 @@
 <script src="https://unpkg.com/lucide@latest"></script>
 
 <script>
-  lucide.createIcons();
+  function initMenu() {
 
-  // TOGGLE SIDEBAR
-  document.getElementById("toggle-menu").onclick = () => {
-    document.getElementById("sidebar").classList.toggle("collapsed");
-  };
+    lucide.createIcons();
 
-  // TITULO DINAMICO
-  const mapa = {
-    "dashboard.html": "Dashboard",
-    "clientes.html": "Clientes",
-    "animais.html": "Animais",
-    "atendimentos.html": "Atendimentos",
-    "agenda.html": "Agenda",
-    "estoque.html": "Estoque",
-    "financeiro.html": "Financeiro"
-  };
+    // toggle sidebar
+    document.getElementById("toggle-menu").onclick = () => {
+      document.getElementById("sidebar").classList.toggle("collapsed");
+    };
 
-  const pagina = window.location.pathname.split("/").pop();
-  document.getElementById("titulo-pagina").innerText = mapa[pagina] || "Sistema";
+    // título dinâmico
+    const mapa = {
+      "dashboard.html": "Dashboard",
+      "clientes.html": "Clientes",
+      "animais.html": "Animais",
+      "atendimentos.html": "Atendimentos",
+      "agenda.html": "Agenda",
+      "estoque.html": "Estoque",
+      "financeiro.html": "Financeiro"
+    };
 
-  // ATIVO
-  document.querySelectorAll(".menu-item").forEach(link => {
-    if (link.href.includes(pagina)) {
-      link.classList.add("active");
-    }
-  });
+    const pagina = window.location.pathname.split("/").pop();
+    document.getElementById("titulo-pagina").innerText = mapa[pagina] || "Sistema";
+
+    // ativo
+    document.querySelectorAll(".menu-item").forEach(link => {
+      if (link.href.includes(pagina)) {
+        link.classList.add("active");
+      }
+    });
+
+  }
 </script>
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+* { margin:0; padding:0; box-sizing:border-box; }
 
-body {
-  font-family: 'Inter', sans-serif;
-}
+body { font-family:'Inter', sans-serif; }
 
-/* LAYOUT */
-.layout {
-  display: flex;
-  height: 100vh;
-}
+.layout { display:flex; height:100vh; }
 
-/* SIDEBAR */
 .sidebar {
-  width: 260px;
-  background: #2E7D6B;
-  color: white;
-  display: flex;
-  flex-direction: column;
-  transition: 0.3s;
+  width:260px;
+  background:#2E7D6B;
+  color:white;
+  display:flex;
+  flex-direction:column;
+  transition:0.3s;
 }
 
-.sidebar.collapsed {
-  width: 70px;
-}
+.sidebar.collapsed { width:70px; }
+.sidebar.collapsed span { display:none; }
 
-.sidebar.collapsed span {
-  display: none;
-}
+.logo { display:flex; gap:10px; padding:20px; align-items:center; }
+.logo img { width:40px; }
 
-/* LOGO */
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 20px;
-}
-
-.logo img {
-  width: 40px;
-}
-
-.logo-text {
-  display: flex;
-  flex-direction: column;
-}
-
-.logo-text span {
-  font-size: 12px;
-  opacity: 0.8;
-}
-
-/* MENU */
-.menu {
-  padding: 10px;
-}
+.menu { padding:10px; }
 
 .menu-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px;
-  border-radius: 8px;
-  color: #e0f2f1;
-  text-decoration: none;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:12px;
+  border-radius:8px;
+  color:#e0f2f1;
+  text-decoration:none;
 }
 
-.menu-item:hover {
-  background: #4DB6AC;
-}
+.menu-item:hover { background:#4DB6AC; }
+.menu-item.active { background:#1b5e55; }
 
-.menu-item.active {
-  background: #1b5e55;
-}
+.main { flex:1; display:flex; flex-direction:column; }
 
-/* MAIN */
-.main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-/* TOPBAR */
 .topbar {
-  height: 70px;
-  background: white;
-  border-bottom: 1px solid #E3E8EE;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 25px;
+  height:70px;
+  background:white;
+  border-bottom:1px solid #E3E8EE;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:0 25px;
 }
 
-/* LEFT */
-.top-left {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
+.top-left { display:flex; align-items:center; gap:15px; }
 
-#toggle-menu {
-  background: none;
-  border: none;
-  cursor: pointer;
-}
+.top-right { display:flex; align-items:center; gap:15px; }
 
-/* RIGHT */
-.top-right {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.user {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  text-decoration: none;
-  color: #1F2933;
-}
-
-.icon {
-  color: #6B7280;
-}
-
-/* CONTENT */
 .content {
-  flex: 1;
-  background: #F5F7F9;
-  padding: 25px;
-  overflow-y: auto;
+  flex:1;
+  background:#F5F7F9;
+  padding:25px;
+  overflow-y:auto;
 }
 </style>
