@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Cliente | AppVet</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+<style>
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: #F5F7F9;
+  display: none;
+}
+
+.page {
+  padding: 20px;
+}
+
+.card {
+  background: white;
+  border: 1px solid #E3E8EE;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+h2 {
+  margin-bottom: 20px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+}
+
+input, select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #E3E8EE;
+  border-radius: 6px;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+button {
+  background: #2F80ED;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+button.secondary {
+  background: #6B7280;
+}
+
+button.danger {
+  background: #E63946;
+}
+</style>
+</head>
+
+<body>
+
+<div id="menu-container"></div>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyDR69colU9JHvemBpab3x8PLHqaUm_5EM0",
+  authDomain: "appvet-prt.firebaseapp.com",
+  projectId: "appvet-prt"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const auth = firebase.auth();
+
+let clienteId = null;
+
+auth.onAuthStateChanged(async (user)=>{
+  if(!user){
+    window.location.href="../login.html";
+    return;
+  }
+
+  clienteId = new URLSearchParams(window.location.search).get("id");
+
+  if(!clienteId){
+    alert("Cliente não encontrado");
+    window.location.href="clientes.html";
+    return;
+  }
+
+  await carregarMenu();
+  await carregarCliente();
+
+  document.body.style.display="block";
+});
+
+async function carregarMenu(){
+  const res = await fetch("/prtvet/appvet/menu/menu.html");
+  document.getElementById("menu-container").innerHTML = await res.text();
+
+  if (typeof initMenu === "function") initMenu();
+
+  const container = document.getElementById("app-content");
+
+  container.innerHTML = `
+    <div class="page">
+
+      <div class="card">
+        <h2>Dados do Cliente</h2>
+
+        <div class="grid">
+          <input id="nome" placeholder="Nome completo">
+          <input id="cpf" placeholder="CPF">
+        </div>
+
+        <div class="grid">
+          <input id="nascimento" type="date">
+          <input id="telefone" placeholder="Telefone">
+        </div>
+
+        <div class="grid">
+          <input id="email" placeholder="Email">
+          <select id="situacao">
+            <option value="ativo">Ativo</option>
+            <option value="inativo">Inativo</option>
+          </select>
+        </div>
+
+      </div>
+
+      <div class="card">
+        <h2>Endereço</h2>
+
+        <div class="grid">
+          <input id="logradouro" placeholder="Logradouro">
+          <input id="numero" placeholder="Número">
+        </div>
+
+        <div class="grid">
+          <input id="bairro" placeholder="Bairro">
+          <input id="cidade" placeholder="Cidade">
+        </div>
+
+        <div class="grid-3">
+          <input id="cep" placeholder="CEP">
+          <input id="estado" placeholder="Estado">
+        </div>
+
+      </div>
+
+      <div class="actions">
+        <button onclick="salvar()">Salvar</button>
+        <button class="secondary" onclick="voltar()">Voltar</button>
+      </div>
+
+    </div>
+  `;
+}
+
+async function carregarCliente(){
+  const doc = await db.collection("clientes").doc(clienteId).get();
+  const c = doc.data();
+
+  document.getElementById("nome").value = c.nome || "";
+  document.getElementById("cpf").value = c.cpf || "";
+  document.getElementById("nascimento").value = c.nascimento || "";
+  document.getElementById("telefone").value = c.telefone || "";
+  document.getElementById("email").value = c.email || "";
+  document.getElementById("situacao").value = c.situacao || "ativo";
+
+  const end = c.endereco || {};
+
+  document.getElementById("logradouro").value = end.logradouro || "";
+  document.getElementById("numero").value = end.numero || "";
+  document.getElementById("bairro").value = end.bairro || "";
+  document.getElementById("cidade").value = end.cidade || "";
+  document.getElementById("cep").value = end.cep || "";
+  document.getElementById("estado").value = end.estado || "";
+}
+
+async function salvar(){
+  await db.collection("clientes").doc(clienteId).update({
+    nome: document.getElementById("nome").value,
+    cpf: document.getElementById("cpf").value,
+    nascimento: document.getElementById("nascimento").value,
+    telefone: document.getElementById("telefone").value,
+    email: document.getElementById("email").value,
+    situacao: document.getElementById("situacao").value,
+
+    endereco: {
+      logradouro: document.getElementById("logradouro").value,
+      numero: document.getElementById("numero").value,
+      bairro: document.getElementById("bairro").value,
+      cidade: document.getElementById("cidade").value,
+      cep: document.getElementById("cep").value,
+      estado: document.getElementById("estado").value
+    }
+  });
+
+  alert("Cliente atualizado!");
+}
+
+function voltar(){
+  window.location.href = "clientes.html";
+}
+</script>
+
+</body>
+</html>
