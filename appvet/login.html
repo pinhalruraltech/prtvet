@@ -1,3 +1,4 @@
+e
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -29,8 +30,7 @@ box-sizing:border-box;
 body{
 font-family: 'Inter', sans-serif;
 background:var(--color-bg);
-height:100vh;
-overflow:hidden;
+min-height:100vh;
 display:flex;
 flex-direction:column;
 }
@@ -38,7 +38,6 @@ flex-direction:column;
 .container{
 flex:1;
 display:flex;
-height:calc(100vh - 40px);
 }
 
 .left{
@@ -98,18 +97,15 @@ margin-bottom:20px;
 color:var(--color-text);
 }
 
-/* 🔥 CORREÇÃO AQUI */
 .login-title svg{
 width:22px;
 height:22px;
-flex-shrink:0;
 }
 
 .password-wrapper{
 position:relative;
 }
 
-/* 🔥 CORREÇÃO AQUI */
 .password-wrapper svg{
 position:absolute;
 right:10px;
@@ -144,12 +140,31 @@ background:var(--color-primary);
 color:#fff;
 border:none;
 border-radius:8px;
+cursor:pointer;
 }
 
 .link{
 margin-top:8px;
 text-align:center;
 font-size:12px;
+}
+
+.alert{
+display:none;
+margin-bottom:10px;
+padding:10px;
+border-radius:6px;
+font-size:13px;
+}
+
+.alert.error{
+background:#fdecea;
+color:#E63946;
+}
+
+.alert.success{
+background:#e6f4ea;
+color:#2D6A4F;
 }
 
 .footer{
@@ -162,15 +177,16 @@ background:#fff;
 border-top:1px solid #E3E8EE;
 }
 
+/* MOBILE */
+
 @media(max-width:768px){
 
 .container{
 flex-direction:column;
-height:calc(100vh - 40px);
 }
 
 .left{
-height:45%;
+height:40vh;
 }
 
 .left img{
@@ -186,7 +202,7 @@ font-size:13px;
 }
 
 .right{
-height:55%;
+height:60vh;
 align-items:flex-start;
 }
 
@@ -228,16 +244,18 @@ margin-top:10px;
 
 </div>
 
+<div id="alert" class="alert"></div>
+
 <div class="form-group">
 <label>Email</label>
-<input type="email">
+<input type="email" id="email">
 </div>
 
 <div class="form-group">
 <label>Senha</label>
 
 <div class="password-wrapper">
-<input type="password">
+<input type="password" id="senha">
 
 <svg onclick="toggleSenha()" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
@@ -248,7 +266,7 @@ margin-top:10px;
 
 </div>
 
-<button>Entrar</button>
+<button onclick="login()">Entrar</button>
 
 <div class="link">
 <a href="#">Esqueceu a senha?</a>
@@ -264,11 +282,81 @@ margin-top:10px;
 Versão 1.0 | Suporte | Termos | Desenvolvido por PRT Soluções
 </div>
 
-<script>
-function toggleSenha(){
-const input = document.querySelector('input[type="password"]');
+<!-- FIREBASE -->
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+
+import {
+getAuth,
+signInWithEmailAndPassword
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+const firebaseConfig = {
+apiKey: "YOUR_API_KEY",
+authDomain: "appvet-prt.firebaseapp.com",
+projectId: "appvet-prt",
+storageBucket: "appvet-prt.firebasestorage.app",
+messagingSenderId: "26046923372",
+appId: "1:26046923372:web:fdbe180eadced87018e49"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+function showAlert(msg, type){
+const alert = document.getElementById("alert");
+alert.innerText = msg;
+alert.className = "alert " + type;
+alert.style.display = "block";
+}
+
+window.login = async function(){
+
+const email = document.getElementById('email').value;
+const senha = document.getElementById('senha').value;
+
+try{
+
+await signInWithEmailAndPassword(auth, email, senha);
+
+showAlert("Login realizado com sucesso!", "success");
+
+setTimeout(()=>{
+window.location.href = "appvet/dashboard.html";
+},1000);
+
+}catch(e){
+
+switch(e.code){
+
+case "auth/user-not-found":
+showAlert("Usuário não encontrado", "error");
+break;
+
+case "auth/wrong-password":
+showAlert("Senha incorreta", "error");
+break;
+
+case "auth/invalid-email":
+showAlert("Email inválido", "error");
+break;
+
+default:
+showAlert("Erro ao fazer login", "error");
+
+}
+
+}
+
+}
+
+window.toggleSenha = function(){
+const input = document.getElementById('senha');
 input.type = input.type === "password" ? "text" : "password";
 }
+
 </script>
 
 </body>
