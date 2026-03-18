@@ -100,6 +100,9 @@ async function carregarMenu(){
   const res = await fetch("/prtvet/appvet/menu/menu.html");
   document.getElementById("menu-container").innerHTML = await res.text();
 
+  // 🔥 GARANTE QUE O DOM FOI ATUALIZADO
+  await new Promise(r => setTimeout(r, 0));
+
   if(typeof initMenu==="function") initMenu();
 
   const container = document.getElementById("app-content");
