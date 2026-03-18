@@ -1,110 +1,68 @@
 <div class="layout">
 
-  <!-- SIDEBAR -->
+  <!-- MENU LATERAL -->
   <aside class="sidebar" id="sidebar">
 
+    <!-- LOGO -->
     <div class="logo">
-      <img src="/prtvet/appvet/logo/logo_rafael.png">
-
-      <div class="logo-text">
-        <strong>Rafael Frutuoso</strong>
-        <span>Médico Veterinário</span>
-      </div>
+      <img src="/prtvet/appvet/logo/logo_rafael.png" class="logo-full">
+      <img src="/prtvet/appvet/logo/logo_rafael.png" class="logo-mini">
     </div>
 
-    <nav class="menu" id="menu">
+    <!-- BOTÃO -->
+    <button class="toggle" id="toggle-menu">
+      <i data-lucide="menu"></i>
+    </button>
 
-      <a href="/prtvet/appvet/dashboard.html" class="menu-item" data-icon="home">
-        <i data-lucide="home"></i><span>Dashboard</span>
+    <!-- MENU -->
+    <nav class="menu">
+
+      <a href="/prtvet/appvet/dashboard.html" class="menu-item" data-name="Dashboard">
+        <i data-lucide="home"></i>
       </a>
 
-      <a href="/prtvet/appvet/app/clientes.html" class="menu-item" data-icon="users">
-        <i data-lucide="users"></i><span>Clientes</span>
+      <a href="/prtvet/appvet/app/clientes.html" class="menu-item" data-name="Clientes">
+        <i data-lucide="users"></i>
       </a>
 
-      <a href="/prtvet/appvet/app/animais.html" class="menu-item" data-icon="paw-print">
-        <i data-lucide="paw-print"></i><span>Animais</span>
+      <a href="/prtvet/appvet/app/animais.html" class="menu-item" data-name="Animais">
+        <i data-lucide="paw-print"></i>
       </a>
 
-      <a href="/prtvet/appvet/app/atendimentos.html" class="menu-item" data-icon="stethoscope">
-        <i data-lucide="stethoscope"></i><span>Atendimentos</span>
+      <a href="/prtvet/appvet/app/atendimentos.html" class="menu-item" data-name="Atendimentos">
+        <i data-lucide="stethoscope"></i>
       </a>
 
-      <a href="/prtvet/appvet/app/agenda.html" class="menu-item" data-icon="calendar">
-        <i data-lucide="calendar"></i><span>Agenda</span>
+      <a href="/prtvet/appvet/app/agenda.html" class="menu-item" data-name="Agenda">
+        <i data-lucide="calendar"></i>
       </a>
 
-      <a href="/prtvet/appvet/app/estoque.html" class="menu-item" data-icon="package">
-        <i data-lucide="package"></i><span>Estoque</span>
+      <a href="/prtvet/appvet/app/estoque.html" class="menu-item" data-name="Estoque">
+        <i data-lucide="package"></i>
       </a>
 
-      <a href="/prtvet/appvet/app/financeiro.html" class="menu-item" data-icon="dollar-sign">
-        <i data-lucide="dollar-sign"></i><span>Financeiro</span>
+      <a href="/prtvet/appvet/app/financeiro.html" class="menu-item" data-name="Financeiro">
+        <i data-lucide="dollar-sign"></i>
       </a>
 
-      <a href="/prtvet/appvet/app/internacao.html" class="menu-item" data-icon="activity">
-        <i data-lucide="activity"></i><span>Internação</span>
+      <a href="/prtvet/appvet/app/internacao.html" class="menu-item" data-name="Internação">
+        <i data-lucide="activity"></i>
       </a>
 
-      <a href="/prtvet/appvet/app/documentos.html" class="menu-item" data-icon="file-text">
-        <i data-lucide="file-text"></i><span>Documentos</span>
+      <a href="/prtvet/appvet/app/documentos.html" class="menu-item" data-name="Documentos">
+        <i data-lucide="file-text"></i>
       </a>
 
-      <a href="/prtvet/appvet/app/protocolos.html" class="menu-item" data-icon="clipboard-list">
-        <i data-lucide="clipboard-list"></i><span>Protocolos</span>
-      </a>
-
-      <a href="/prtvet/appvet/app/usuarios.html" class="menu-item" data-icon="user-cog">
-        <i data-lucide="user-cog"></i><span>Usuários</span>
-      </a>
-
-      <a href="/prtvet/appvet/app/configuracoes.html" class="menu-item" data-icon="settings">
-        <i data-lucide="settings"></i><span>Configurações</span>
-      </a>
-
-      <a href="/prtvet/appvet/app/relatorios.html" class="menu-item" data-icon="bar-chart-3">
-        <i data-lucide="bar-chart-3"></i><span>Relatórios</span>
+      <a href="/prtvet/appvet/app/protocolos.html" class="menu-item" data-name="Protocolos">
+        <i data-lucide="clipboard-list"></i>
       </a>
 
     </nav>
 
   </aside>
 
-  <!-- MAIN -->
-  <div class="main">
-
-    <!-- TOPBAR -->
-    <header class="topbar">
-
-      <div class="top-left">
-        <button id="toggle-menu">
-          <i data-lucide="menu"></i>
-        </button>
-
-        <div class="page-info">
-          <i id="top-icon"></i>
-          <h1 id="titulo-pagina">Dashboard</h1>
-        </div>
-      </div>
-
-      <div class="top-right">
-
-        <i data-lucide="bell" class="icon"></i>
-
-        <a href="/prtvet/appvet/perfil.html" class="user">
-          <i data-lucide="user"></i>
-          <span id="nome-usuario">Usuário</span>
-        </a>
-
-        <button id="btn-logout">Sair</button>
-
-      </div>
-
-    </header>
-
-    <main class="content" id="app-content"></main>
-
-  </div>
+  <!-- CONTEÚDO -->
+  <main class="main" id="app-content"></main>
 
 </div>
 
@@ -113,113 +71,135 @@
 <script>
 function initMenu() {
 
-  // 🔥 FORÇA layout correto sempre
-  document.querySelector(".layout").style.display = "flex";
-
   lucide.createIcons();
 
+  const sidebar = document.getElementById("sidebar");
+
   document.getElementById("toggle-menu").onclick = () => {
-    document.getElementById("sidebar").classList.toggle("collapsed");
+    sidebar.classList.toggle("collapsed");
   };
 
+  // ATIVO
   const pagina = window.location.pathname.split("/").pop();
 
-  const itens = document.querySelectorAll(".menu-item");
-
-  itens.forEach(link => {
-    if (link.getAttribute("href").includes(pagina)) {
-
+  document.querySelectorAll(".menu-item").forEach(link => {
+    if (link.href.includes(pagina)) {
       link.classList.add("active");
-
-      const nome = link.innerText.trim();
-      const icon = link.dataset.icon;
-
-      document.getElementById("titulo-pagina").innerText = nome;
-
-      document.getElementById("top-icon").outerHTML =
-        `<i data-lucide="${icon}"></i>`;
     }
   });
 
-  lucide.createIcons();
-
-  if (window.firebase && firebase.auth) {
-    firebase.auth().onAuthStateChanged(user => {
-      if (user) {
-        let nome = user.displayName || user.email || "Usuário";
-        document.getElementById("nome-usuario").innerText = nome.split(" ")[0];
-      }
-    });
-  }
 }
 </script>
 
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 
-.layout { display:flex; height:100vh; }
-
-.sidebar {
-  width:260px;
-  background:#2E7D6B;
-  color:white;
+.layout {
   display:flex;
-  flex-direction:column;
-  overflow-y:auto;
+  height:100vh;
 }
 
-.sidebar.collapsed { width:70px; }
-.sidebar.collapsed span { display:none; }
-
-.logo {
+/* SIDEBAR */
+.sidebar {
+  width:220px;
+  background:#2E7D6B;
   display:flex;
   flex-direction:column;
   align-items:center;
-  padding:20px;
+  padding:15px 10px;
+  transition:0.3s;
+}
+
+.sidebar.collapsed {
+  width:70px;
+}
+
+/* LOGO */
+.logo {
+  margin-bottom:20px;
+}
+
+.logo-full {
+  width:120px;
+}
+
+.logo-mini {
+  display:none;
+  width:40px;
+}
+
+.sidebar.collapsed .logo-full {
+  display:none;
+}
+
+.sidebar.collapsed .logo-mini {
+  display:block;
+}
+
+/* TOGGLE */
+.toggle {
+  background:none;
+  border:none;
+  color:white;
+  cursor:pointer;
+  margin-bottom:20px;
+}
+
+/* MENU */
+.menu {
+  display:flex;
+  flex-direction:column;
   gap:10px;
-  text-align:center;
-}
-
-.logo img {
   width:100%;
-  max-width:180px;
 }
-
-.menu { padding:10px; }
 
 .menu-item {
+  position:relative;
   display:flex;
+  justify-content:center;
   align-items:center;
-  gap:12px;
-  padding:12px;
-  border-radius:8px;
-  color:#e0f2f1;
+  height:50px;
+  border-radius:10px;
+  color:white;
   text-decoration:none;
+  font-size:22px;
+  transition:0.2s;
 }
 
-.menu-item:hover { background:#4DB6AC; }
-.menu-item.active { background:#1b5e55; }
+/* HOVER */
+.menu-item:hover {
+  background:#4DB6AC;
+}
 
+/* ATIVO */
+.menu-item.active {
+  background:#1b5e55;
+}
+
+/* TOOLTIP */
+.menu-item::after {
+  content: attr(data-name);
+  position:absolute;
+  left:70px;
+  background:#1F2933;
+  color:white;
+  padding:5px 10px;
+  border-radius:6px;
+  font-size:12px;
+  opacity:0;
+  pointer-events:none;
+  transition:0.2s;
+  white-space:nowrap;
+}
+
+.sidebar.collapsed .menu-item:hover::after {
+  opacity:1;
+}
+
+/* MAIN */
 .main {
   flex:1;
-  display:flex;
-  flex-direction:column;
-}
-
-.topbar {
-  height:70px;
-  background:#fff;
-  border-bottom:1px solid #E3E8EE;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:0 25px;
-}
-
-.content {
-  flex:1;
   background:#F5F7F9;
-  padding:25px;
-  overflow-y:auto;
+  padding:20px;
 }
 </style>
