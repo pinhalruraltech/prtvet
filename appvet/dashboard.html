@@ -41,16 +41,24 @@ body {
 
 <script>
 fetch('./menu/menu.html')
-.then(r=>r.text())
-.then(html=>{
+.then(r => r.text())
+.then(html => {
   document.getElementById('menu-container').innerHTML = html;
 
-  // injeta conteúdo no layout
+  // 🔥 1. INJETA O CONTEÚDO PRIMEIRO
   document.getElementById('app-content')
     .appendChild(document.getElementById('conteudo'));
 
-  // 🔥 ATIVA LUCIDE
-  lucide.createIcons();
+  // 🔥 2. INICIALIZA MENU DEPOIS
+  initMenu();
+
+  // 🔥 3. GARANTE LUCIDE (EXTRA SEGURANÇA)
+  if (window.lucide) {
+    lucide.createIcons();
+  }
+
+  document.body.style.display = "block";
+});
 
   // 🔥 TOGGLE MENU
   document.getElementById('toggle-menu').onclick = ()=>{
