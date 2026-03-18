@@ -1,12 +1,25 @@
 <div class="layout">
 
-  <!-- MENU LATERAL -->
-  <aside class="sidebar" id="sidebar">
+  <!-- SIDEBAR -->
+  <aside class="sidebar collapsed" id="sidebar">
 
     <!-- LOGO -->
     <div class="logo">
-      <img src="/prtvet/appvet/logo/logo_rafael.png" class="logo-full">
-      <img src="/prtvet/appvet/logo/logo_rafael.png" class="logo-mini">
+
+      <!-- LOGO GRANDE -->
+      <div class="logo-full">
+        <img src="/prtvet/appvet/logo/logo_rafael.png">
+        <div class="logo-text">
+          <strong>Rafael Frutuoso</strong>
+          <span>Médico Veterinário</span>
+        </div>
+      </div>
+
+      <!-- LOGO MINI -->
+      <div class="logo-mini">
+        <img src="/prtvet/appvet/logo/logo_rafael.png">
+      </div>
+
     </div>
 
     <!-- BOTÃO -->
@@ -19,42 +32,52 @@
 
       <a href="/prtvet/appvet/dashboard.html" class="menu-item" data-name="Dashboard">
         <i data-lucide="home"></i>
+        <span>Dashboard</span>
       </a>
 
       <a href="/prtvet/appvet/app/clientes.html" class="menu-item" data-name="Clientes">
         <i data-lucide="users"></i>
+        <span>Clientes</span>
       </a>
 
       <a href="/prtvet/appvet/app/animais.html" class="menu-item" data-name="Animais">
         <i data-lucide="paw-print"></i>
+        <span>Animais</span>
       </a>
 
       <a href="/prtvet/appvet/app/atendimentos.html" class="menu-item" data-name="Atendimentos">
         <i data-lucide="stethoscope"></i>
+        <span>Atendimentos</span>
       </a>
 
       <a href="/prtvet/appvet/app/agenda.html" class="menu-item" data-name="Agenda">
         <i data-lucide="calendar"></i>
+        <span>Agenda</span>
       </a>
 
       <a href="/prtvet/appvet/app/estoque.html" class="menu-item" data-name="Estoque">
         <i data-lucide="package"></i>
+        <span>Estoque</span>
       </a>
 
       <a href="/prtvet/appvet/app/financeiro.html" class="menu-item" data-name="Financeiro">
         <i data-lucide="dollar-sign"></i>
+        <span>Financeiro</span>
       </a>
 
       <a href="/prtvet/appvet/app/internacao.html" class="menu-item" data-name="Internação">
         <i data-lucide="activity"></i>
+        <span>Internação</span>
       </a>
 
       <a href="/prtvet/appvet/app/documentos.html" class="menu-item" data-name="Documentos">
         <i data-lucide="file-text"></i>
+        <span>Documentos</span>
       </a>
 
       <a href="/prtvet/appvet/app/protocolos.html" class="menu-item" data-name="Protocolos">
         <i data-lucide="clipboard-list"></i>
+        <span>Protocolos</span>
       </a>
 
     </nav>
@@ -101,12 +124,12 @@ function initMenu() {
 
 /* SIDEBAR */
 .sidebar {
-  width:220px;
+  width:240px;
   background:#2E7D6B;
   display:flex;
   flex-direction:column;
   align-items:center;
-  padding:15px 10px;
+  padding:20px 10px;
   transition:0.3s;
 }
 
@@ -116,27 +139,35 @@ function initMenu() {
 
 /* LOGO */
 .logo {
+  width:100%;
   margin-bottom:20px;
+  text-align:center;
 }
 
-.logo-full {
-  width:120px;
+.logo-full img {
+  width:140px;
 }
 
-.logo-mini {
-  display:none;
+.logo-text {
+  margin-top:8px;
+  color:white;
+  font-size:13px;
+}
+
+.logo-mini img {
   width:40px;
 }
 
+/* CONTROLE LOGO */
 .sidebar.collapsed .logo-full {
   display:none;
 }
 
-.sidebar.collapsed .logo-mini {
-  display:block;
+.sidebar:not(.collapsed) .logo-mini {
+  display:none;
 }
 
-/* TOGGLE */
+/* BOTÃO */
 .toggle {
   background:none;
   border:none;
@@ -147,23 +178,37 @@ function initMenu() {
 
 /* MENU */
 .menu {
+  width:100%;
   display:flex;
   flex-direction:column;
   gap:10px;
-  width:100%;
 }
 
 .menu-item {
-  position:relative;
   display:flex;
-  justify-content:center;
   align-items:center;
+  gap:12px;
   height:50px;
+  padding:0 15px;
   border-radius:10px;
   color:white;
   text-decoration:none;
+  font-size:15px;
+  position:relative;
+}
+
+.menu-item i {
   font-size:22px;
-  transition:0.2s;
+}
+
+/* TEXTO */
+.sidebar.collapsed .menu-item span {
+  display:none;
+}
+
+/* CENTRALIZA ÍCONE */
+.sidebar.collapsed .menu-item {
+  justify-content:center;
 }
 
 /* HOVER */
