@@ -2,503 +2,217 @@
 <html lang="pt-BR">
 
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Dashboard | APPVET</title>
 
+<!-- CONTROLE DE PERMISSÃO -->
+<script>
+const PERMISSAO_PAGINA = {
+    area: "app",
+    chave: "dashboard"
+};
+</script>
+
 <style>
-
 /* RESET */
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family: 'Inter', sans-serif;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
 }
 
-body{
-background:#F8FAFC;
-color:#1F2933;
-display:none;
+/* BODY */
+body {
+    background: #F5F7F9;
+    display: none;
 }
-
 
 /* LAYOUT */
-
-.app{
-display:flex;
-min-height:100vh;
+.container {
+    display: flex;
+    min-height: 100vh;
 }
 
-
-/* SIDEBAR */
-
-.sidebar{
-
-width:240px;
-background:#1F2933;
-color:white;
-display:flex;
-flex-direction:column;
+/* CONTEÚDO */
+.main {
+    flex: 1;
+    padding: 20px;
 }
 
-.sidebar .logo{
-
-padding:20px;
-font-size:20px;
-font-weight:600;
-border-bottom:1px solid rgba(255,255,255,0.1);
-
+/* HEADER */
+.topbar {
+    background: #FFFFFF;
+    padding: 15px 20px;
+    border: 1px solid #E3E8EE;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    font-weight: 600;
+    color: #1F2933;
 }
 
-.menu{
-flex:1;
+/* GRID CARDS */
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 15px;
 }
 
-.menu a{
-
-display:flex;
-align-items:center;
-padding:14px 20px;
-color:#E5E7EB;
-text-decoration:none;
-font-size:15px;
-transition:0.2s;
-
+/* CARD */
+.card {
+    background: #FFFFFF;
+    border: 1px solid #E3E8EE;
+    border-radius: 10px;
+    padding: 20px;
 }
 
-.menu a:hover{
-background:#374151;
+.card-title {
+    font-size: 14px;
+    color: #6B7280;
+    margin-bottom: 10px;
 }
 
-.menu a.active{
-background:#2D6A4F;
+.card-value {
+    font-size: 22px;
+    font-weight: 600;
+    color: #1F2933;
 }
 
-.menu span{
-margin-left:10px;
+/* SEÇÕES */
+.section {
+    margin-top: 20px;
+    background: #FFFFFF;
+    border: 1px solid #E3E8EE;
+    border-radius: 10px;
+    padding: 20px;
 }
 
-
-/* MAIN */
-
-.main{
-
-flex:1;
-display:flex;
-flex-direction:column;
-
+.section-title {
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: #1F2933;
 }
 
-
-/* TOPBAR */
-
-.topbar{
-
-height:60px;
-background:white;
-border-bottom:1px solid #E5E7EB;
-display:flex;
-align-items:center;
-justify-content:space-between;
-padding:0 20px;
-
+/* LISTA */
+.list-item {
+    padding: 10px;
+    border-bottom: 1px solid #E3E8EE;
+    font-size: 14px;
+    color: #374151;
 }
 
-.user{
-font-weight:500;
+.list-item:last-child {
+    border-bottom: none;
 }
 
-.logout{
-
-background:#E63946;
-color:white;
-border:none;
-padding:8px 14px;
-border-radius:6px;
-cursor:pointer;
-
+/* RODAPÉ */
+.footer {
+    margin-top: 30px;
+    padding: 15px;
+    text-align: center;
+    font-size: 13px;
+    color: #6B7280;
 }
-
-
-/* CONTENT */
-
-.content{
-
-padding:25px;
-}
-
-
-/* CARDS */
-
-.cards{
-
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-gap:20px;
-margin-bottom:25px;
-
-}
-
-.card{
-
-background:white;
-padding:20px;
-border-radius:10px;
-box-shadow:0 4px 6px rgba(0,0,0,0.05);
-
-}
-
-.card h3{
-
-font-size:14px;
-color:#6B7280;
-margin-bottom:6px;
-
-}
-
-.card strong{
-
-font-size:24px;
-color:#2D6A4F;
-
-}
-
-
-/* TABLE */
-
-.table{
-
-background:white;
-border-radius:10px;
-overflow:hidden;
-box-shadow:0 4px 6px rgba(0,0,0,0.05);
-
-}
-
-table{
-
-width:100%;
-border-collapse:collapse;
-
-}
-
-th{
-
-text-align:left;
-background:#F3F4F6;
-padding:12px;
-font-size:14px;
-
-}
-
-td{
-
-padding:12px;
-border-top:1px solid #E5E7EB;
-font-size:14px;
-
-}
-
-
-/* STATUS */
-
-.badge{
-
-padding:4px 8px;
-border-radius:6px;
-font-size:12px;
-
-}
-
-.badge.ok{
-
-background:#D1FAE5;
-color:#065F46;
-
-}
-
-.badge.wait{
-
-background:#FEF3C7;
-color:#92400E;
-
-}
-
-.badge.progress{
-
-background:#DBEAFE;
-color:#1E40AF;
-
-}
-
 </style>
-
 </head>
 
 <body>
 
-<div class="app">
+<div class="container">
 
-<!-- SIDEBAR -->
+    <!-- MENU -->
+    <div id="menu-container"></div>
 
-<div class="sidebar">
+    <!-- CONTEÚDO -->
+    <div class="main">
 
-<div class="logo">
+        <div class="topbar">
+            Dashboard
+        </div>
 
-APPVET
+        <!-- CARDS -->
+        <div class="cards">
+            <div class="card">
+                <div class="card-title">Atendimentos Hoje</div>
+                <div class="card-value">12</div>
+            </div>
 
+            <div class="card">
+                <div class="card-title">Animais Cadastrados</div>
+                <div class="card-value">248</div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Clientes</div>
+                <div class="card-value">132</div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Vacinas Pendentes</div>
+                <div class="card-value">9</div>
+            </div>
+        </div>
+
+        <!-- AGENDA -->
+        <div class="section">
+            <div class="section-title">Agenda de Hoje</div>
+
+            <div class="list-item">09:00 - Consulta | Rex</div>
+            <div class="list-item">10:30 - Vacinação | Mia</div>
+            <div class="list-item">14:00 - Cirurgia | Thor</div>
+        </div>
+
+        <!-- ALERTAS -->
+        <div class="section">
+            <div class="section-title">Alertas</div>
+
+            <div class="list-item">Estoque baixo: Antibiótico X</div>
+            <div class="list-item">Vacina atrasada: Bella</div>
+        </div>
+
+        <!-- RODAPÉ -->
+        <div class="footer">
+            © 2026 APPVET • Sistema de Gestão Veterinária
+        </div>
+
+    </div>
 </div>
 
-<div class="menu">
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script>
 
-<a href="#" class="active" data-perm="dashboard">
-<span>Dashboard</span>
-</a>
+<script src="./js/firebase-init.js"></script>
+<script src="./js/auth.js"></script>
 
-<a href="#" data-perm="clientes">
-<span>Clientes</span>
-</a>
-
-<a href="#" data-perm="animais">
-<span>Animais</span>
-</a>
-
-<a href="#" data-perm="agenda">
-<span>Agenda</span>
-</a>
-
-<a href="#" data-perm="atendimentos">
-<span>Prontuário</span>
-</a>
-
-<a href="#" data-perm="estoque">
-<span>Estoque</span>
-</a>
-
-<a href="#" data-perm="financeiro">
-<span>Financeiro</span>
-</a>
-
-<a href="#" data-perm="usuarios">
-<span>Usuários</span>
-</a>
-
-<a href="#" data-perm="config">
-<span>Configurações</span>
-</a>
-
-</div>
-
-</div>
-
-<!-- MAIN -->
-
-<div class="main">
-
-<!-- TOPBAR -->
-
-<div class="topbar">
-
-<div>
-
-<strong>Dashboard</strong>
-
-</div>
-
-<div>
-
-<span class="user" id="userNome"></span>
-
-<button class="logout" id="logout">
-
-Sair
-
-</button>
-
-</div>
-
-</div>
-
-<!-- CONTENT -->
-
-<div class="content">
-
-<div class="cards">
-
-<div class="card">
-<h3>Clientes cadastrados</h3>
-<strong id="totalClientes">0</strong>
-</div>
-
-<div class="card">
-<h3>Animais cadastrados</h3>
-<strong id="totalAnimais">0</strong>
-</div>
-
-<div class="card">
-<h3>Consultas hoje</h3>
-<strong id="consultasHoje">0</strong>
-</div>
-
-<div class="card">
-<h3>Estoque baixo</h3>
-<strong id="estoqueBaixo">0</strong>
-</div>
-
-</div>
-
-<div class="table">
-
-<table>
-
-<thead>
-
-<tr>
-
-<th>Hora</th>
-<th>Cliente</th>
-<th>Animal</th>
-<th>Status</th>
-
-</tr>
-
-</thead>
-
-<tbody id="tabelaAgenda">
-
-<tr>
-
-<td>09:00</td>
-<td>João Silva</td>
-<td>Rex</td>
-<td><span class="badge progress">Em atendimento</span></td>
-
-</tr>
-
-<tr>
-
-<td>10:30</td>
-<td>Maria Souza</td>
-<td>Mimi</td>
-<td><span class="badge wait">Aguardando</span></td>
-
-</tr>
-
-<tr>
-
-<td>14:00</td>
-<td>Carlos Pereira</td>
-<td>Thor</td>
-<td><span class="badge ok">Finalizado</span></td>
-
-</tr>
-
-</tbody>
-
-</table>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-
+<!-- LOAD MENU -->
 <script>
+fetch('./menu/menu.html')
+.then(res => res.text())
+.then(data => {
+    document.getElementById('menu-container').innerHTML = data;
 
-/* SIMULAÇÃO LOGIN */
+    // MARCAR ATIVO
+    const links = document.querySelectorAll('.menu a');
+    links.forEach(link => {
+        if (link.getAttribute('href') === 'dashboard.html') {
+            link.classList.add('active');
+        }
+    });
 
-const usuario = {
+    // INJETAR PERMISSÕES
+    const script = document.createElement('script');
+    script.src = './js/menu-permissoes.js';
 
-Nome:"Administrador",
-grupo:"ADM"
+    script.onload = () => {
+        document.body.style.display = "block";
+    };
 
-}
-
-document.getElementById("userNome").innerText = usuario.Nome
-
-
-
-/* CONTROLE PERMISSÕES */
-
-const permissoes = {
-
-ADM:[
-"dashboard",
-"clientes",
-"animais",
-"agenda",
-"atendimentos",
-"estoque",
-"financeiro",
-"usuarios",
-"config"
-],
-
-GERENTE:[
-"dashboard",
-"clientes",
-"animais",
-"agenda",
-"atendimentos",
-"estoque",
-"financeiro"
-],
-
-FUNCIONARIO:[
-"dashboard",
-"clientes",
-"animais",
-"agenda",
-"atendimentos"
-]
-
-}
-
-
-const links = document.querySelectorAll(".menu a")
-
-links.forEach(link=>{
-
-const perm = link.dataset.perm
-
-if(!permissoes[usuario.grupo].includes(perm)){
-
-link.style.display="none"
-
-}
-
-})
-
-
-
-/* SIMULAÇÃO DADOS */
-
-document.getElementById("totalClientes").innerText = 124
-document.getElementById("totalAnimais").innerText = 187
-document.getElementById("consultasHoje").innerText = 9
-document.getElementById("estoqueBaixo").innerText = 3
-
-
-
-/* LOGOUT */
-
-document.getElementById("logout").onclick = ()=>{
-
-alert("Logout")
-
-}
-
-document.body.style.display="block"
-
+    document.body.appendChild(script);
+});
 </script>
 
 </body>
-
 </html>
