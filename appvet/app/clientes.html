@@ -21,7 +21,6 @@ body {
   display:none;
 }
 
-/* LAYOUT */
 .page {
   padding:20px;
   max-width:1000px;
@@ -35,7 +34,6 @@ body {
   padding:20px;
 }
 
-/* HEADER */
 .header {
   display:flex;
   justify-content:space-between;
@@ -43,13 +41,6 @@ body {
   margin-bottom:15px;
 }
 
-.header h2 {
-  display:flex;
-  gap:8px;
-  align-items:center;
-}
-
-/* BOTÕES */
 .btn {
   background:#2D6A4F;
   color:white;
@@ -60,12 +51,14 @@ body {
 }
 
 .btn-sec {
-  background:#E5E7EB;
-  color:#111;
+  background:#F3F4F6;
+  border:1px solid #D1D5DB;
+  padding:10px 16px;
+  border-radius:8px;
+  cursor:pointer;
 }
 
-/* INPUT */
-input {
+input, select {
   width:100%;
   padding:10px;
   border-radius:8px;
@@ -73,7 +66,13 @@ input {
   margin-bottom:10px;
 }
 
-/* CARD CLIENTE */
+.filtros {
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:10px;
+}
+
 .cliente-card {
   border:1px solid #E3E8EE;
   border-radius:10px;
@@ -84,18 +83,9 @@ input {
   align-items:center;
 }
 
-.cliente-info {
-  display:flex;
-  flex-direction:column;
-  gap:5px;
-}
-
 .cliente-info span {
+  display:block;
   font-size:14px;
-}
-
-.cliente-info strong {
-  font-weight:600;
 }
 
 .btn-ver {
@@ -106,15 +96,25 @@ input {
   border:none;
 }
 
-/* PAGINAÇÃO */
 .pagination {
   display:flex;
   justify-content:center;
-  gap:10px;
+  gap:8px;
   margin-top:20px;
 }
 
-/* MODAL */
+.pagination button {
+  border:none;
+  padding:8px 12px;
+  border-radius:8px;
+  background:#E5E7EB;
+}
+
+.pagination .active {
+  background:#2D6A4F;
+  color:white;
+}
+
 .modal {
   position:fixed;
   inset:0;
@@ -134,7 +134,6 @@ input {
   overflow:auto;
 }
 
-/* FOOTER */
 .footer {
   text-align:center;
   font-size:12px;
@@ -180,9 +179,11 @@ async function carregarMenu(){
 
   setTimeout(()=>{
     if(typeof initMenu==="function") initMenu();
-  },150);
+  },200);
 
-  document.getElementById("app-content").innerHTML = `
+  const container = document.getElementById("app-content") || document.body;
+
+  container.innerHTML += `
   <div class="page">
 
     <div class="card">
@@ -192,7 +193,11 @@ async function carregarMenu(){
         <button class="btn" onclick="abrirModal()">+ Novo</button>
       </div>
 
-      <input id="busca" placeholder="Buscar cliente..." oninput="filtrar()">
+      <div class="filtros">
+        <input id="filtroNome" placeholder="Nome">
+        <input id="filtroCidade" placeholder="Cidade">
+        <input id="filtroBairro" placeholder="Bairro">
+      </div>
 
       <div id="listaClientes"></div>
 
@@ -212,10 +217,19 @@ async function carregarMenu(){
       <h3>Novo Cliente</h3>
 
       <input id="nome" placeholder="Nome completo">
+      <input id="cpf" placeholder="CPF">
+      <input id="nascimento" type="date">
       <input id="telefone" placeholder="Telefone">
-      <input id="cidade" placeholder="Cidade">
+      <input id="email" placeholder="Email">
 
-      <div style="display:flex; gap:10px; margin-top:10px;">
+      <input id="logradouro" placeholder="Logradouro">
+      <input id="numero" placeholder="Número">
+      <input id="bairro" placeholder="Bairro">
+      <input id="cidade" placeholder="Cidade">
+      <input id="estado" placeholder="Estado">
+      <input id="cep" placeholder="CEP">
+
+      <div style="display:flex; gap:10px;">
         <button class="btn-sec" onclick="fecharModal()">Cancelar</button>
         <button class="btn" onclick="salvarCliente()">Salvar</button>
       </div>
@@ -234,7 +248,18 @@ async function carregarClientes(){
   render();
 }
 
-function render(lista = clientes){
+function aplicarFiltros(){
+  return clientes.filter(c => {
+    return (
+      (filtroNome.value === "" || (c.nome||"").toLowerCase().includes(filtroNome.value.toLowerCase())) &&
+      (filtroCidade.value === "" || (c.endereco?.cidade||"").toLowerCase().includes(filtroCidade.value.toLowerCase())) &&
+      (filtroBairro.value === "" || (c.endereco?.bairro||"").toLowerCase().includes(filtroBairro.value.toLowerCase()))
+    );
+  });
+}
+
+function render(){
+  const lista = aplicarFiltros();
 
   const inicio = (paginaAtual-1)*porPagina;
   const paginados = lista.slice(inicio, inicio+porPagina);
@@ -242,12 +267,18 @@ function render(lista = clientes){
   const el = document.getElementById("listaClientes");
   el.innerHTML="";
 
+  if(lista.length === 0){
+    el.innerHTML = "<p>Nenhum cliente encontrado</p>";
+    return;
+  }
+
   paginados.forEach(c=>{
     el.innerHTML += `
       <div class="cliente-card">
         <div class="cliente-info">
           <span><strong>${c.nome || "-"}</strong></span>
           <span>📞 ${c.telefone || "-"}</span>
+          <span>🏠 ${c.endereco?.bairro || "-"}</span>
           <span>📍 ${c.endereco?.cidade || "-"}</span>
         </div>
         <button class="btn-ver" onclick="abrirCliente('${c.id}')">Ver</button>
@@ -265,7 +296,7 @@ function renderPaginacao(total){
 
   for(let i=1;i<=totalPaginas;i++){
     el.innerHTML += `
-      <button onclick="irPagina(${i})">${i}</button>
+      <button class="${i===paginaAtual?'active':''}" onclick="irPagina(${i})">${i}</button>
     `;
   }
 }
@@ -273,12 +304,6 @@ function renderPaginacao(total){
 function irPagina(p){
   paginaAtual = p;
   render();
-}
-
-function filtrar(){
-  const t = busca.value.toLowerCase();
-  paginaAtual = 1;
-  render(clientes.filter(c => (c.nome||"").toLowerCase().includes(t)));
 }
 
 function abrirCliente(id){
@@ -296,13 +321,28 @@ function fecharModal(){
 async function salvarCliente(){
   await db.collection("clientes").add({
     nome:nome.value,
+    cpf:cpf.value,
+    nascimento:nascimento.value,
     telefone:telefone.value,
-    endereco:{ cidade:cidade.value }
+    email:email.value,
+    endereco:{
+      logradouro:logradouro.value,
+      numero:numero.value,
+      bairro:bairro.value,
+      cidade:cidade.value,
+      estado:estado.value,
+      cep:cep.value
+    }
   });
 
   fecharModal();
   carregarClientes();
 }
+
+document.addEventListener("input", ()=>{
+  paginaAtual=1;
+  render();
+});
 </script>
 
 </body>
