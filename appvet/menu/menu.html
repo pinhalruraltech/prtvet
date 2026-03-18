@@ -1,12 +1,14 @@
 <div class="layout">
 
+  <!-- OVERLAY MOBILE -->
+  <div id="overlay"></div>
+
   <!-- SIDEBAR -->
   <aside class="sidebar collapsed" id="sidebar">
 
     <!-- LOGO -->
     <div class="logo">
 
-      <!-- LOGO GRANDE -->
       <div class="logo-full">
         <img src="/prtvet/appvet/logo/logo_rafael.png">
         <div class="logo-text">
@@ -15,7 +17,6 @@
         </div>
       </div>
 
-      <!-- LOGO MINI -->
       <div class="logo-mini">
         <img src="/prtvet/appvet/logo/logo_rafael.png">
       </div>
@@ -31,53 +32,43 @@
     <nav class="menu">
 
       <a href="/prtvet/appvet/dashboard.html" class="menu-item" data-name="Dashboard">
-        <i data-lucide="home"></i>
-        <span>Dashboard</span>
+        <i data-lucide="home"></i><span>Dashboard</span>
       </a>
 
       <a href="/prtvet/appvet/app/clientes.html" class="menu-item" data-name="Clientes">
-        <i data-lucide="users"></i>
-        <span>Clientes</span>
+        <i data-lucide="users"></i><span>Clientes</span>
       </a>
 
       <a href="/prtvet/appvet/app/animais.html" class="menu-item" data-name="Animais">
-        <i data-lucide="paw-print"></i>
-        <span>Animais</span>
+        <i data-lucide="paw-print"></i><span>Animais</span>
       </a>
 
       <a href="/prtvet/appvet/app/atendimentos.html" class="menu-item" data-name="Atendimentos">
-        <i data-lucide="stethoscope"></i>
-        <span>Atendimentos</span>
+        <i data-lucide="stethoscope"></i><span>Atendimentos</span>
       </a>
 
       <a href="/prtvet/appvet/app/agenda.html" class="menu-item" data-name="Agenda">
-        <i data-lucide="calendar"></i>
-        <span>Agenda</span>
+        <i data-lucide="calendar"></i><span>Agenda</span>
       </a>
 
       <a href="/prtvet/appvet/app/estoque.html" class="menu-item" data-name="Estoque">
-        <i data-lucide="package"></i>
-        <span>Estoque</span>
+        <i data-lucide="package"></i><span>Estoque</span>
       </a>
 
       <a href="/prtvet/appvet/app/financeiro.html" class="menu-item" data-name="Financeiro">
-        <i data-lucide="dollar-sign"></i>
-        <span>Financeiro</span>
+        <i data-lucide="dollar-sign"></i><span>Financeiro</span>
       </a>
 
       <a href="/prtvet/appvet/app/internacao.html" class="menu-item" data-name="Internação">
-        <i data-lucide="activity"></i>
-        <span>Internação</span>
+        <i data-lucide="activity"></i><span>Internação</span>
       </a>
 
       <a href="/prtvet/appvet/app/documentos.html" class="menu-item" data-name="Documentos">
-        <i data-lucide="file-text"></i>
-        <span>Documentos</span>
+        <i data-lucide="file-text"></i><span>Documentos</span>
       </a>
 
       <a href="/prtvet/appvet/app/protocolos.html" class="menu-item" data-name="Protocolos">
-        <i data-lucide="clipboard-list"></i>
-        <span>Protocolos</span>
+        <i data-lucide="clipboard-list"></i><span>Protocolos</span>
       </a>
 
     </nav>
@@ -97,9 +88,25 @@ function initMenu() {
   lucide.createIcons();
 
   const sidebar = document.getElementById("sidebar");
+  const overlay = document.getElementById("overlay");
+  const btn = document.getElementById("toggle-menu");
 
-  document.getElementById("toggle-menu").onclick = () => {
-    sidebar.classList.toggle("collapsed");
+  function isMobile() {
+    return window.innerWidth <= 768;
+  }
+
+  btn.onclick = () => {
+    if (isMobile()) {
+      sidebar.classList.toggle("open");
+      overlay.classList.toggle("show");
+    } else {
+      sidebar.classList.toggle("collapsed");
+    }
+  };
+
+  overlay.onclick = () => {
+    sidebar.classList.remove("open");
+    overlay.classList.remove("show");
   };
 
   // ATIVO
@@ -122,6 +129,22 @@ function initMenu() {
   height:100vh;
 }
 
+/* OVERLAY */
+#overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.3s;
+  z-index: 5;
+}
+
+#overlay.show {
+  opacity: 1;
+  pointer-events: all;
+}
+
 /* SIDEBAR */
 .sidebar {
   width:240px;
@@ -131,41 +154,41 @@ function initMenu() {
   align-items:center;
   padding:20px 10px;
   transition:0.3s;
+  z-index: 10;
 }
 
 .sidebar.collapsed {
   width:70px;
 }
 
+/* MOBILE */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    left: -240px;
+    top: 0;
+    height: 100%;
+  }
+
+  .sidebar.open {
+    left: 0;
+  }
+
+  .main {
+    padding: 15px;
+  }
+}
+
 /* LOGO */
-.logo {
-  width:100%;
-  margin-bottom:20px;
-  text-align:center;
-}
+.logo { width:100%; text-align:center; margin-bottom:20px; }
 
-.logo-full img {
-  width:140px;
-}
+.logo-full img { width:140px; }
+.logo-mini img { width:40px; }
 
-.logo-text {
-  margin-top:8px;
-  color:white;
-  font-size:13px;
-}
+.logo-text { color:white; font-size:13px; margin-top:8px; }
 
-.logo-mini img {
-  width:40px;
-}
-
-/* CONTROLE LOGO */
-.sidebar.collapsed .logo-full {
-  display:none;
-}
-
-.sidebar:not(.collapsed) .logo-mini {
-  display:none;
-}
+.sidebar.collapsed .logo-full { display:none; }
+.sidebar:not(.collapsed) .logo-mini { display:none; }
 
 /* BOTÃO */
 .toggle {
@@ -193,33 +216,15 @@ function initMenu() {
   border-radius:10px;
   color:white;
   text-decoration:none;
-  font-size:15px;
-  position:relative;
 }
 
-.menu-item i {
-  font-size:22px;
-}
+.menu-item i { font-size:22px; }
 
-/* TEXTO */
-.sidebar.collapsed .menu-item span {
-  display:none;
-}
+.sidebar.collapsed .menu-item span { display:none; }
+.sidebar.collapsed .menu-item { justify-content:center; }
 
-/* CENTRALIZA ÍCONE */
-.sidebar.collapsed .menu-item {
-  justify-content:center;
-}
-
-/* HOVER */
-.menu-item:hover {
-  background:#4DB6AC;
-}
-
-/* ATIVO */
-.menu-item.active {
-  background:#1b5e55;
-}
+.menu-item:hover { background:#4DB6AC; }
+.menu-item.active { background:#1b5e55; }
 
 /* TOOLTIP */
 .menu-item::after {
@@ -232,9 +237,7 @@ function initMenu() {
   border-radius:6px;
   font-size:12px;
   opacity:0;
-  pointer-events:none;
   transition:0.2s;
-  white-space:nowrap;
 }
 
 .sidebar.collapsed .menu-item:hover::after {
