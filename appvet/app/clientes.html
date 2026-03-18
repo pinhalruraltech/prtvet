@@ -126,10 +126,16 @@ auth.onAuthStateChanged(async (user)=>{
 });
 
 async function carregarMenu(){
-  const res = await fetch("../menu/menu.html");
+
+  const res = await fetch("/prtvet/appvet/menu/menu.html");
   document.getElementById("menu-container").innerHTML = await res.text();
 
-  const container = document.querySelector(".page-content");
+  // 🔥 INICIALIZA MENU
+  if (typeof initMenu === "function") {
+    initMenu();
+  }
+
+  const container = document.getElementById("app-content");
 
   container.innerHTML = `
     <div class="page">
@@ -176,16 +182,7 @@ async function carregarMenu(){
     </div>
   `;
 
-  document.querySelectorAll(".menu a").forEach(link=>{
-    if(link.href.includes("clientes.html")){
-      link.classList.add("active");
-    }
-  });
-
-  const script = document.createElement("script");
-  script.src = "../js/menu-permissoes.js";
-  script.onload = ()=>lucide.createIcons();
-  document.body.appendChild(script);
+  lucide.createIcons();
 }
 
 let clientes = [];
