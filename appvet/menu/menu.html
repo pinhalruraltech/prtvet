@@ -95,7 +95,6 @@ function initMenu() {
     return window.innerWidth <= 768;
   }
 
-  // TOGGLE
   btn.onclick = () => {
     if (isMobile()) {
       sidebar.classList.toggle("open");
@@ -105,13 +104,12 @@ function initMenu() {
     }
   };
 
-  // FECHAR MOBILE
   overlay.onclick = () => {
     sidebar.classList.remove("open");
     overlay.classList.remove("show");
   };
 
-  // 🔥 ATIVO INTELIGENTE
+  // ATIVO
   const path = window.location.pathname;
 
   let activeKey = "";
@@ -140,7 +138,10 @@ function initMenu() {
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 
-.layout { display:flex; height:100vh; }
+.layout {
+  display:flex;
+  min-height:100vh; /* 🔥 ajuste importante */
+}
 
 /* OVERLAY */
 #overlay {
@@ -226,20 +227,16 @@ function initMenu() {
 
 .menu-item i { font-size:22px; }
 
-/* COLAPSADO */
 .sidebar.collapsed .menu-item span { display:none; }
 .sidebar.collapsed .menu-item { justify-content:center; }
 
-/* HOVER */
 .menu-item:hover { background:#4DB6AC; }
 
-/* 🔥 ATIVO MELHORADO */
 .menu-item.active {
   background:#1b5e55;
   box-shadow: inset 0 0 0 2px rgba(255,255,255,0.15);
 }
 
-/* TOOLTIP */
 .menu-item::after {
   content: attr(data-name);
   position:absolute;
