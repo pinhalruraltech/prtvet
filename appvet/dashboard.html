@@ -28,25 +28,12 @@ body {
     display: none;
 }
 
-.container {
-    display: flex;
-    min-height: 100vh;
+/* ÁREA PRINCIPAL (IMPORTANTE) */
+.page-content {
+    padding: 25px;
 }
 
-.main {
-    flex: 1;
-    padding: 20px;
-}
-
-.topbar {
-    background: #FFFFFF;
-    padding: 15px 20px;
-    border: 1px solid #E3E8EE;
-    border-radius: 10px;
-    margin-bottom: 20px;
-    font-weight: 600;
-}
-
+/* CARDS */
 .cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -71,6 +58,7 @@ body {
     margin-top: 8px;
 }
 
+/* SEÇÕES */
 .section {
     margin-top: 20px;
     background: #FFFFFF;
@@ -100,56 +88,53 @@ body {
 
 <body>
 
-<div class="container">
+<!-- MENU -->
+<div id="menu-container"></div>
 
-    <div id="menu-container"></div>
+<!-- CONTEÚDO DA PÁGINA -->
+<div class="page-content">
 
-    <div class="main">
-
-        <div class="topbar">Dashboard</div>
-
-        <div class="cards">
-            <div class="card">
-                <div class="card-title">Atendimentos Hoje</div>
-                <div class="card-value">12</div>
-            </div>
-
-            <div class="card">
-                <div class="card-title">Animais</div>
-                <div class="card-value">248</div>
-            </div>
-
-            <div class="card">
-                <div class="card-title">Clientes</div>
-                <div class="card-value">132</div>
-            </div>
-
-            <div class="card">
-                <div class="card-title">Vacinas Pendentes</div>
-                <div class="card-value">9</div>
-            </div>
+    <div class="cards">
+        <div class="card">
+            <div class="card-title">Atendimentos Hoje</div>
+            <div class="card-value">12</div>
         </div>
 
-        <div class="section">
-            <div class="section-title">Agenda de Hoje</div>
-            <div class="list-item">09:00 - Consulta | Rex</div>
-            <div class="list-item">10:30 - Vacina | Mia</div>
+        <div class="card">
+            <div class="card-title">Animais</div>
+            <div class="card-value">248</div>
         </div>
 
-        <div class="section">
-            <div class="section-title">Alertas</div>
-            <div class="list-item">Estoque baixo</div>
-            <div class="list-item">Vacina atrasada</div>
+        <div class="card">
+            <div class="card-title">Clientes</div>
+            <div class="card-value">132</div>
         </div>
 
-        <div class="footer">
-            © 2026 APPVET • Sistema de Gestão Veterinária
+        <div class="card">
+            <div class="card-title">Vacinas Pendentes</div>
+            <div class="card-value">9</div>
         </div>
-
     </div>
+
+    <div class="section">
+        <div class="section-title">Agenda de Hoje</div>
+        <div class="list-item">09:00 - Consulta | Rex</div>
+        <div class="list-item">10:30 - Vacina | Mia</div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Alertas</div>
+        <div class="list-item">Estoque baixo</div>
+        <div class="list-item">Vacina atrasada</div>
+    </div>
+
+    <div class="footer">
+        © 2026 APPVET • Sistema de Gestão Veterinária
+    </div>
+
 </div>
 
-<!-- FIREBASE (VERSÃO COMPAT) -->
+<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 
@@ -166,7 +151,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 </script>
 
-<!-- AUTH GUARD SIMPLES -->
+<!-- AUTH -->
 <script>
 firebase.auth().onAuthStateChanged(user => {
     if (!user) {
@@ -175,25 +160,26 @@ firebase.auth().onAuthStateChanged(user => {
 });
 </script>
 
-<!-- MENU -->
+<!-- MENU LOAD (CORRIGIDO) -->
 <script>
 fetch('./menu/menu.html')
 .then(res => res.text())
 .then(data => {
     document.getElementById('menu-container').innerHTML = data;
 
-    const links = document.querySelectorAll('.menu a');
-    links.forEach(link => {
-        if (link.getAttribute('href') === 'dashboard.html') {
+    // 🔥 IMPORTANTE: RECRIAR ÍCONES
+    if (window.lucide) {
+        lucide.createIcons();
+    }
+
+    // ATIVO
+    const pagina = window.location.pathname.split("/").pop();
+    document.querySelectorAll('.menu-item').forEach(link => {
+        if (link.getAttribute('href').includes(pagina)) {
             link.classList.add('active');
         }
     });
 
-    // NÃO depende mais de menu-permissoes.js pra liberar tela
-    document.body.style.display = "block";
-})
-.catch(() => {
-    // mesmo se o menu falhar, não trava tela
     document.body.style.display = "block";
 });
 </script>
