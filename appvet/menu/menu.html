@@ -3,8 +3,13 @@
   <!-- SIDEBAR -->
   <aside class="sidebar">
 
+    <!-- LOGO -->
     <div class="logo">
-      <span>AppVet</span>
+      <div class="logo-icon">🐾</div>
+      <div class="logo-text">
+        <strong>AppVet</strong>
+        <span>Clínica Veterinária</span>
+      </div>
     </div>
 
     <nav class="menu">
@@ -64,18 +69,14 @@
     <!-- TOPBAR -->
     <header class="topbar">
 
-      <div class="topbar-left">
-        <h1 id="titulo-pagina">Dashboard</h1>
-      </div>
+      <h1 id="titulo-pagina">Dashboard</h1>
 
       <div class="topbar-right">
 
-        <!-- NOTIFICAÇÃO -->
         <div class="icon-btn">
           <i data-lucide="bell"></i>
         </div>
 
-        <!-- USUARIO -->
         <a href="../perfil.html" class="user-info">
           <i data-lucide="user"></i>
           <span id="nome-usuario">Usuário</span>
@@ -87,7 +88,6 @@
 
     </header>
 
-    <!-- CONTEUDO -->
     <main class="content"></main>
 
   </div>
@@ -96,12 +96,10 @@
 
 <!-- LUCIDE -->
 <script src="https://unpkg.com/lucide@latest"></script>
+
 <script>
   lucide.createIcons();
-</script>
 
-<!-- SCRIPT DINAMICO -->
-<script>
   // TITULO DINAMICO
   const mapaTitulos = {
     "dashboard.html": "Dashboard",
@@ -118,7 +116,7 @@
   const pagina = window.location.pathname.split("/").pop();
   document.getElementById("titulo-pagina").innerText = mapaTitulos[pagina] || "Sistema";
 
-  // LINK ATIVO
+  // ATIVO
   document.querySelectorAll(".menu-item").forEach(link => {
     if (link.getAttribute("href").includes(pagina)) {
       link.classList.add("active");
@@ -126,7 +124,6 @@
   });
 </script>
 
-<!-- ESTILO -->
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 
@@ -140,6 +137,7 @@ body {
   font-family: 'Inter', sans-serif;
 }
 
+/* LAYOUT */
 .menu-wrapper {
   display: flex;
   height: 100vh;
@@ -147,20 +145,41 @@ body {
 
 /* SIDEBAR */
 .sidebar {
-  width: 250px;
-  background: #1F2933;
-  color: #fff;
+  width: 260px;
+  background: #2E7D6B;
+  color: white;
   display: flex;
   flex-direction: column;
 }
 
 .logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   padding: 20px;
-  font-size: 20px;
-  font-weight: 600;
-  border-bottom: 1px solid #2a3441;
+  border-bottom: 1px solid rgba(255,255,255,0.2);
 }
 
+.logo-icon {
+  font-size: 22px;
+}
+
+.logo-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+
+.logo-text strong {
+  font-size: 16px;
+}
+
+.logo-text span {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+/* MENU */
 .menu {
   padding: 10px;
 }
@@ -171,7 +190,7 @@ body {
   gap: 12px;
   padding: 12px;
   border-radius: 8px;
-  color: #cbd5e1;
+  color: #e0f2f1;
   text-decoration: none;
   transition: 0.2s;
 }
@@ -182,13 +201,12 @@ body {
 }
 
 .menu-item:hover {
-  background: #2a3441;
+  background: #4DB6AC;
   color: #fff;
 }
 
 .menu-item.active {
-  background: #2D6A4F;
-  color: #fff;
+  background: #1b5e55;
 }
 
 /* MAIN */
@@ -196,12 +214,12 @@ body {
   flex: 1;
   display: flex;
   flex-direction: column;
-  background: #F8FAFC;
+  background: #F5F7F9;
 }
 
 /* TOPBAR */
 .topbar {
-  height: 70px;
+  height: 75px;
   background: #ffffff;
   border-bottom: 1px solid #E3E8EE;
   display: flex;
@@ -211,7 +229,7 @@ body {
 }
 
 .topbar h1 {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 600;
   color: #1F2933;
 }
@@ -219,7 +237,7 @@ body {
 .topbar-right {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 18px;
 }
 
 .icon-btn {
@@ -240,7 +258,7 @@ body {
   background: #E63946;
   color: #fff;
   border: none;
-  padding: 6px 12px;
+  padding: 6px 14px;
   border-radius: 6px;
   cursor: pointer;
 }
