@@ -1,228 +1,256 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Clientes | AppVet</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>Clientes | AppVet</title>
 
-  <!-- LUCIDE -->
-  <script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
 
-  <!-- FIREBASE -->
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Inter', sans-serif;
-      background: #F5F7F9;
-      display: none;
-    }
+<style>
+body {
+  margin: 0;
+  font-family: Inter;
+  background: #F5F7F9;
+  display: none;
+}
 
-    .content {
-      padding: 20px;
-    }
+.page {
+  padding: 20px;
+}
 
-    .card {
-      background: #fff;
-      border: 1px solid #E3E8EE;
-      border-radius: 10px;
-      padding: 20px;
-    }
+.card {
+  background: white;
+  border: 1px solid #E3E8EE;
+  border-radius: 10px;
+  padding: 20px;
+}
 
-    .card h2 {
-      margin-top: 0;
-      font-size: 18px;
-    }
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
-    .actions {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 15px;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
+input {
+  padding: 8px;
+  border: 1px solid #E3E8EE;
+  border-radius: 6px;
+}
 
-    input {
-      padding: 8px 10px;
-      border: 1px solid #E3E8EE;
-      border-radius: 6px;
-    }
+button {
+  background: #2F80ED;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}
 
-    button {
-      background: #2F80ED;
-      color: white;
-      border: none;
-      padding: 8px 14px;
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      cursor: pointer;
-    }
+table {
+  width: 100%;
+  margin-top: 15px;
+  border-collapse: collapse;
+}
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
+th, td {
+  border-bottom: 1px solid #EEE;
+  padding: 10px 0;
+}
 
-    th {
-      text-align: left;
-      font-size: 13px;
-      color: #6B7280;
-      border-bottom: 1px solid #E3E8EE;
-      padding-bottom: 10px;
-    }
+.modal {
+  position: fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background: rgba(0,0,0,0.4);
+  display:none;
+  align-items:center;
+  justify-content:center;
+}
 
-    td {
-      padding: 12px 0;
-      border-bottom: 1px solid #F1F3F5;
-    }
+.modal-content {
+  background:white;
+  padding:20px;
+  border-radius:10px;
+  width:400px;
+}
 
-    .footer {
-      text-align: center;
-      font-size: 12px;
-      padding: 10px;
-      color: #6B7280;
-      border-top: 1px solid #E3E8EE;
-      background: white;
-    }
-  </style>
+.modal input {
+  width:100%;
+  margin-bottom:10px;
+}
+
+.footer {
+  text-align:center;
+  font-size:12px;
+  padding:10px;
+  color:#6B7280;
+}
+</style>
 </head>
 
 <body>
 
-<!-- MENU (SIDEBAR + TOPBAR) -->
 <div id="menu-container"></div>
 
-<!-- CONTEÚDO -->
-<div class="content">
+<script>
+const PERMISSAO_PAGINA = { area:"app", chave:"clientes" };
 
-  <div class="card">
-    <h2>Gestão de Clientes</h2>
+const firebaseConfig = {
+  apiKey: "AIzaSyDR69colU9JHvemBpab3x8PLHqaUm_5EM0",
+  authDomain: "appvet-prt.firebaseapp.com",
+  projectId: "appvet-prt",
+  storageBucket: "appvet-prt.firebasestorage.app",
+  messagingSenderId: "26046923372",
+  appId: "1:26046923372:web:fdbe180eadced87018e49"
+};
 
-    <div class="actions">
-      <input type="text" placeholder="Buscar cliente...">
-      <button onclick="novoCliente()">
-        <i data-lucide="plus"></i> Novo Cliente
-      </button>
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const auth = firebase.auth();
+
+auth.onAuthStateChanged(async (user)=>{
+  if(!user){
+    window.location.href="../login.html";
+    return;
+  }
+
+  await carregarMenu();
+  document.body.style.display="block";
+  carregarClientes();
+});
+
+async function carregarMenu(){
+  const res = await fetch("../menu/menu.html");
+  document.getElementById("menu-container").innerHTML = await res.text();
+
+  const container = document.querySelector(".page-content");
+
+  container.innerHTML = `
+    <div class="page">
+
+      <div class="card">
+
+        <div class="header">
+          <h2>Clientes</h2>
+          <button onclick="abrirModal()">Novo Cliente</button>
+        </div>
+
+        <input type="text" id="busca" placeholder="Buscar cliente..." oninput="filtrar()">
+
+        <table>
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Telefone</th>
+              <th>Email</th>
+            </tr>
+          </thead>
+          <tbody id="listaClientes"></tbody>
+        </table>
+
+      </div>
+
+      <div class="footer">
+        © 2026 AppVet
+      </div>
+
     </div>
 
-    <table>
-      <thead>
-        <tr>
-          <th>Nome</th>
-          <th>Telefone</th>
-          <th>Email</th>
-          <th>Ações</th>
-        </tr>
-      </thead>
-      <tbody id="listaClientes"></tbody>
-    </table>
-  </div>
+    <div class="modal" id="modal">
+      <div class="modal-content">
+        <h3>Novo Cliente</h3>
 
-</div>
+        <input id="nome" placeholder="Nome completo">
+        <input id="cpf" placeholder="CPF">
+        <input id="telefone" placeholder="Telefone">
+        <input id="email" placeholder="Email">
 
-<!-- FOOTER -->
-<div class="footer">
-  © 2026 AppVet - Sistema de Gestão Veterinária
-</div>
+        <button onclick="salvarCliente()">Salvar</button>
+      </div>
+    </div>
+  `;
 
-<script>
-  // 🔐 PERMISSÃO
-  const PERMISSAO_PAGINA = {
-    area: "app",
-    chave: "clientes"
-  };
-
-  // 🔥 FIREBASE
-  const firebaseConfig = {
-    apiKey: "AIzaSyDR69colU9JHvemBpab3x8PLHqaUm_5EM0",
-    authDomain: "appvet-prt.firebaseapp.com",
-    projectId: "appvet-prt",
-    storageBucket: "appvet-prt.firebasestorage.app",
-    messagingSenderId: "26046923372",
-    appId: "1:26046923372:web:fdbe180eadced87018e49"
-  };
-
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-  const db = firebase.firestore();
-
-  // 🔐 AUTH
-  auth.onAuthStateChanged(async (user) => {
-    if (!user) {
-      window.location.href = "../login.html";
-      return;
+  document.querySelectorAll(".menu a").forEach(link=>{
+    if(link.href.includes("clientes.html")){
+      link.classList.add("active");
     }
-
-    await carregarMenu();
-    carregarClientes();
-
-    document.body.style.display = "block";
   });
 
-  // 📌 CARREGAR MENU PADRÃO
-  async function carregarMenu() {
-    const res = await fetch("../menu/menu.html");
-    const html = await res.text();
-    document.getElementById("menu-container").innerHTML = html;
+  const script = document.createElement("script");
+  script.src = "../js/menu-permissoes.js";
+  script.onload = ()=>lucide.createIcons();
+  document.body.appendChild(script);
+}
 
-    // marca ativo
-    const links = document.querySelectorAll(".menu a");
-    links.forEach(link => {
-      if (link.href.includes("clientes.html")) {
-        link.classList.add("active");
-      }
-    });
+let clientes = [];
 
-    // injeta permissões
-    const script = document.createElement("script");
-    script.src = "../js/menu-permissoes.js";
+async function carregarClientes(){
+  const snapshot = await db.collection("clientes").orderBy("nome").get();
 
-    script.onload = () => {
-      lucide.createIcons();
-    };
+  clientes = [];
 
-    document.body.appendChild(script);
+  snapshot.forEach(doc=>{
+    clientes.push({ id: doc.id, ...doc.data() });
+  });
+
+  render();
+}
+
+function render(lista = clientes){
+  const tbody = document.getElementById("listaClientes");
+  tbody.innerHTML="";
+
+  lista.forEach(c=>{
+    tbody.innerHTML += `
+      <tr>
+        <td>${c.nome || ""}</td>
+        <td>${c.telefone || ""}</td>
+        <td>${c.email || ""}</td>
+      </tr>
+    `;
+  });
+}
+
+function filtrar(){
+  const termo = document.getElementById("busca").value.toLowerCase();
+
+  const filtrado = clientes.filter(c =>
+    (c.nome || "").toLowerCase().includes(termo)
+  );
+
+  render(filtrado);
+}
+
+function abrirModal(){
+  document.getElementById("modal").style.display="flex";
+}
+
+async function salvarCliente(){
+  const nome = document.getElementById("nome").value;
+
+  if(!nome){
+    alert("Nome obrigatório");
+    return;
   }
 
-  // 📋 LISTAR CLIENTES
-  async function carregarClientes() {
-    const lista = document.getElementById("listaClientes");
-    lista.innerHTML = "";
+  await db.collection("clientes").add({
+    nome,
+    cpf: document.getElementById("cpf").value,
+    telefone: document.getElementById("telefone").value,
+    email: document.getElementById("email").value,
+    createdAt: new Date()
+  });
 
-    const snapshot = await db.collection("clientes").get();
+  document.getElementById("modal").style.display="none";
 
-    snapshot.forEach(doc => {
-      const c = doc.data();
-
-      lista.innerHTML += `
-        <tr>
-          <td>${c.nome || ""}</td>
-          <td>${c.telefone || ""}</td>
-          <td>${c.email || ""}</td>
-          <td>
-            <button onclick="editar('${doc.id}')">
-              <i data-lucide="pencil"></i>
-            </button>
-          </td>
-        </tr>
-      `;
-    });
-
-    lucide.createIcons();
-  }
-
-  function novoCliente() {
-    alert("Cadastro em breve");
-  }
-
-  function editar(id) {
-    alert("Editar: " + id);
-  }
+  carregarClientes();
+}
 </script>
 
 </body>
