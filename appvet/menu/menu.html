@@ -124,6 +124,19 @@
 <!-- LUCIDE -->
 <script src="https://unpkg.com/lucide@latest"></script>
 
+<script>
+  // 🔥 PEGAR PRIMEIRO NOME DO USUÁRIO LOGADO
+  if (window.firebase && firebase.auth) {
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        let nome = user.displayName || user.email || "Usuário";
+        let primeiroNome = nome.split(" ")[0];
+        document.getElementById("nome-usuario").innerText = primeiroNome;
+      }
+    });
+  }
+</script>
+
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 
@@ -165,12 +178,15 @@ body {
 .logo {
   display: flex;
   flex-direction: column;
+  align-items: center; /* CENTRALIZADO */
   padding: 20px;
   gap: 10px;
+  text-align: center; /* CENTRALIZA TEXTO */
 }
 
 .logo img {
-  width: 60px;
+  width: 100%; /* 🔥 ocupa toda largura */
+  max-width: 180px;
 }
 
 .logo-text {
