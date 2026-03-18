@@ -1,63 +1,55 @@
-<div class="menu-wrapper">
+<div class="layout">
 
   <!-- SIDEBAR -->
-  <aside class="sidebar">
+  <aside class="sidebar" id="sidebar">
 
     <!-- LOGO -->
     <div class="logo">
-      <div class="logo-icon">🐾</div>
+      <img src="../logo/logo_rafael.png" alt="Logo">
       <div class="logo-text">
         <strong>AppVet</strong>
         <span>Clínica Veterinária</span>
       </div>
     </div>
 
+    <!-- MENU -->
     <nav class="menu">
 
       <a href="../dashboard.html" class="menu-item" data-area="app" data-chave="dashboard">
-        <i data-lucide="home"></i>
-        <span>Dashboard</span>
+        <i data-lucide="home"></i><span>Dashboard</span>
       </a>
 
       <a href="../clientes.html" class="menu-item" data-area="app" data-chave="clientes">
-        <i data-lucide="users"></i>
-        <span>Clientes</span>
+        <i data-lucide="users"></i><span>Clientes</span>
       </a>
 
       <a href="../animais.html" class="menu-item" data-area="app" data-chave="animais">
-        <i data-lucide="paw-print"></i>
-        <span>Animais</span>
+        <i data-lucide="paw-print"></i><span>Animais</span>
       </a>
 
       <a href="../atendimentos.html" class="menu-item" data-area="app" data-chave="atendimentos">
-        <i data-lucide="stethoscope"></i>
-        <span>Atendimentos</span>
+        <i data-lucide="stethoscope"></i><span>Atendimentos</span>
       </a>
 
       <a href="../agenda.html" class="menu-item" data-area="app" data-chave="agenda">
-        <i data-lucide="calendar"></i>
-        <span>Agenda</span>
+        <i data-lucide="calendar"></i><span>Agenda</span>
       </a>
 
       <a href="../estoque.html" class="menu-item" data-area="app" data-chave="estoque">
-        <i data-lucide="package"></i>
-        <span>Estoque</span>
+        <i data-lucide="package"></i><span>Estoque</span>
       </a>
 
       <a href="../financeiro.html" class="menu-item" data-area="app" data-chave="financeiro">
-        <i data-lucide="dollar-sign"></i>
-        <span>Financeiro</span>
+        <i data-lucide="dollar-sign"></i><span>Financeiro</span>
       </a>
 
-      <a href="../relatorios.html" class="menu-item" data-area="app" data-chave="relatorios">
-        <i data-lucide="bar-chart-3"></i>
-        <span>Relatórios</span>
-      </a>
+      <a href="../internacao.html" class="menu-item"><i data-lucide="activity"></i><span>Internação</span></a>
+      <a href="../documentos.html" class="menu-item"><i data-lucide="file-text"></i><span>Documentos</span></a>
+      <a href="../protocolos.html" class="menu-item"><i data-lucide="clipboard-list"></i><span>Protocolos</span></a>
+      <a href="../usuarios.html" class="menu-item"><i data-lucide="user-cog"></i><span>Usuários</span></a>
+      <a href="../configuracoes.html" class="menu-item"><i data-lucide="settings"></i><span>Configurações</span></a>
 
-      <a href="../adm/administrador.html" class="menu-item" data-area="adm" data-chave="administrador">
-        <i data-lucide="settings"></i>
-        <span>Administrador</span>
-      </a>
+      <a href="../relatorios.html" class="menu-item"><i data-lucide="bar-chart-3"></i><span>Relatórios</span></a>
 
     </nav>
 
@@ -69,15 +61,21 @@
     <!-- TOPBAR -->
     <header class="topbar">
 
-      <h1 id="titulo-pagina">Dashboard</h1>
+      <!-- LEFT -->
+      <div class="top-left">
+        <button id="toggle-menu">
+          <i data-lucide="menu"></i>
+        </button>
 
-      <div class="topbar-right">
+        <h1 id="titulo-pagina">Dashboard</h1>
+      </div>
 
-        <div class="icon-btn">
-          <i data-lucide="bell"></i>
-        </div>
+      <!-- RIGHT -->
+      <div class="top-right">
 
-        <a href="../perfil.html" class="user-info">
+        <i data-lucide="bell" class="icon"></i>
+
+        <a href="../perfil.html" class="user">
           <i data-lucide="user"></i>
           <span id="nome-usuario">Usuário</span>
         </a>
@@ -88,7 +86,10 @@
 
     </header>
 
-    <main class="content"></main>
+    <!-- CONTENT -->
+    <main class="content">
+      <!-- conteúdo da página -->
+    </main>
 
   </div>
 
@@ -100,25 +101,28 @@
 <script>
   lucide.createIcons();
 
+  // TOGGLE SIDEBAR
+  document.getElementById("toggle-menu").onclick = () => {
+    document.getElementById("sidebar").classList.toggle("collapsed");
+  };
+
   // TITULO DINAMICO
-  const mapaTitulos = {
+  const mapa = {
     "dashboard.html": "Dashboard",
     "clientes.html": "Clientes",
     "animais.html": "Animais",
     "atendimentos.html": "Atendimentos",
     "agenda.html": "Agenda",
     "estoque.html": "Estoque",
-    "financeiro.html": "Financeiro",
-    "relatorios.html": "Relatórios",
-    "administrador.html": "Administrador"
+    "financeiro.html": "Financeiro"
   };
 
   const pagina = window.location.pathname.split("/").pop();
-  document.getElementById("titulo-pagina").innerText = mapaTitulos[pagina] || "Sistema";
+  document.getElementById("titulo-pagina").innerText = mapa[pagina] || "Sistema";
 
   // ATIVO
   document.querySelectorAll(".menu-item").forEach(link => {
-    if (link.getAttribute("href").includes(pagina)) {
+    if (link.href.includes(pagina)) {
       link.classList.add("active");
     }
   });
@@ -138,7 +142,7 @@ body {
 }
 
 /* LAYOUT */
-.menu-wrapper {
+.layout {
   display: flex;
   height: 100vh;
 }
@@ -150,28 +154,32 @@ body {
   color: white;
   display: flex;
   flex-direction: column;
+  transition: 0.3s;
 }
 
+.sidebar.collapsed {
+  width: 70px;
+}
+
+.sidebar.collapsed span {
+  display: none;
+}
+
+/* LOGO */
 .logo {
   display: flex;
   align-items: center;
   gap: 10px;
   padding: 20px;
-  border-bottom: 1px solid rgba(255,255,255,0.2);
 }
 
-.logo-icon {
-  font-size: 22px;
+.logo img {
+  width: 40px;
 }
 
 .logo-text {
   display: flex;
   flex-direction: column;
-  line-height: 1;
-}
-
-.logo-text strong {
-  font-size: 16px;
 }
 
 .logo-text span {
@@ -192,17 +200,10 @@ body {
   border-radius: 8px;
   color: #e0f2f1;
   text-decoration: none;
-  transition: 0.2s;
-}
-
-.menu-item i {
-  width: 18px;
-  height: 18px;
 }
 
 .menu-item:hover {
   background: #4DB6AC;
-  color: #fff;
 }
 
 .menu-item.active {
@@ -214,57 +215,56 @@ body {
   flex: 1;
   display: flex;
   flex-direction: column;
-  background: #F5F7F9;
 }
 
 /* TOPBAR */
 .topbar {
-  height: 75px;
-  background: #ffffff;
+  height: 70px;
+  background: white;
   border-bottom: 1px solid #E3E8EE;
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  padding: 0 30px;
+  align-items: center;
+  padding: 0 25px;
 }
 
-.topbar h1 {
-  font-size: 22px;
-  font-weight: 600;
-  color: #1F2933;
-}
-
-.topbar-right {
+/* LEFT */
+.top-left {
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 15px;
 }
 
-.icon-btn {
+#toggle-menu {
+  background: none;
+  border: none;
   cursor: pointer;
-  color: #6B7280;
 }
 
-.user-info {
+/* RIGHT */
+.top-right {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 15px;
+}
+
+.user {
+  display: flex;
+  align-items: center;
+  gap: 5px;
   text-decoration: none;
   color: #1F2933;
-  font-weight: 500;
 }
 
-#btn-logout {
-  background: #E63946;
-  color: #fff;
-  border: none;
-  padding: 6px 14px;
-  border-radius: 6px;
-  cursor: pointer;
+.icon {
+  color: #6B7280;
 }
 
 /* CONTENT */
 .content {
+  flex: 1;
+  background: #F5F7F9;
   padding: 25px;
+  overflow-y: auto;
 }
 </style>
