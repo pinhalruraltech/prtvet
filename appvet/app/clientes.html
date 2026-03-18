@@ -21,11 +21,7 @@ body {
   display:none;
 }
 
-.page {
-  padding:20px;
-  max-width:1000px;
-  margin:auto;
-}
+.page { padding:20px; max-width:1000px; margin:auto; }
 
 .card {
   background:#FFF;
@@ -47,29 +43,13 @@ body {
   border:none;
   padding:10px 16px;
   border-radius:8px;
-  cursor:pointer;
 }
 
-.btn-sec {
-  background:#F3F4F6;
-  border:1px solid #D1D5DB;
-  padding:10px 16px;
-  border-radius:8px;
-  cursor:pointer;
-}
-
-input, select {
+input {
   width:100%;
   padding:10px;
   border-radius:8px;
   border:1px solid #E3E8EE;
-  margin-bottom:10px;
-}
-
-.filtros {
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
   margin-bottom:10px;
 }
 
@@ -80,65 +60,12 @@ input, select {
   margin-top:10px;
   display:flex;
   justify-content:space-between;
-  align-items:center;
-}
-
-.cliente-info span {
-  display:block;
-  font-size:14px;
-}
-
-.btn-ver {
-  background:#2D6A4F;
-  color:white;
-  padding:8px 14px;
-  border-radius:8px;
-  border:none;
-}
-
-.pagination {
-  display:flex;
-  justify-content:center;
-  gap:8px;
-  margin-top:20px;
-}
-
-.pagination button {
-  border:none;
-  padding:8px 12px;
-  border-radius:8px;
-  background:#E5E7EB;
-}
-
-.pagination .active {
-  background:#2D6A4F;
-  color:white;
-}
-
-.modal {
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.4);
-  display:none;
-  align-items:center;
-  justify-content:center;
-}
-
-.modal-content {
-  background:white;
-  padding:20px;
-  border-radius:12px;
-  width:95%;
-  max-width:500px;
-  max-height:90vh;
-  overflow:auto;
 }
 
 .footer {
   text-align:center;
   font-size:12px;
   margin-top:20px;
-  color:#6B7280;
 }
 </style>
 </head>
@@ -158,10 +85,6 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const auth = firebase.auth();
 
-let clientes = [];
-let paginaAtual = 1;
-const porPagina = 6;
-
 auth.onAuthStateChanged(async (user)=>{
   if(!user){
     window.location.href="../login.html";
@@ -170,179 +93,51 @@ auth.onAuthStateChanged(async (user)=>{
 
   await carregarMenu();
   document.body.style.display="block";
-  carregarClientes();
 });
 
 async function carregarMenu(){
+
   const res = await fetch("/prtvet/appvet/menu/menu.html");
   document.getElementById("menu-container").innerHTML = await res.text();
 
-  setTimeout(()=>{
-    if(typeof initMenu==="function") initMenu();
-  },200);
+  if(typeof initMenu==="function") initMenu();
 
-  const container = document.getElementById("app-content") || document.body;
+  const container = document.getElementById("app-content");
 
-  container.innerHTML += `
-  <div class="page">
+  if(!container){
+    console.error("app-content não encontrado");
+    return;
+  }
 
-    <div class="card">
+  container.innerHTML = `
+    <div class="page">
+      <div class="card">
 
-      <div class="header">
-        <h2><i data-lucide="users"></i> Clientes</h2>
-        <button class="btn" onclick="abrirModal()">+ Novo</button>
+        <div class="header">
+          <h2>Clientes</h2>
+          <button class="btn">+ Novo</button>
+        </div>
+
+        <input placeholder="Buscar...">
+
+        <div class="cliente-card">
+          <div>
+            <strong>Exemplo Cliente</strong><br>
+            📞 (00) 00000-0000
+          </div>
+          <button class="btn">Ver</button>
+        </div>
+
       </div>
 
-      <div class="filtros">
-        <input id="filtroNome" placeholder="Nome">
-        <input id="filtroCidade" placeholder="Cidade">
-        <input id="filtroBairro" placeholder="Bairro">
+      <div class="footer">
+        Versão 1.0 | Desenvolvido por PRT
       </div>
-
-      <div id="listaClientes"></div>
-
-      <div class="pagination" id="paginacao"></div>
-
     </div>
-
-    <div class="footer">
-      Versão 1.0 | Suporte | Termos | Desenvolvido por PRT Soluções
-    </div>
-
-  </div>
-
-  <div class="modal" id="modal">
-    <div class="modal-content">
-
-      <h3>Novo Cliente</h3>
-
-      <input id="nome" placeholder="Nome completo">
-      <input id="cpf" placeholder="CPF">
-      <input id="nascimento" type="date">
-      <input id="telefone" placeholder="Telefone">
-      <input id="email" placeholder="Email">
-
-      <input id="logradouro" placeholder="Logradouro">
-      <input id="numero" placeholder="Número">
-      <input id="bairro" placeholder="Bairro">
-      <input id="cidade" placeholder="Cidade">
-      <input id="estado" placeholder="Estado">
-      <input id="cep" placeholder="CEP">
-
-      <div style="display:flex; gap:10px;">
-        <button class="btn-sec" onclick="fecharModal()">Cancelar</button>
-        <button class="btn" onclick="salvarCliente()">Salvar</button>
-      </div>
-
-    </div>
-  </div>
   `;
 
   lucide.createIcons();
 }
-
-async function carregarClientes(){
-  const snap = await db.collection("clientes").get();
-  clientes = [];
-  snap.forEach(doc => clientes.push({ id: doc.id, ...doc.data() }));
-  render();
-}
-
-function aplicarFiltros(){
-  return clientes.filter(c => {
-    return (
-      (filtroNome.value === "" || (c.nome||"").toLowerCase().includes(filtroNome.value.toLowerCase())) &&
-      (filtroCidade.value === "" || (c.endereco?.cidade||"").toLowerCase().includes(filtroCidade.value.toLowerCase())) &&
-      (filtroBairro.value === "" || (c.endereco?.bairro||"").toLowerCase().includes(filtroBairro.value.toLowerCase()))
-    );
-  });
-}
-
-function render(){
-  const lista = aplicarFiltros();
-
-  const inicio = (paginaAtual-1)*porPagina;
-  const paginados = lista.slice(inicio, inicio+porPagina);
-
-  const el = document.getElementById("listaClientes");
-  el.innerHTML="";
-
-  if(lista.length === 0){
-    el.innerHTML = "<p>Nenhum cliente encontrado</p>";
-    return;
-  }
-
-  paginados.forEach(c=>{
-    el.innerHTML += `
-      <div class="cliente-card">
-        <div class="cliente-info">
-          <span><strong>${c.nome || "-"}</strong></span>
-          <span>📞 ${c.telefone || "-"}</span>
-          <span>🏠 ${c.endereco?.bairro || "-"}</span>
-          <span>📍 ${c.endereco?.cidade || "-"}</span>
-        </div>
-        <button class="btn-ver" onclick="abrirCliente('${c.id}')">Ver</button>
-      </div>
-    `;
-  });
-
-  renderPaginacao(lista.length);
-}
-
-function renderPaginacao(total){
-  const totalPaginas = Math.ceil(total / porPagina);
-  const el = document.getElementById("paginacao");
-  el.innerHTML="";
-
-  for(let i=1;i<=totalPaginas;i++){
-    el.innerHTML += `
-      <button class="${i===paginaAtual?'active':''}" onclick="irPagina(${i})">${i}</button>
-    `;
-  }
-}
-
-function irPagina(p){
-  paginaAtual = p;
-  render();
-}
-
-function abrirCliente(id){
-  window.location.href="cliente.html?id="+id;
-}
-
-function abrirModal(){
-  modal.style.display="flex";
-}
-
-function fecharModal(){
-  modal.style.display="none";
-}
-
-async function salvarCliente(){
-  await db.collection("clientes").add({
-    nome:nome.value,
-    cpf:cpf.value,
-    nascimento:nascimento.value,
-    telefone:telefone.value,
-    email:email.value,
-    endereco:{
-      logradouro:logradouro.value,
-      numero:numero.value,
-      bairro:bairro.value,
-      cidade:cidade.value,
-      estado:estado.value,
-      cep:cep.value
-    }
-  });
-
-  fecharModal();
-  carregarClientes();
-}
-
-document.addEventListener("input", ()=>{
-  paginaAtual=1;
-  render();
-});
 </script>
 
 </body>
