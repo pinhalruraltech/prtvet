@@ -1,95 +1,56 @@
-<!-- MENU WRAPPER -->
 <div class="menu-wrapper">
 
   <!-- SIDEBAR -->
   <aside class="sidebar">
 
-    <!-- LOGO -->
-    <div class="sidebar-header">
-      <h2>AppVet</h2>
+    <div class="logo">
+      <span>AppVet</span>
     </div>
 
-    <!-- MENU -->
     <nav class="menu">
 
-      <!-- DASHBOARD -->
-      <a href="../dashboard.html"
-         class="menu-item"
-         data-area="app"
-         data-chave="dashboard">
-        <span>🏠</span>
+      <a href="../dashboard.html" class="menu-item" data-area="app" data-chave="dashboard">
+        <i data-lucide="home"></i>
         <span>Dashboard</span>
       </a>
 
-      <!-- CLIENTES -->
-      <a href="../clientes.html"
-         class="menu-item"
-         data-area="app"
-         data-chave="clientes">
-        <span>👤</span>
+      <a href="../clientes.html" class="menu-item" data-area="app" data-chave="clientes">
+        <i data-lucide="users"></i>
         <span>Clientes</span>
       </a>
 
-      <!-- ANIMAIS -->
-      <a href="../animais.html"
-         class="menu-item"
-         data-area="app"
-         data-chave="animais">
-        <span>🐾</span>
+      <a href="../animais.html" class="menu-item" data-area="app" data-chave="animais">
+        <i data-lucide="paw-print"></i>
         <span>Animais</span>
       </a>
 
-      <!-- ATENDIMENTOS -->
-      <a href="../atendimentos.html"
-         class="menu-item"
-         data-area="app"
-         data-chave="atendimentos">
-        <span>🩺</span>
+      <a href="../atendimentos.html" class="menu-item" data-area="app" data-chave="atendimentos">
+        <i data-lucide="stethoscope"></i>
         <span>Atendimentos</span>
       </a>
 
-      <!-- AGENDA -->
-      <a href="../agenda.html"
-         class="menu-item"
-         data-area="app"
-         data-chave="agenda">
-        <span>📅</span>
+      <a href="../agenda.html" class="menu-item" data-area="app" data-chave="agenda">
+        <i data-lucide="calendar"></i>
         <span>Agenda</span>
       </a>
 
-      <!-- ESTOQUE -->
-      <a href="../estoque.html"
-         class="menu-item"
-         data-area="app"
-         data-chave="estoque">
-        <span>📦</span>
+      <a href="../estoque.html" class="menu-item" data-area="app" data-chave="estoque">
+        <i data-lucide="package"></i>
         <span>Estoque</span>
       </a>
 
-      <!-- FINANCEIRO -->
-      <a href="../financeiro.html"
-         class="menu-item"
-         data-area="app"
-         data-chave="financeiro">
-        <span>💰</span>
+      <a href="../financeiro.html" class="menu-item" data-area="app" data-chave="financeiro">
+        <i data-lucide="dollar-sign"></i>
         <span>Financeiro</span>
       </a>
 
-      <!-- RELATORIOS -->
-      <a href="../relatorios.html"
-         class="menu-item"
-         data-area="app"
-         data-chave="relatorios">
-        <span>📊</span>
+      <a href="../relatorios.html" class="menu-item" data-area="app" data-chave="relatorios">
+        <i data-lucide="bar-chart-3"></i>
         <span>Relatórios</span>
       </a>
 
-      <!-- ADMIN -->
-      <a href="../adm/administrador.html"
-         class="menu-item"
-         data-area="adm"
-         data-chave="administrador">
-        <span>⚙️</span>
+      <a href="../adm/administrador.html" class="menu-item" data-area="adm" data-chave="administrador">
+        <i data-lucide="settings"></i>
         <span>Administrador</span>
       </a>
 
@@ -97,118 +58,195 @@
 
   </aside>
 
-  <!-- MAIN AREA -->
-  <div class="main-area">
+  <!-- MAIN -->
+  <div class="main">
 
     <!-- TOPBAR -->
     <header class="topbar">
 
       <div class="topbar-left">
-        <h3 id="titulo-pagina">Sistema</h3>
+        <h1 id="titulo-pagina">Dashboard</h1>
       </div>
 
       <div class="topbar-right">
-        <span id="nome-usuario">Usuário</span>
+
+        <!-- NOTIFICAÇÃO -->
+        <div class="icon-btn">
+          <i data-lucide="bell"></i>
+        </div>
+
+        <!-- USUARIO -->
+        <a href="../perfil.html" class="user-info">
+          <i data-lucide="user"></i>
+          <span id="nome-usuario">Usuário</span>
+        </a>
+
         <button id="btn-logout">Sair</button>
+
       </div>
 
     </header>
 
-    <!-- CONTEUDO DINAMICO -->
-    <main class="content">
-      <!-- A página carrega aqui -->
-    </main>
+    <!-- CONTEUDO -->
+    <main class="content"></main>
 
   </div>
 
 </div>
 
-<!-- ESTILO BASE -->
+<!-- LUCIDE -->
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+  lucide.createIcons();
+</script>
+
+<!-- SCRIPT DINAMICO -->
+<script>
+  // TITULO DINAMICO
+  const mapaTitulos = {
+    "dashboard.html": "Dashboard",
+    "clientes.html": "Clientes",
+    "animais.html": "Animais",
+    "atendimentos.html": "Atendimentos",
+    "agenda.html": "Agenda",
+    "estoque.html": "Estoque",
+    "financeiro.html": "Financeiro",
+    "relatorios.html": "Relatórios",
+    "administrador.html": "Administrador"
+  };
+
+  const pagina = window.location.pathname.split("/").pop();
+  document.getElementById("titulo-pagina").innerText = mapaTitulos[pagina] || "Sistema";
+
+  // LINK ATIVO
+  document.querySelectorAll(".menu-item").forEach(link => {
+    if (link.getAttribute("href").includes(pagina)) {
+      link.classList.add("active");
+    }
+  });
+</script>
+
+<!-- ESTILO -->
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+}
+
 .menu-wrapper {
   display: flex;
   height: 100vh;
-  font-family: 'Inter', sans-serif;
 }
 
 /* SIDEBAR */
 .sidebar {
-  width: 240px;
+  width: 250px;
   background: #1F2933;
   color: #fff;
   display: flex;
   flex-direction: column;
 }
 
-.sidebar-header {
+.logo {
   padding: 20px;
   font-size: 20px;
   font-weight: 600;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+  border-bottom: 1px solid #2a3441;
 }
 
 .menu {
-  display: flex;
-  flex-direction: column;
   padding: 10px;
 }
 
 .menu-item {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   padding: 12px;
   border-radius: 8px;
+  color: #cbd5e1;
   text-decoration: none;
-  color: #fff;
-  margin-bottom: 5px;
   transition: 0.2s;
 }
 
+.menu-item i {
+  width: 18px;
+  height: 18px;
+}
+
 .menu-item:hover {
-  background: rgba(255,255,255,0.1);
+  background: #2a3441;
+  color: #fff;
 }
 
-.menu-item.ativo {
+.menu-item.active {
   background: #2D6A4F;
+  color: #fff;
 }
 
-/* MAIN AREA */
-.main-area {
+/* MAIN */
+.main {
   flex: 1;
   display: flex;
   flex-direction: column;
-  background: #F5F7F9;
+  background: #F8FAFC;
 }
 
 /* TOPBAR */
 .topbar {
-  height: 60px;
-  background: #fff;
+  height: 70px;
+  background: #ffffff;
   border-bottom: 1px solid #E3E8EE;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 20px;
+  padding: 0 30px;
+}
+
+.topbar h1 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1F2933;
 }
 
 .topbar-right {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 15px;
+}
+
+.icon-btn {
+  cursor: pointer;
+  color: #6B7280;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  color: #1F2933;
+  font-weight: 500;
 }
 
 #btn-logout {
-  padding: 6px 12px;
-  border: none;
   background: #E63946;
   color: #fff;
+  border: none;
+  padding: 6px 12px;
   border-radius: 6px;
   cursor: pointer;
 }
 
 /* CONTENT */
 .content {
-  padding: 20px;
+  padding: 25px;
 }
 </style>
