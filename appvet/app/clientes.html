@@ -1,281 +1,325 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+  <meta charset="UTF-8">
+  <title>Clientes | AppVet</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Clientes | APPVET</title>
+  <!-- LUCIDE ICONS -->
+  <script src="https://unpkg.com/lucide@latest"></script>
 
-<script src="https://unpkg.com/lucide@latest"></script>
+  <!-- FIREBASE -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
-<style>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: #F5F7F9;
+      color: #1F2933;
+    }
 
-/* RESET */
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-}
+    .layout {
+      display: flex;
+      height: 100vh;
+    }
 
-body{
-font-family:Arial, sans-serif;
-background:#F5F7F9;
-}
+    /* SIDEBAR */
+    .sidebar {
+      width: 240px;
+      background: #1F2933;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      padding: 20px 10px;
+    }
 
-/* BOTÃO MENU */
-#btnMenu{
-position:fixed;
-top:15px;
-left:15px;
-z-index:1100;
-background:#2D6A4F;
-color:#fff;
-border:none;
-padding:10px;
-border-radius:8px;
-}
+    .logo {
+      text-align: center;
+      margin-bottom: 30px;
+    }
 
-/* SIDEBAR */
-.sidebar{
-width:240px;
-height:100vh;
-background:#1F2933;
-position:fixed;
-top:0;
-left:0;
-transition:0.3s;
-z-index:1000;
-}
+    .logo img {
+      width: 100%;
+      max-width: 140px;
+    }
 
-/* MOBILE */
-@media(max-width:768px){
-.sidebar{
-transform:translateX(-100%);
-}
-.sidebar.active{
-transform:translateX(0);
-}
-}
+    .menu a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      border-radius: 8px;
+      color: #ccc;
+      text-decoration: none;
+      margin-bottom: 5px;
+      transition: 0.2s;
+    }
 
-/* MAIN */
-.main{
-margin-left:240px;
-padding:20px;
-}
+    .menu a:hover {
+      background: rgba(255,255,255,0.05);
+      color: white;
+    }
 
-@media(max-width:768px){
-.main{
-margin-left:0;
-}
-}
+    .menu a.active {
+      background: rgba(255,255,255,0.1);
+      color: white;
+    }
 
-/* HEADER */
-.header{
-margin-bottom:20px;
-}
+    /* MAIN */
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
 
-/* CARD */
-.card{
-background:#fff;
-padding:20px;
-border-radius:10px;
-box-shadow:0 4px 6px rgba(0,0,0,0.05);
-}
+    /* TOPBAR */
+    .topbar {
+      height: 60px;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      border-bottom: 1px solid #E3E8EE;
+    }
 
-/* FILTROS */
-.filters{
-display:flex;
-gap:10px;
-margin:10px 0;
-flex-wrap:wrap;
-}
+    .user {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: #6B7280;
+    }
 
-.filters select,
-.filters button{
-padding:10px;
-border-radius:8px;
-border:1px solid #ccc;
-background:#fff;
-}
+    /* CONTENT */
+    .content {
+      padding: 20px;
+      flex: 1;
+      overflow-y: auto;
+    }
 
-/* INPUT */
-input{
-width:100%;
-padding:12px;
-border-radius:8px;
-border:1px solid #ccc;
-}
+    .card {
+      background: white;
+      border: 1px solid #E3E8EE;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
 
-/* TABLE */
-table{
-width:100%;
-border-collapse:collapse;
-margin-top:15px;
-}
+    .card h2 {
+      margin-top: 0;
+      font-size: 18px;
+      font-weight: 600;
+    }
 
-th, td{
-padding:12px;
-border-bottom:1px solid #eee;
-}
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
 
-/* BADGE */
-.badge{
-background:#E6F4EA;
-padding:5px 10px;
-border-radius:20px;
-font-size:12px;
-}
+    input {
+      padding: 8px 10px;
+      border: 1px solid #E3E8EE;
+      border-radius: 6px;
+      outline: none;
+    }
 
-/* AÇÕES */
-.actions{
-display:flex;
-gap:10px;
-}
+    button {
+      background: #2F80ED;
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
 
-.actions button{
-border:none;
-background:#eee;
-padding:6px 10px;
-border-radius:6px;
-cursor:pointer;
-}
+    button:hover {
+      opacity: 0.9;
+    }
 
-/* PAGINAÇÃO */
-.pagination{
-margin-top:15px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-}
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
 
-.pagination button{
-padding:8px 12px;
-border:none;
-background:#2D6A4F;
-color:#fff;
-border-radius:6px;
-cursor:pointer;
-}
+    th {
+      text-align: left;
+      font-size: 13px;
+      color: #6B7280;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #E3E8EE;
+    }
 
-</style>
+    td {
+      padding: 12px 0;
+      border-bottom: 1px solid #F1F3F5;
+      font-size: 14px;
+    }
 
+    .footer {
+      text-align: center;
+      font-size: 12px;
+      padding: 10px;
+      color: #6B7280;
+      border-top: 1px solid #E3E8EE;
+      background: white;
+    }
+  </style>
 </head>
 
 <body style="display:none">
 
-<button id="btnMenu">☰</button>
+<div class="layout">
 
-<div id="menu-container"></div>
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="logo">
+      <img src="../icons/logo.png" alt="Logo">
+      <div>AppVet</div>
+    </div>
 
-<div class="main">
+    <div class="menu">
+      <a href="dashboard.html"><i data-lucide="layout-dashboard"></i> Dashboard</a>
+      <a href="clientes.html" class="active"><i data-lucide="users"></i> Clientes</a>
+      <a href="animais.html"><i data-lucide="paw-print"></i> Animais</a>
+    </div>
+  </div>
 
-<div class="header">
-<h1>Clientes</h1>
-<p>Gerencie proprietários e seus animais</p>
-</div>
+  <!-- MAIN -->
+  <div class="main">
 
-<div class="card">
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div><strong>Clientes</strong></div>
+      <div class="user">
+        <i data-lucide="user"></i>
+        <span id="userNome">...</span>
+      </div>
+    </div>
 
-<input placeholder="Buscar cliente ou animal...">
+    <!-- CONTENT -->
+    <div class="content">
 
-<div class="filters">
-<select>
-<option>Cidade</option>
-<option>Monte Belo</option>
-<option>Alfenas</option>
-</select>
+      <div class="card">
+        <h2>Gestão de Clientes</h2>
 
-<select>
-<option>Possui animais</option>
-<option>Sim</option>
-<option>Não</option>
-</select>
+        <div class="actions">
+          <input type="text" placeholder="Buscar cliente...">
+          <button onclick="novoCliente()">
+            <i data-lucide="plus"></i> Novo Cliente
+          </button>
+        </div>
 
-<button>Limpar filtros</button>
-</div>
+        <table>
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Telefone</th>
+              <th>Email</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="listaClientes">
+            <!-- Dados virão do Firestore -->
+          </tbody>
+        </table>
 
-<table>
-<thead>
-<tr>
-<th>Nome</th>
-<th>Telefone</th>
-<th>Cidade</th>
-<th>Animais</th>
-<th>Última visita</th>
-<th>Ações</th>
-</tr>
-</thead>
+      </div>
 
-<tbody>
+    </div>
 
-<tr>
-<td>João Silva</td>
-<td>(35) 99999-9999</td>
-<td>Monte Belo</td>
-<td><span class="badge">3</span></td>
-<td>10/03/2026</td>
-<td class="actions">
-<button>👁</button>
-<button>✏️</button>
-</td>
-</tr>
+    <!-- FOOTER -->
+    <div class="footer">
+      © 2026 AppVet - Sistema de Gestão Veterinária
+    </div>
 
-<tr>
-<td>Maria Oliveira</td>
-<td>(35) 98888-8888</td>
-<td>Alfenas</td>
-<td><span class="badge">1</span></td>
-<td>02/03/2026</td>
-<td class="actions">
-<button>👁</button>
-<button>✏️</button>
-</td>
-</tr>
-
-</tbody>
-</table>
-
-<div class="pagination">
-<span>Mostrando 1–10 de 230 clientes</span>
-
-<div>
-<button>‹</button>
-<button>1</button>
-<button>›</button>
-</div>
+  </div>
 
 </div>
 
-</div>
+<script>
+  // 🔐 PERMISSÃO DA PÁGINA
+  const PERMISSAO_PAGINA = {
+    area: "app",
+    chave: "clientes"
+  };
 
-</div>
+  // 🔥 FIREBASE CONFIG
+  const firebaseConfig = {
+    apiKey: "AIzaSyDR69colU9JHvemBpab3x8PLHqaUm_5EM0",
+    authDomain: "appvet-prt.firebaseapp.com",
+    projectId: "appvet-prt",
+    storageBucket: "appvet-prt.firebasestorage.app",
+    messagingSenderId: "26046923372",
+    appId: "1:26046923372:web:fdbe180eadced87018e49"
+  };
 
-<script type="module">
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
 
-fetch("../components/menu.html")
-.then(res => res.text())
-.then(html => {
+  // 🔐 AUTH + USUÁRIO
+  auth.onAuthStateChanged(async (user) => {
+    if (!user) {
+      window.location.href = "../index.html";
+      return;
+    }
 
-document.getElementById("menu-container").innerHTML = html;
+    const doc = await db.collection("usuarios").doc(user.uid).get();
+    const dados = doc.data();
 
-lucide.createIcons();
+    document.getElementById("userNome").innerText = dados?.Nome?.split(" ")[0] || "Usuário";
 
-// ATIVO
-document.querySelectorAll(".sidebar a").forEach(link=>{
-if(link.href === window.location.href){
-link.classList.add("active");
-}
-});
+    document.body.style.display = "block";
 
-// MENU MOBILE
-document.getElementById("btnMenu").addEventListener("click", ()=>{
-document.querySelector(".sidebar").classList.toggle("active");
-});
+    carregarClientes();
+  });
 
-document.body.style.display = "block";
+  // 📋 LISTAR CLIENTES
+  async function carregarClientes() {
+    const lista = document.getElementById("listaClientes");
+    lista.innerHTML = "";
 
-});
+    const snapshot = await db.collection("clientes").get();
 
+    snapshot.forEach(doc => {
+      const c = doc.data();
+
+      lista.innerHTML += `
+        <tr>
+          <td>${c.nome || ""}</td>
+          <td>${c.telefone || ""}</td>
+          <td>${c.email || ""}</td>
+          <td>
+            <button onclick="editar('${doc.id}')">
+              <i data-lucide="pencil"></i>
+            </button>
+          </td>
+        </tr>
+      `;
+    });
+
+    lucide.createIcons();
+  }
+
+  function novoCliente() {
+    alert("Abrir tela de cadastro futuramente");
+  }
+
+  function editar(id) {
+    alert("Editar cliente: " + id);
+  }
+
+  lucide.createIcons();
 </script>
 
 </body>
