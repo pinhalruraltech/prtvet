@@ -3,9 +3,8 @@
   <!-- SIDEBAR -->
   <aside class="sidebar" id="sidebar">
 
-    <!-- LOGO -->
     <div class="logo">
-      <img src="/prtvet/appvet/logo/logo_rafael.png" alt="Logo">
+      <img src="/prtvet/appvet/logo/logo_rafael.png">
 
       <div class="logo-text">
         <strong>Rafael Frutuoso</strong>
@@ -13,72 +12,58 @@
       </div>
     </div>
 
-    <!-- MENU -->
-    <nav class="menu">
+    <nav class="menu" id="menu">
 
-      <a href="../dashboard.html" class="menu-item">
-        <i data-lucide="home"></i>
-        <span>Dashboard</span>
+      <a href="../dashboard.html" class="menu-item" data-icon="home">
+        <i data-lucide="home"></i><span>Dashboard</span>
       </a>
 
-      <a href="../clientes.html" class="menu-item">
-        <i data-lucide="users"></i>
-        <span>Clientes</span>
+      <a href="../clientes.html" class="menu-item" data-icon="users">
+        <i data-lucide="users"></i><span>Clientes</span>
       </a>
 
-      <a href="../animais.html" class="menu-item">
-        <i data-lucide="paw-print"></i>
-        <span>Animais</span>
+      <a href="../animais.html" class="menu-item" data-icon="paw-print">
+        <i data-lucide="paw-print"></i><span>Animais</span>
       </a>
 
-      <a href="../atendimentos.html" class="menu-item">
-        <i data-lucide="stethoscope"></i>
-        <span>Atendimentos</span>
+      <a href="../atendimentos.html" class="menu-item" data-icon="stethoscope">
+        <i data-lucide="stethoscope"></i><span>Atendimentos</span>
       </a>
 
-      <a href="../agenda.html" class="menu-item">
-        <i data-lucide="calendar"></i>
-        <span>Agenda</span>
+      <a href="../agenda.html" class="menu-item" data-icon="calendar">
+        <i data-lucide="calendar"></i><span>Agenda</span>
       </a>
 
-      <a href="../estoque.html" class="menu-item">
-        <i data-lucide="package"></i>
-        <span>Estoque</span>
+      <a href="../estoque.html" class="menu-item" data-icon="package">
+        <i data-lucide="package"></i><span>Estoque</span>
       </a>
 
-      <a href="../financeiro.html" class="menu-item">
-        <i data-lucide="dollar-sign"></i>
-        <span>Financeiro</span>
+      <a href="../financeiro.html" class="menu-item" data-icon="dollar-sign">
+        <i data-lucide="dollar-sign"></i><span>Financeiro</span>
       </a>
 
-      <a href="../internacao.html" class="menu-item">
-        <i data-lucide="activity"></i>
-        <span>Internação</span>
+      <a href="../internacao.html" class="menu-item" data-icon="activity">
+        <i data-lucide="activity"></i><span>Internação</span>
       </a>
 
-      <a href="../documentos.html" class="menu-item">
-        <i data-lucide="file-text"></i>
-        <span>Documentos</span>
+      <a href="../documentos.html" class="menu-item" data-icon="file-text">
+        <i data-lucide="file-text"></i><span>Documentos</span>
       </a>
 
-      <a href="../protocolos.html" class="menu-item">
-        <i data-lucide="clipboard-list"></i>
-        <span>Protocolos</span>
+      <a href="../protocolos.html" class="menu-item" data-icon="clipboard-list">
+        <i data-lucide="clipboard-list"></i><span>Protocolos</span>
       </a>
 
-      <a href="../usuarios.html" class="menu-item">
-        <i data-lucide="user-cog"></i>
-        <span>Usuários</span>
+      <a href="../usuarios.html" class="menu-item" data-icon="user-cog">
+        <i data-lucide="user-cog"></i><span>Usuários</span>
       </a>
 
-      <a href="../configuracoes.html" class="menu-item">
-        <i data-lucide="settings"></i>
-        <span>Configurações</span>
+      <a href="../configuracoes.html" class="menu-item" data-icon="settings">
+        <i data-lucide="settings"></i><span>Configurações</span>
       </a>
 
-      <a href="../relatorios.html" class="menu-item">
-        <i data-lucide="bar-chart-3"></i>
-        <span>Relatórios</span>
+      <a href="../relatorios.html" class="menu-item" data-icon="bar-chart-3">
+        <i data-lucide="bar-chart-3"></i><span>Relatórios</span>
       </a>
 
     </nav>
@@ -96,7 +81,10 @@
           <i data-lucide="menu"></i>
         </button>
 
-        <h1 id="titulo-pagina">Dashboard</h1>
+        <div class="page-info">
+          <i id="top-icon"></i>
+          <h1 id="titulo-pagina">Dashboard</h1>
+        </div>
       </div>
 
       <div class="top-right">
@@ -114,167 +102,153 @@
 
     </header>
 
-    <!-- CONTEÚDO DINÂMICO -->
     <main class="content" id="app-content"></main>
 
   </div>
 
 </div>
 
-<!-- LUCIDE -->
 <script src="https://unpkg.com/lucide@latest"></script>
 
 <script>
-  // 🔥 PEGAR PRIMEIRO NOME DO USUÁRIO LOGADO
+function initMenu() {
+
+  lucide.createIcons();
+
+  // toggle
+  document.getElementById("toggle-menu").onclick = () => {
+    document.getElementById("sidebar").classList.toggle("collapsed");
+  };
+
+  const pagina = window.location.pathname.split("/").pop();
+
+  const itens = document.querySelectorAll(".menu-item");
+
+  itens.forEach(link => {
+    if (link.getAttribute("href").includes(pagina)) {
+
+      link.classList.add("active");
+
+      // 🔥 TOPBAR DINÂMICA
+      const nome = link.innerText.trim();
+      const icon = link.dataset.icon;
+
+      document.getElementById("titulo-pagina").innerText = nome;
+
+      document.getElementById("top-icon").outerHTML =
+        `<i data-lucide="${icon}"></i>`;
+
+    }
+  });
+
+  lucide.createIcons();
+
+  // nome do usuario
   if (window.firebase && firebase.auth) {
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
         let nome = user.displayName || user.email || "Usuário";
-        let primeiroNome = nome.split(" ")[0];
-        document.getElementById("nome-usuario").innerText = primeiroNome;
+        document.getElementById("nome-usuario").innerText = nome.split(" ")[0];
       }
     });
   }
+}
 </script>
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+* { margin:0; padding:0; box-sizing:border-box; }
 
-body {
-  font-family: 'Inter', sans-serif;
-}
+body { font-family:'Inter', sans-serif; }
 
 /* LAYOUT */
-.layout {
-  display: flex;
-  height: 100vh;
-}
+.layout { display:flex; height:100vh; overflow:hidden; }
 
 /* SIDEBAR */
 .sidebar {
-  width: 260px;
-  background: #2E7D6B;
-  color: white;
-  display: flex;
-  flex-direction: column;
-  transition: 0.3s;
+  width:260px;
+  background:#2E7D6B;
+  color:white;
+  display:flex;
+  flex-direction:column;
+  overflow-y:auto; /* 🔥 CORREÇÃO DO CORTE */
 }
 
-.sidebar.collapsed {
-  width: 70px;
-}
-
-.sidebar.collapsed span {
-  display: none;
-}
+.sidebar.collapsed { width:70px; }
+.sidebar.collapsed span { display:none; }
 
 /* LOGO */
 .logo {
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* CENTRALIZADO */
-  padding: 20px;
-  gap: 10px;
-  text-align: center; /* CENTRALIZA TEXTO */
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:20px;
+  gap:10px;
+  text-align:center;
 }
 
 .logo img {
-  width: 100%; /* 🔥 ocupa toda largura */
-  max-width: 180px;
-}
-
-.logo-text {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.2;
-}
-
-.logo-text strong {
-  font-size: 15px;
-  font-weight: 600;
-}
-
-.logo-text span {
-  font-size: 12px;
-  opacity: 0.85;
+  width:100%;
+  max-width:180px;
 }
 
 /* MENU */
-.menu {
-  padding: 10px;
-}
+.menu { padding:10px; }
 
 .menu-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px;
-  border-radius: 8px;
-  color: #e0f2f1;
-  text-decoration: none;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:12px;
+  border-radius:8px;
+  color:#e0f2f1;
+  text-decoration:none;
 }
 
-.menu-item:hover {
-  background: #4DB6AC;
-}
-
-.menu-item.active {
-  background: #1b5e55;
-}
+.menu-item:hover { background:#4DB6AC; }
+.menu-item.active { background:#1b5e55; }
 
 /* MAIN */
 .main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
+  flex:1;
+  display:flex;
+  flex-direction:column;
 }
 
 /* TOPBAR */
 .topbar {
-  height: 70px;
-  background: #FFFFFF;
-  border-bottom: 1px solid #E3E8EE;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 25px;
+  height:70px;
+  background:#fff;
+  border-bottom:1px solid #E3E8EE;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:0 25px;
+}
+
+.page-info {
+  display:flex;
+  align-items:center;
+  gap:10px;
 }
 
 .top-left {
-  display: flex;
-  align-items: center;
-  gap: 15px;
+  display:flex;
+  align-items:center;
+  gap:15px;
 }
 
 .top-right {
-  display: flex;
-  align-items: center;
-  gap: 15px;
+  display:flex;
+  align-items:center;
+  gap:15px;
 }
 
-.icon {
-  color: #6B7280;
-}
-
-.user {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  text-decoration: none;
-  color: #1F2933;
-}
-
-/* CONTENT */
 .content {
-  flex: 1;
-  background: #F5F7F9;
-  padding: 25px;
-  overflow-y: auto;
+  flex:1;
+  background:#F5F7F9;
+  padding:25px;
+  overflow-y:auto;
 }
 </style>
