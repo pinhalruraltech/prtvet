@@ -1,186 +1,84 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Dashboard | APPVET</title>
-
-<!-- PERMISSÃO -->
-<script>
-const PERMISSAO_PAGINA = {
-    area: "app",
-    chave: "dashboard"
-};
-</script>
+<title>Dashboard</title>
 
 <style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Inter', sans-serif;
-}
-
 body {
-    background: #F5F7F9;
-    display: none;
-}
-
-/* ÁREA PRINCIPAL (IMPORTANTE) */
-.page-content {
-    padding: 25px;
+  display:none;
+  background:#F5F7F9;
+  font-family:'Inter', sans-serif;
 }
 
 /* CARDS */
 .cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 15px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:15px;
 }
 
 .card {
-    background: #FFFFFF;
-    border: 1px solid #E3E8EE;
-    border-radius: 10px;
-    padding: 20px;
+  background:#fff;
+  border:1px solid #E3E8EE;
+  border-radius:10px;
+  padding:20px;
 }
 
-.card-title {
-    font-size: 14px;
-    color: #6B7280;
-}
-
-.card-value {
-    font-size: 22px;
-    font-weight: 600;
-    margin-top: 8px;
-}
+.card-title { font-size:14px; color:#6B7280; }
+.card-value { font-size:22px; font-weight:600; }
 
 /* SEÇÕES */
 .section {
-    margin-top: 20px;
-    background: #FFFFFF;
-    border: 1px solid #E3E8EE;
-    border-radius: 10px;
-    padding: 20px;
-}
-
-.section-title {
-    font-weight: 600;
-    margin-bottom: 10px;
+  margin-top:20px;
+  background:#fff;
+  border:1px solid #E3E8EE;
+  border-radius:10px;
+  padding:20px;
 }
 
 .list-item {
-    padding: 10px 0;
-    border-bottom: 1px solid #E3E8EE;
-}
-
-.footer {
-    margin-top: 30px;
-    text-align: center;
-    font-size: 13px;
-    color: #6B7280;
+  padding:10px 0;
+  border-bottom:1px solid #E3E8EE;
 }
 </style>
 </head>
 
 <body>
 
-<!-- MENU -->
 <div id="menu-container"></div>
 
-<!-- CONTEÚDO DA PÁGINA -->
-<div class="page-content">
+<!-- 🔥 CONTEUDO -->
+<div id="conteudo">
 
-    <div class="cards">
-        <div class="card">
-            <div class="card-title">Atendimentos Hoje</div>
-            <div class="card-value">12</div>
-        </div>
+  <div class="cards">
+    <div class="card"><div class="card-title">Atendimentos Hoje</div><div class="card-value">12</div></div>
+    <div class="card"><div class="card-title">Animais</div><div class="card-value">248</div></div>
+    <div class="card"><div class="card-title">Clientes</div><div class="card-value">132</div></div>
+    <div class="card"><div class="card-title">Vacinas Pendentes</div><div class="card-value">9</div></div>
+  </div>
 
-        <div class="card">
-            <div class="card-title">Animais</div>
-            <div class="card-value">248</div>
-        </div>
-
-        <div class="card">
-            <div class="card-title">Clientes</div>
-            <div class="card-value">132</div>
-        </div>
-
-        <div class="card">
-            <div class="card-title">Vacinas Pendentes</div>
-            <div class="card-value">9</div>
-        </div>
-    </div>
-
-    <div class="section">
-        <div class="section-title">Agenda de Hoje</div>
-        <div class="list-item">09:00 - Consulta | Rex</div>
-        <div class="list-item">10:30 - Vacina | Mia</div>
-    </div>
-
-    <div class="section">
-        <div class="section-title">Alertas</div>
-        <div class="list-item">Estoque baixo</div>
-        <div class="list-item">Vacina atrasada</div>
-    </div>
-
-    <div class="footer">
-        © 2026 APPVET • Sistema de Gestão Veterinária
-    </div>
+  <div class="section">
+    <div class="list-item">09:00 - Consulta | Rex</div>
+    <div class="list-item">10:30 - Vacina | Mia</div>
+  </div>
 
 </div>
 
-<!-- FIREBASE -->
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-
-<script>
-const firebaseConfig = {
-  apiKey: "AIzaSyDR69colU9JHvemBpab3x8PLHqaUm_5EM0",
-  authDomain: "appvet-prt.firebaseapp.com",
-  projectId: "appvet-prt",
-  storageBucket: "appvet-prt.firebasestorage.app",
-  messagingSenderId: "26046923372",
-  appId: "1:26046923372:web:fdbe180eadced87018e49"
-};
-
-firebase.initializeApp(firebaseConfig);
-</script>
-
-<!-- AUTH -->
-<script>
-firebase.auth().onAuthStateChanged(user => {
-    if (!user) {
-        window.location.href = "login.html";
-    }
-});
-</script>
-
-<!-- MENU LOAD (CORRIGIDO) -->
 <script>
 fetch('./menu/menu.html')
-.then(res => res.text())
-.then(data => {
-    document.getElementById('menu-container').innerHTML = data;
+.then(r=>r.text())
+.then(html=>{
+  document.getElementById('menu-container').innerHTML = html;
 
-    // 🔥 IMPORTANTE: RECRIAR ÍCONES
-    if (window.lucide) {
-        lucide.createIcons();
-    }
+  // 🔥 injeta conteúdo dentro do menu
+  document.getElementById('app-content')
+          .appendChild(document.getElementById('conteudo'));
 
-    // ATIVO
-    const pagina = window.location.pathname.split("/").pop();
-    document.querySelectorAll('.menu-item').forEach(link => {
-        if (link.getAttribute('href').includes(pagina)) {
-            link.classList.add('active');
-        }
-    });
+  // inicia menu
+  initMenu();
 
-    document.body.style.display = "block";
+  document.body.style.display="block";
 });
 </script>
 
