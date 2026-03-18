@@ -7,7 +7,7 @@
 
 <title>Dashboard | APPVET</title>
 
-<!-- CONTROLE DE PERMISSÃO -->
+<!-- PERMISSÃO -->
 <script>
 const PERMISSAO_PAGINA = {
     area: "app",
@@ -16,7 +16,6 @@ const PERMISSAO_PAGINA = {
 </script>
 
 <style>
-/* RESET */
 * {
     margin: 0;
     padding: 0;
@@ -24,25 +23,21 @@ const PERMISSAO_PAGINA = {
     font-family: 'Inter', sans-serif;
 }
 
-/* BODY */
 body {
     background: #F5F7F9;
     display: none;
 }
 
-/* LAYOUT */
 .container {
     display: flex;
     min-height: 100vh;
 }
 
-/* CONTEÚDO */
 .main {
     flex: 1;
     padding: 20px;
 }
 
-/* HEADER */
 .topbar {
     background: #FFFFFF;
     padding: 15px 20px;
@@ -50,17 +45,14 @@ body {
     border-radius: 10px;
     margin-bottom: 20px;
     font-weight: 600;
-    color: #1F2933;
 }
 
-/* GRID CARDS */
 .cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 15px;
 }
 
-/* CARD */
 .card {
     background: #FFFFFF;
     border: 1px solid #E3E8EE;
@@ -71,16 +63,14 @@ body {
 .card-title {
     font-size: 14px;
     color: #6B7280;
-    margin-bottom: 10px;
 }
 
 .card-value {
     font-size: 22px;
     font-weight: 600;
-    color: #1F2933;
+    margin-top: 8px;
 }
 
-/* SEÇÕES */
 .section {
     margin-top: 20px;
     background: #FFFFFF;
@@ -91,26 +81,16 @@ body {
 
 .section-title {
     font-weight: 600;
-    margin-bottom: 15px;
-    color: #1F2933;
+    margin-bottom: 10px;
 }
 
-/* LISTA */
 .list-item {
-    padding: 10px;
+    padding: 10px 0;
     border-bottom: 1px solid #E3E8EE;
-    font-size: 14px;
-    color: #374151;
 }
 
-.list-item:last-child {
-    border-bottom: none;
-}
-
-/* RODAPÉ */
 .footer {
     margin-top: 30px;
-    padding: 15px;
     text-align: center;
     font-size: 13px;
     color: #6B7280;
@@ -122,17 +102,12 @@ body {
 
 <div class="container">
 
-    <!-- MENU -->
     <div id="menu-container"></div>
 
-    <!-- CONTEÚDO -->
     <div class="main">
 
-        <div class="topbar">
-            Dashboard
-        </div>
+        <div class="topbar">Dashboard</div>
 
-        <!-- CARDS -->
         <div class="cards">
             <div class="card">
                 <div class="card-title">Atendimentos Hoje</div>
@@ -140,7 +115,7 @@ body {
             </div>
 
             <div class="card">
-                <div class="card-title">Animais Cadastrados</div>
+                <div class="card-title">Animais</div>
                 <div class="card-value">248</div>
             </div>
 
@@ -155,24 +130,18 @@ body {
             </div>
         </div>
 
-        <!-- AGENDA -->
         <div class="section">
             <div class="section-title">Agenda de Hoje</div>
-
             <div class="list-item">09:00 - Consulta | Rex</div>
-            <div class="list-item">10:30 - Vacinação | Mia</div>
-            <div class="list-item">14:00 - Cirurgia | Thor</div>
+            <div class="list-item">10:30 - Vacina | Mia</div>
         </div>
 
-        <!-- ALERTAS -->
         <div class="section">
             <div class="section-title">Alertas</div>
-
-            <div class="list-item">Estoque baixo: Antibiótico X</div>
-            <div class="list-item">Vacina atrasada: Bella</div>
+            <div class="list-item">Estoque baixo</div>
+            <div class="list-item">Vacina atrasada</div>
         </div>
 
-        <!-- RODAPÉ -->
         <div class="footer">
             © 2026 APPVET • Sistema de Gestão Veterinária
         </div>
@@ -180,21 +149,39 @@ body {
     </div>
 </div>
 
-<!-- FIREBASE -->
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script>
+<!-- FIREBASE (VERSÃO COMPAT) -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 
-<script src="./js/firebase-init.js"></script>
-<script src="./js/auth.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyDR69colU9JHvemBpab3x8PLHqaUm_5EM0",
+  authDomain: "appvet-prt.firebaseapp.com",
+  projectId: "appvet-prt",
+  storageBucket: "appvet-prt.firebasestorage.app",
+  messagingSenderId: "26046923372",
+  appId: "1:26046923372:web:fdbe180eadced87018e49"
+};
 
-<!-- LOAD MENU -->
+firebase.initializeApp(firebaseConfig);
+</script>
+
+<!-- AUTH GUARD SIMPLES -->
+<script>
+firebase.auth().onAuthStateChanged(user => {
+    if (!user) {
+        window.location.href = "login.html";
+    }
+});
+</script>
+
+<!-- MENU -->
 <script>
 fetch('./menu/menu.html')
 .then(res => res.text())
 .then(data => {
     document.getElementById('menu-container').innerHTML = data;
 
-    // MARCAR ATIVO
     const links = document.querySelectorAll('.menu a');
     links.forEach(link => {
         if (link.getAttribute('href') === 'dashboard.html') {
@@ -202,15 +189,12 @@ fetch('./menu/menu.html')
         }
     });
 
-    // INJETAR PERMISSÕES
-    const script = document.createElement('script');
-    script.src = './js/menu-permissoes.js';
-
-    script.onload = () => {
-        document.body.style.display = "block";
-    };
-
-    document.body.appendChild(script);
+    // NÃO depende mais de menu-permissoes.js pra liberar tela
+    document.body.style.display = "block";
+})
+.catch(() => {
+    // mesmo se o menu falhar, não trava tela
+    document.body.style.display = "block";
 });
 </script>
 
