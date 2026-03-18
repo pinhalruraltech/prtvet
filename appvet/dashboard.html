@@ -8,6 +8,7 @@
 body {
   display:none;
   font-family:Arial;
+  background:#f5f7f9;
 }
 
 .cards {
@@ -15,10 +16,12 @@ body {
   grid-template-columns:repeat(4,1fr);
   gap:10px;
 }
+
 .card {
   background:#fff;
   padding:20px;
   border:1px solid #ccc;
+  border-radius:8px;
 }
 </style>
 </head>
@@ -43,31 +46,52 @@ body {
 fetch('./menu/menu.html')
 .then(r => r.text())
 .then(html => {
+
+  // 1. INJETA MENU
   document.getElementById('menu-container').innerHTML = html;
 
-  // 🔥 1. INJETA O CONTEÚDO PRIMEIRO
-  document.getElementById('app-content')
-    .appendChild(document.getElementById('conteudo'));
+  // 2. MOVE CONTEÚDO PARA DENTRO DO LAYOUT
+  const appContent = document.getElementById('app-content');
+  const conteudo = document.getElementById('conteudo');
 
-  // 🔥 2. INICIALIZA MENU DEPOIS
-  initMenu();
+  if (appContent && conteudo) {
+    appContent.appendChild(conteudo);
+  }
 
-  // 🔥 3. GARANTE LUCIDE (EXTRA SEGURANÇA)
+  // 3. INICIALIZA MENU (se existir)
+  if (typeof initMenu === "function") {
+    initMenu();
+  }
+
+  // 4. BOTÃO MENU (só se existir)
+  const toggle = document.getElementById('toggle-menu');
+  const sidebar = document.getElementById('sidebar');
+
+  if (toggle && sidebar) {
+    toggle.onclick = () => {
+      sidebar.classList.toggle('collapsed');
+    };
+  }
+
+  // 5. TÍTULO (se existir)
+  const titulo = document.getElementById('titulo-pagina');
+  if (titulo) {
+    titulo.innerText = "Dashboard";
+  }
+
+  // 6. ICONES
   if (window.lucide) {
     lucide.createIcons();
   }
 
+  // 7. LIBERA TELA (SEMPRE)
   document.body.style.display = "block";
-});
 
-  // 🔥 TOGGLE MENU
-  document.getElementById('toggle-menu').onclick = ()=>{
-    document.getElementById('sidebar').classList.toggle('collapsed');
-  };
+})
+.catch(err => {
+  console.error("Erro ao carregar menu:", err);
 
-  // 🔥 TITULO
-  document.getElementById('titulo-pagina').innerText = "Dashboard";
-
+  // Mesmo com erro, não trava tela
   document.body.style.display = "block";
 });
 </script>
