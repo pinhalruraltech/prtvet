@@ -1,6 +1,6 @@
 <div class="layout">
 
-  <!-- OVERLAY MOBILE -->
+  <!-- OVERLAY -->
   <div id="overlay"></div>
 
   <!-- SIDEBAR -->
@@ -31,43 +31,43 @@
     <!-- MENU -->
     <nav class="menu">
 
-      <a href="/prtvet/appvet/dashboard.html" class="menu-item" data-name="Dashboard">
+      <a href="/prtvet/appvet/dashboard.html" class="menu-item" data-key="dashboard" data-name="Dashboard">
         <i data-lucide="home"></i><span>Dashboard</span>
       </a>
 
-      <a href="/prtvet/appvet/app/clientes.html" class="menu-item" data-name="Clientes">
+      <a href="/prtvet/appvet/app/clientes.html" class="menu-item" data-key="clientes" data-name="Clientes">
         <i data-lucide="users"></i><span>Clientes</span>
       </a>
 
-      <a href="/prtvet/appvet/app/animais.html" class="menu-item" data-name="Animais">
+      <a href="/prtvet/appvet/app/animais.html" class="menu-item" data-key="animais" data-name="Animais">
         <i data-lucide="paw-print"></i><span>Animais</span>
       </a>
 
-      <a href="/prtvet/appvet/app/atendimentos.html" class="menu-item" data-name="Atendimentos">
+      <a href="/prtvet/appvet/app/atendimentos.html" class="menu-item" data-key="atendimentos" data-name="Atendimentos">
         <i data-lucide="stethoscope"></i><span>Atendimentos</span>
       </a>
 
-      <a href="/prtvet/appvet/app/agenda.html" class="menu-item" data-name="Agenda">
+      <a href="/prtvet/appvet/app/agenda.html" class="menu-item" data-key="agenda" data-name="Agenda">
         <i data-lucide="calendar"></i><span>Agenda</span>
       </a>
 
-      <a href="/prtvet/appvet/app/estoque.html" class="menu-item" data-name="Estoque">
+      <a href="/prtvet/appvet/app/estoque.html" class="menu-item" data-key="estoque" data-name="Estoque">
         <i data-lucide="package"></i><span>Estoque</span>
       </a>
 
-      <a href="/prtvet/appvet/app/financeiro.html" class="menu-item" data-name="Financeiro">
+      <a href="/prtvet/appvet/app/financeiro.html" class="menu-item" data-key="financeiro" data-name="Financeiro">
         <i data-lucide="dollar-sign"></i><span>Financeiro</span>
       </a>
 
-      <a href="/prtvet/appvet/app/internacao.html" class="menu-item" data-name="Internação">
+      <a href="/prtvet/appvet/app/internacao.html" class="menu-item" data-key="internacao" data-name="Internação">
         <i data-lucide="activity"></i><span>Internação</span>
       </a>
 
-      <a href="/prtvet/appvet/app/documentos.html" class="menu-item" data-name="Documentos">
+      <a href="/prtvet/appvet/app/documentos.html" class="menu-item" data-key="documentos" data-name="Documentos">
         <i data-lucide="file-text"></i><span>Documentos</span>
       </a>
 
-      <a href="/prtvet/appvet/app/protocolos.html" class="menu-item" data-name="Protocolos">
+      <a href="/prtvet/appvet/app/protocolos.html" class="menu-item" data-key="protocolos" data-name="Protocolos">
         <i data-lucide="clipboard-list"></i><span>Protocolos</span>
       </a>
 
@@ -95,6 +95,7 @@ function initMenu() {
     return window.innerWidth <= 768;
   }
 
+  // TOGGLE
   btn.onclick = () => {
     if (isMobile()) {
       sidebar.classList.toggle("open");
@@ -104,17 +105,32 @@ function initMenu() {
     }
   };
 
+  // FECHAR MOBILE
   overlay.onclick = () => {
     sidebar.classList.remove("open");
     overlay.classList.remove("show");
   };
 
-  // ATIVO
-  const pagina = window.location.pathname.split("/").pop();
+  // 🔥 ATIVO INTELIGENTE
+  const path = window.location.pathname;
 
-  document.querySelectorAll(".menu-item").forEach(link => {
-    if (link.href.includes(pagina)) {
-      link.classList.add("active");
+  let activeKey = "";
+
+  if (path.includes("cliente")) activeKey = "clientes";
+  else if (path.includes("clientes")) activeKey = "clientes";
+  else if (path.includes("animais")) activeKey = "animais";
+  else if (path.includes("atendimentos")) activeKey = "atendimentos";
+  else if (path.includes("agenda")) activeKey = "agenda";
+  else if (path.includes("estoque")) activeKey = "estoque";
+  else if (path.includes("financeiro")) activeKey = "financeiro";
+  else if (path.includes("internacao")) activeKey = "internacao";
+  else if (path.includes("documentos")) activeKey = "documentos";
+  else if (path.includes("protocolos")) activeKey = "protocolos";
+  else activeKey = "dashboard";
+
+  document.querySelectorAll(".menu-item").forEach(item => {
+    if (item.dataset.key === activeKey) {
+      item.classList.add("active");
     }
   });
 
@@ -124,10 +140,7 @@ function initMenu() {
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 
-.layout {
-  display:flex;
-  height:100vh;
-}
+.layout { display:flex; height:100vh; }
 
 /* OVERLAY */
 #overlay {
@@ -154,35 +167,27 @@ function initMenu() {
   align-items:center;
   padding:20px 10px;
   transition:0.3s;
-  z-index: 10;
+  z-index:10;
 }
 
-.sidebar.collapsed {
-  width:70px;
-}
+.sidebar.collapsed { width:70px; }
 
 /* MOBILE */
 @media (max-width: 768px) {
   .sidebar {
     position: fixed;
-    left: -240px;
-    top: 0;
-    height: 100%;
+    left:-240px;
+    top:0;
+    height:100%;
   }
 
-  .sidebar.open {
-    left: 0;
-  }
-
-  .main {
-    padding: 15px;
-  }
+  .sidebar.open { left:0; }
 }
 
 /* LOGO */
 .logo { width:100%; text-align:center; margin-bottom:20px; }
 
-.logo-full img { width:140px; }
+.logo-full img { width:150px; }
 .logo-mini img { width:40px; }
 
 .logo-text { color:white; font-size:13px; margin-top:8px; }
@@ -213,31 +218,40 @@ function initMenu() {
   gap:12px;
   height:50px;
   padding:0 15px;
-  border-radius:10px;
+  border-radius:12px;
   color:white;
   text-decoration:none;
+  position:relative;
 }
 
 .menu-item i { font-size:22px; }
 
+/* COLAPSADO */
 .sidebar.collapsed .menu-item span { display:none; }
 .sidebar.collapsed .menu-item { justify-content:center; }
 
+/* HOVER */
 .menu-item:hover { background:#4DB6AC; }
-.menu-item.active { background:#1b5e55; }
+
+/* 🔥 ATIVO MELHORADO */
+.menu-item.active {
+  background:#1b5e55;
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,0.15);
+}
 
 /* TOOLTIP */
 .menu-item::after {
   content: attr(data-name);
   position:absolute;
-  left:70px;
+  left:75px;
   background:#1F2933;
   color:white;
-  padding:5px 10px;
+  padding:6px 10px;
   border-radius:6px;
   font-size:12px;
   opacity:0;
   transition:0.2s;
+  white-space:nowrap;
 }
 
 .sidebar.collapsed .menu-item:hover::after {
