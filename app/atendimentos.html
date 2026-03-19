@@ -8,6 +8,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/lucide@latest"></script>
 
+<!-- MENU CSS -->
+<link rel="stylesheet" href="../menu/menu.css">
+
 <style>
 
 *{
@@ -28,20 +31,24 @@ body{
     padding:16px;
     font-size:18px;
     font-weight:600;
+    display:flex;
+    align-items:center;
+    gap:8px;
 }
 
 /* CONTAINER */
 .container{
     padding:16px;
+    padding-bottom:80px;
 }
 
 /* CARD */
 .card{
     background:#fff;
-    border-radius:12px;
+    border-radius:14px;
     padding:16px;
     margin-bottom:16px;
-    box-shadow:0 4px 6px rgba(0,0,0,0.05);
+    box-shadow:0 4px 10px rgba(0,0,0,0.04);
 }
 
 /* INPUTS */
@@ -55,10 +62,15 @@ label{
 input, select, textarea{
     width:100%;
     padding:14px;
-    border-radius:10px;
-    border:1.5px solid #D1D5DB;
+    border-radius:12px;
+    border:1.8px solid #CBD5E1;
     font-size:15px;
     margin-bottom:12px;
+    outline:none;
+}
+
+input:focus, select:focus, textarea:focus{
+    border-color:#2D6A4F;
 }
 
 /* BOTÕES */
@@ -70,6 +82,10 @@ input, select, textarea{
     font-size:15px;
     font-weight:600;
     margin-top:8px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
 }
 
 .btn-primary{
@@ -80,7 +96,6 @@ input, select, textarea{
 .btn-option{
     background:#E8F5E9;
     color:#2D6A4F;
-    margin-bottom:8px;
 }
 
 /* MINI CARD */
@@ -94,7 +109,7 @@ input, select, textarea{
     width:60px;
     height:60px;
     border-radius:12px;
-    background:#ddd;
+    background:#E5E7EB;
 }
 
 .small{
@@ -107,13 +122,26 @@ input, select, textarea{
     display:none;
 }
 
+/* TÍTULO SEÇÃO */
+.section-title{
+    font-weight:600;
+    margin-bottom:10px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+}
+
 </style>
 </head>
 
 <body>
 
+<!-- MENU -->
+<div id="menu-container"></div>
+
 <div class="header">
-    <i data-lucide="stethoscope"></i> Atendimento
+    <i data-lucide="stethoscope"></i>
+    Atendimento
 </div>
 
 <div class="container">
@@ -138,6 +166,10 @@ input, select, textarea{
 <!-- FORM -->
 <div class="card">
 
+    <div class="section-title">
+        <i data-lucide="clipboard"></i> Atendimento
+    </div>
+
     <label>Tipo de atendimento</label>
     <select id="tipo">
         <option>Consulta</option>
@@ -148,37 +180,40 @@ input, select, textarea{
     </select>
 
     <label>Sintomas</label>
-    <textarea id="sintomas"></textarea>
+    <textarea id="sintomas" rows="3"></textarea>
 
     <label>Diagnóstico</label>
-    <textarea id="diagnostico"></textarea>
+    <textarea id="diagnostico" rows="3"></textarea>
 
     <label>Procedimentos</label>
-    <textarea id="procedimentos"></textarea>
+    <textarea id="procedimentos" rows="3"></textarea>
 
     <label>Observações</label>
-    <textarea id="observacoes"></textarea>
+    <textarea id="observacoes" rows="3"></textarea>
 
 </div>
 
 <!-- EVOLUÇÃO -->
 <div class="card">
-    <label>Evolução do paciente</label>
+
+    <div class="section-title">
+        <i data-lucide="activity"></i> Evolução do paciente
+    </div>
 
     <button class="btn btn-option" onclick="toggle('vacinaBox')">
-        💉 Nova Vacina
+        <i data-lucide="syringe"></i> Nova Vacina
     </button>
 
     <button class="btn btn-option" onclick="toggle('medicacaoBox')">
-        💊 Prescrever Medicação
+        <i data-lucide="pill"></i> Prescrever Medicação
     </button>
 
     <button class="btn btn-option" onclick="toggle('exameBox')">
-        🧪 Solicitar Exame
+        <i data-lucide="flask-conical"></i> Solicitar Exame
     </button>
 
     <button class="btn btn-option" onclick="toggle('internacaoBox')">
-        🏥 Internação
+        <i data-lucide="bed"></i> Internação
     </button>
 
 </div>
@@ -186,19 +221,19 @@ input, select, textarea{
 <!-- VACINA -->
 <div class="card hidden" id="vacinaBox">
     <label>Nome da vacina</label>
-    <input type="text" id="vacinaNome">
+    <input type="text">
 
     <label>Data</label>
-    <input type="date" id="vacinaData">
+    <input type="date">
 
     <label>Próxima dose</label>
-    <input type="date" id="vacinaProxima">
+    <input type="date">
 </div>
 
 <!-- MEDICAÇÃO -->
 <div class="card hidden" id="medicacaoBox">
     <label>Medicamento</label>
-    <input type="text" id="medNome">
+    <input type="text">
 
     <label>Posologia</label>
     <input type="text" placeholder="Ex: 6 em 6 horas">
@@ -223,7 +258,7 @@ input, select, textarea{
     </select>
 
     <label>Observações</label>
-    <textarea></textarea>
+    <textarea rows="3"></textarea>
 </div>
 
 <!-- INTERNAÇÃO -->
@@ -256,11 +291,12 @@ input, select, textarea{
 </div>
 
 <button class="btn btn-primary" onclick="salvarAtendimento()">
-    💾 Salvar Atendimento
+    <i data-lucide="save"></i> Salvar Atendimento
 </button>
 
 </div>
 
+<!-- FIREBASE -->
 <script type="module">
 
 import { db } from "../js/firebase-init.js";
@@ -304,13 +340,24 @@ window.salvarAtendimento = async function(){
 
 </script>
 
+<!-- MENU LOAD -->
 <script>
+
+fetch("../menu/menu.html")
+.then(res => res.text())
+.then(html => {
+    document.getElementById("menu-container").innerHTML = html;
+
+    const script = document.createElement("script");
+    script.src = "../menu/menu.js";
+    document.body.appendChild(script);
+
+    lucide.createIcons();
+});
 
 function toggle(id){
     document.getElementById(id).classList.toggle("hidden");
 }
-
-lucide.createIcons();
 
 </script>
 
