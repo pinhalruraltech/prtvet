@@ -109,6 +109,8 @@ input {
 <div id="menu-container"></div>
 
 <script>
+const PERMISSAO_PAGINA = { area:"app", chave:"clientes" };
+
 const firebaseConfig = {
   apiKey: "AIzaSyDR69colU9JHvemBpab3x8PLHqaUm_5EM0",
   authDomain: "appvet-prt.firebaseapp.com",
@@ -139,7 +141,23 @@ async function carregarMenu(){
   document.getElementById("menu-container").innerHTML = await res.text();
 
   requestAnimationFrame(()=>{
-    initMenu();
+    if(typeof initMenu==="function") initMenu();
+
+    // 🔥 MARCAR ATIVO
+    document.querySelectorAll(".menu nav a").forEach(link=>{
+      if(link.dataset.key === "clientes"){
+        link.classList.add("active");
+      }
+
+      // 🔥 FECHAR MENU AO CLICAR (mobile)
+      link.addEventListener("click", ()=>{
+        const menu = document.getElementById("menu");
+        const overlay = document.getElementById("overlay");
+        if(menu) menu.classList.remove("open");
+        if(overlay) overlay.classList.remove("show");
+      });
+    });
+
   });
 
   const container = document.getElementById("app-content");
@@ -240,17 +258,17 @@ function verCliente(id){
 }
 
 function abrirModal(){
-  modal.style.display="flex";
+  document.getElementById("modal").style.display="flex";
 }
 
 function fecharModal(){
-  modal.style.display="none";
+  document.getElementById("modal").style.display="none";
 }
 
 async function salvar(){
   await db.collection("clientes").add({
-    nome: nome.value,
-    telefone: telefone.value
+    nome: document.getElementById("nome").value,
+    telefone: document.getElementById("telefone").value
   });
 
   fecharModal();
