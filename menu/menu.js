@@ -22,7 +22,6 @@ function carregarUsuario(){
 /* LOGOUT */
 function logout(){
     alert("Logout");
-    // depois integrar com Firebase Auth
 }
 
 carregarUsuario();
