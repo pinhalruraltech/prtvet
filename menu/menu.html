@@ -1,81 +1,71 @@
-<div class="menu-wrapper" id="menuWrapper">
+<div class="menu-wrapper">
 
-  <!-- SIDEBAR -->
-  <aside class="sidebar" id="sidebar">
-
-    <!-- TOPO -->
-    <div class="sidebar-header">
-      <img src="../logo/logo_rafael.png" class="logo" />
-
-      <p class="clinic">Clínica Veterinária</p>
-      <p class="doctor">Dr. Rafael Frutuoso</p>
+    <!-- TOPO / LOGO -->
+    <div class="menu-top">
+        <img src="../logo/logo_rafael.png" class="logo">
+        <div class="menu-info">
+            <strong>Clínica Veterinária</strong>
+            <span>Dr. Rafael Frutuoso</span>
+        </div>
     </div>
 
-    <!-- USUÁRIO -->
-    <div class="user-info">
-      <span>Usuário:</span>
-      <strong id="userNome">Carregando...</strong>
+    <!-- BOTÃO SETA -->
+    <div class="menu-toggle" onclick="toggleMenu()">
+        <i data-lucide="chevron-down" id="menuIcon"></i>
     </div>
 
     <!-- MENU -->
-    <nav class="menu">
+    <div class="menu-horizontal hidden" id="menuHorizontal">
 
-      <a href="../index.html" class="menu-item">
-        <i data-lucide="home"></i>
-        <span>Início</span>
-      </a>
+        <a href="../app/index.html"><i data-lucide="home"></i><span>Início</span></a>
 
-      <a href="clientes.html" class="menu-item">
-        <i data-lucide="users"></i>
-        <span>Clientes</span>
-      </a>
+        <a href="../app/lembretes.html"><i data-lucide="clipboard-list"></i><span>Lembretes</span></a>
 
-      <a href="animais.html" class="menu-item">
-        <i data-lucide="paw-print"></i>
-        <span>Animais</span>
-      </a>
+        <a href="../app/animais.html"><i data-lucide="paw-print"></i><span>Animais</span></a>
 
-      <a href="agenda.html" class="menu-item">
-        <i data-lucide="calendar"></i>
-        <span>Agenda</span>
-      </a>
+        <a href="../app/clientes.html"><i data-lucide="users"></i><span>Clientes</span></a>
 
-      <a href="financeiro.html" class="menu-item">
-        <i data-lucide="dollar-sign"></i>
-        <span>Financeiro</span>
-      </a>
+        <a href="../app/atendimentos.html"><i data-lucide="stethoscope"></i><span>Atendimentos</span></a>
 
-    </nav>
+        <a href="../app/vacinas.html"><i data-lucide="syringe"></i><span>Vacinas</span></a>
 
-    <!-- RODAPÉ -->
-    <div class="sidebar-footer">
+        <a href="../app/internacao.html"><i data-lucide="bed"></i><span>Internação</span></a>
 
-      <a href="../suporte/suporte.html" class="footer-link">
-        <i data-lucide="life-buoy"></i>
-        <span>Suporte</span>
-      </a>
+        <a href="../app/agenda.html"><i data-lucide="calendar"></i><span>Agenda</span></a>
 
-      <button class="logout" id="logoutBtn">
-        <i data-lucide="log-out"></i>
-        <span>Sair</span>
-      </button>
+        <a href="../app/estoque.html"><i data-lucide="package"></i><span>Estoque</span></a>
 
-      <p class="dev">Desenvolvido por PRT Soluções</p>
+        <a href="../app/vendas.html"><i data-lucide="shopping-cart"></i><span>Vendas</span></a>
+
+        <a href="../app/financeiro.html"><i data-lucide="dollar-sign"></i><span>Financeiro</span></a>
+
+        <a href="../app/relatorios.html"><i data-lucide="bar-chart"></i><span>Relatórios</span></a>
+
+        <a href="../app/documentos.html"><i data-lucide="file-text"></i><span>Documentos</span></a>
+
+        <a href="../app/configuracoes.html"><i data-lucide="settings"></i><span>Config</span></a>
 
     </div>
 
-  </aside>
+    <!-- RODAPÉ -->
+    <div class="menu-footer">
 
-  <!-- OVERLAY -->
-  <div class="overlay" id="overlay"></div>
+        <div class="usuario">
+            👤 <span id="usuarioNome">Usuário</span>
+        </div>
+
+        <a href="../app/suporte.html" class="suporte">
+            <i data-lucide="life-buoy"></i> Suporte
+        </a>
+
+        <div class="logout" onclick="logout()">
+            <i data-lucide="log-out"></i> Sair
+        </div>
+
+        <div class="dev">
+            Desenvolvido por PRT Soluções
+        </div>
+
+    </div>
 
 </div>
-
-<!-- TOPBAR -->
-<header class="topbar">
-  <button id="menuToggle">
-    <i data-lucide="menu"></i>
-  </button>
-
-  <h1 id="pageTitle">Dashboard</h1>
-</header>
