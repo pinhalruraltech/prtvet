@@ -3,259 +3,236 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Atendimentos | AppVet</title>
+<title>Atendimento | AppVet</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
+<script src="https://unpkg.com/lucide@latest"></script>
+
 <style>
-
-body {
+body{
     margin:0;
-    font-family:'Inter',sans-serif;
-    background:#F1F5F9;
-}
-
-/* TOPBAR */
-.topbar{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:16px;
-    background:white;
-    border-bottom:1px solid #E5EAF0;
-}
-
-.topbar-left{
-    display:flex;
-    align-items:center;
-    gap:10px;
-}
-
-.main{
-    margin-left:240px;
-    padding:20px;
-}
-
-@media(max-width:768px){
-    .main{margin-left:0;}
+    font-family:'Inter', sans-serif;
+    background:#F5F7F9;
+    color:#1F2933;
 }
 
 /* HEADER */
 .header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:16px;
+    background:#2D6A4F;
+    color:#fff;
+    padding:16px;
+    font-size:18px;
+    font-weight:600;
 }
 
-.btn{
-    background:#3B82F6;
-    color:white;
-    border:none;
-    padding:10px 14px;
-    border-radius:10px;
-    cursor:pointer;
+/* CONTAINER */
+.container{
+    padding:16px;
 }
 
-/* BUSCA */
-.search{
-    width:100%;
-    padding:12px;
-    border-radius:10px;
-    border:1px solid #E5EAF0;
-    margin-bottom:10px;
-}
-
-/* FILTROS */
-.filters{
-    display:flex;
-    gap:10px;
-    margin-bottom:16px;
-}
-
-.filter{
-    padding:8px 12px;
-    border-radius:8px;
-    border:1px solid #E5EAF0;
-    background:white;
-    cursor:pointer;
-}
-
-/* DATA */
-.date{
-    margin:10px 0;
-    color:#6B7280;
-}
-
-/* CARD ATENDIMENTO */
+/* CARD */
 .card{
-    background:white;
-    border-radius:14px;
-    padding:12px;
-    margin-bottom:12px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    border:1px solid #E5EAF0;
+    background:#fff;
+    border-radius:12px;
+    padding:16px;
+    margin-bottom:16px;
+    box-shadow:0 4px 6px rgba(0,0,0,0.05);
 }
 
-/* ESQUERDA */
-.left{
-    display:flex;
-    gap:10px;
-    align-items:center;
-}
-
-.left img{
-    width:50px;
-    height:50px;
-    border-radius:10px;
-    object-fit:cover;
-}
-
-.info strong{
-    font-size:15px;
-}
-
-.info small{
+/* INPUTS */
+label{
+    font-size:13px;
     color:#6B7280;
+    display:block;
+    margin-bottom:6px;
 }
 
-/* TAG */
-.tag{
-    padding:6px 10px;
-    border-radius:8px;
-    font-size:12px;
+input, select, textarea{
+    width:100%;
+    padding:14px;
+    border-radius:10px;
+    border:1px solid #E3E8EE;
+    font-size:15px;
+    margin-bottom:12px;
 }
 
-.consulta{background:#FEF3C7;color:#B45309;}
-.vacina{background:#DCFCE7;color:#166534;}
-.retorno{background:#E0F2FE;color:#0369A1;}
+/* BOTÕES */
+.btn{
+    width:100%;
+    padding:16px;
+    border:none;
+    border-radius:12px;
+    font-size:16px;
+    font-weight:600;
+    margin-top:10px;
+}
 
-/* HORAS */
-.time{
+.btn-primary{
+    background:#2D6A4F;
+    color:#fff;
+}
+
+.btn-secondary{
+    background:#E3E8EE;
+}
+
+/* MINI CARD ANIMAL */
+.animal-card{
     display:flex;
-    gap:10px;
+    gap:12px;
     align-items:center;
 }
 
-.time span{
-    background:#E5E7EB;
-    padding:6px 10px;
-    border-radius:8px;
+.animal-photo{
+    width:60px;
+    height:60px;
+    border-radius:12px;
+    background:#ddd;
 }
 
-.time .active{
-    background:#67C1C7;
-    color:white;
+.small{
+    font-size:13px;
+    color:#6B7280;
 }
 
 </style>
-
 </head>
 
 <body>
 
-<div id="menu-container"></div>
-
-<div class="topbar">
-    <div class="topbar-left">
-        <button id="menu-btn">☰</button>
-        <strong>Atendimentos</strong>
-    </div>
-
-    <button class="btn">+ Novo Atendimento</button>
+<div class="header">
+    Atendimento
 </div>
 
-<div class="main">
+<div class="container">
 
-    <input class="search" placeholder="Buscar paciente...">
-
-    <div class="filters">
-        <div class="filter">Hoje</div>
-        <div class="filter">Semana</div>
-        <div class="filter">Filtrar</div>
+    <!-- ANIMAL -->
+    <div class="card">
+        <label>Selecionar Animal</label>
+        <select id="animalSelect"></select>
     </div>
 
-    <div class="date">Abr 24, 2024</div>
-
-    <!-- ITEM -->
-    <div class="card">
-        <div class="left">
-            <img src="https://placedog.net/100?id=1">
-            <div class="info">
-                <strong>Thor</strong><br>
-                <small>Labrador • 4 anos</small>
+    <!-- RESUMO -->
+    <div class="card" id="animalResumo">
+        <div class="animal-card">
+            <div class="animal-photo"></div>
+            <div>
+                <strong id="animalNome">-</strong>
+                <div class="small" id="animalInfo"></div>
             </div>
         </div>
-
-        <div class="time">
-            <span class="tag consulta">Consulta</span>
-            <span class="active">09:00</span>
-            <span>11:10</span>
-        </div>
     </div>
 
+    <!-- FORM -->
     <div class="card">
-        <div class="left">
-            <img src="https://placedog.net/100?id=2">
-            <div class="info">
-                <strong>Mel</strong><br>
-                <small>Jeão • 2 anos</small>
-            </div>
-        </div>
 
-        <div class="time">
-            <span class="tag vacina">Vacina</span>
-            <span class="active">10:00</span>
-            <span>11:30</span>
-        </div>
+        <label>Tipo de atendimento</label>
+        <select id="tipo">
+            <option>Consulta</option>
+            <option>Vacina</option>
+            <option>Procedimento</option>
+            <option>Cirurgia</option>
+            <option>Emergência</option>
+        </select>
+
+        <label>Sintomas</label>
+        <textarea id="sintomas" rows="3"></textarea>
+
+        <label>Diagnóstico</label>
+        <textarea id="diagnostico" rows="3"></textarea>
+
+        <label>Procedimentos</label>
+        <textarea id="procedimentos" rows="3"></textarea>
+
+        <label>Observações</label>
+        <textarea id="observacoes" rows="3"></textarea>
+
     </div>
 
+    <!-- MEDICAMENTOS -->
     <div class="card">
-        <div class="left">
-            <img src="https://placedog.net/100?id=3">
-            <div class="info">
-                <strong>Ursinho</strong><br>
-                <small>Shih Tzu • 5 anos</small>
-            </div>
-        </div>
+        <label>Medicamentos aplicados</label>
 
-        <div class="time">
-            <span class="tag retorno">Retorno</span>
-            <span class="active">08:00</span>
-            <span>12:10</span>
-        </div>
+        <select id="medicamento"></select>
+        <input type="text" id="dose" placeholder="Dose">
+        <select id="via">
+            <option>IM</option>
+            <option>SC</option>
+            <option>Oral</option>
+        </select>
     </div>
 
+    <!-- RETORNO -->
     <div class="card">
-        <div class="left">
-            <img src="https://placedog.net/100?id=4">
-            <div class="info">
-                <strong>Zeus</strong><br>
-                <small>Golden • 8 anos</small>
-            </div>
-        </div>
-
-        <div class="time">
-            <span class="tag consulta">Consulta</span>
-            <span class="active">09:00</span>
-            <span>16:30</span>
-        </div>
+        <label>Agendar retorno</label>
+        <input type="date" id="dataRetorno">
+        <input type="time" id="horaRetorno">
     </div>
+
+    <!-- BOTÕES -->
+    <button class="btn btn-primary" onclick="salvarAtendimento()">
+        Salvar Atendimento
+    </button>
 
 </div>
 
-<div class="footer" style="position:fixed;bottom:0;width:100%;background:#2D6A4F;color:white;padding:10px;display:flex;justify-content:space-between;">
-    <div>AppVet v1.0.0</div>
-    <div>PRT Soluções</div>
-</div>
+<script type="module">
+
+import { db } from "../js/firebase-init.js";
+import {
+    collection,
+    getDocs,
+    addDoc,
+    serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+// CARREGAR ANIMAIS
+async function carregarAnimais(){
+    const snapshot = await getDocs(collection(db, "animais"));
+    const select = document.getElementById("animalSelect");
+
+    snapshot.forEach(doc=>{
+        const data = doc.data();
+        const option = document.createElement("option");
+        option.value = doc.id;
+        option.textContent = data.nome;
+        select.appendChild(option);
+    });
+}
+
+carregarAnimais();
+
+// SALVAR
+window.salvarAtendimento = async function(){
+
+    const animalId = document.getElementById("animalSelect").value;
+
+    const data = {
+        animalId: animalId,
+        tipo: document.getElementById("tipo").value,
+        sintomas: document.getElementById("sintomas").value,
+        diagnostico: document.getElementById("diagnostico").value,
+        procedimentos: document.getElementById("procedimentos").value,
+        observacoes: document.getElementById("observacoes").value,
+        medicamento: document.getElementById("medicamento").value,
+        dose: document.getElementById("dose").value,
+        via: document.getElementById("via").value,
+        dataRetorno: document.getElementById("dataRetorno").value,
+        horaRetorno: document.getElementById("horaRetorno").value,
+        createdAt: serverTimestamp()
+    };
+
+    await addDoc(collection(db, "atendimentos"), data);
+
+    alert("Atendimento salvo com sucesso!");
+
+}
+
+</script>
 
 <script>
-fetch("menu/menu.html")
-.then(r=>r.text())
-.then(d=>document.getElementById("menu-container").innerHTML=d);
+lucide.createIcons();
 </script>
 
 </body>
