@@ -14,7 +14,7 @@
 body {
     margin: 0;
     font-family: 'Inter', sans-serif;
-    background: #F8FAFC;
+    background: #F1F5F9;
     color: #1F2933;
 }
 
@@ -24,7 +24,6 @@ body {
     padding: 24px;
 }
 
-/* MOBILE */
 @media (max-width: 768px) {
     .main {
         margin-left: 0;
@@ -33,35 +32,28 @@ body {
 }
 
 /* HEADER */
-.page-header {
-    margin-bottom: 24px;
-}
-
 .page-header h1 {
-    margin: 0;
     font-size: 24px;
     font-weight: 600;
-    letter-spacing: -0.3px;
+    margin-bottom: 20px;
 }
 
 /* GRID */
 .grid {
     display: grid;
-    gap: 16px;
+    gap: 20px;
 }
 
 .grid-4 {
     grid-template-columns: repeat(4, 1fr);
 }
 
-@media (max-width: 900px) {
-    .grid-4 {
-        grid-template-columns: repeat(2, 1fr);
-    }
+.grid-2 {
+    grid-template-columns: repeat(2, 1fr);
 }
 
-@media (max-width: 500px) {
-    .grid-4 {
+@media (max-width: 900px) {
+    .grid-4, .grid-2 {
         grid-template-columns: 1fr;
     }
 }
@@ -69,25 +61,32 @@ body {
 /* CARDS */
 .card {
     background: #FFFFFF;
-    border-radius: 12px;
-    border: 1px solid #E3E8EE;
-    padding: 16px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.04);
+    border-radius: 16px;
+    padding: 18px;
+    border: 1px solid #E5EAF0;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.04);
 }
 
-/* CARD STATS */
+/* STATS */
 .stat-card {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 14px;
 }
 
-.stat-card i {
-    background: #E6F4EA;
-    color: #2D6A4F;
-    padding: 10px;
-    border-radius: 8px;
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
+
+.icon-blue { background: #E0F2FE; color: #0284C7; }
+.icon-green { background: #DCFCE7; color: #16A34A; }
+.icon-purple { background: #EDE9FE; color: #7C3AED; }
+.icon-orange { background: #FFF7ED; color: #EA580C; }
 
 .card-title {
     font-size: 13px;
@@ -97,24 +96,46 @@ body {
 .card-value {
     font-size: 22px;
     font-weight: 600;
-    margin-top: 5px;
 }
 
-/* SEÇÕES */
-.section {
-    margin-top: 20px;
-}
-
-/* LISTA */
-.list-item {
-    padding: 12px 0;
-    border-bottom: 1px solid #E3E8EE;
+/* BLOCO CABEÇALHO */
+.card-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    margin-bottom: 10px;
+    font-weight: 500;
 }
 
-/* BOTÃO */
+/* ITENS MODERNOS */
+.item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px;
+    border-radius: 12px;
+    transition: 0.2s;
+}
+
+.item:hover {
+    background: #F8FAFC;
+}
+
+.item-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.item-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* FAB */
 .fab {
     position: fixed;
     bottom: 80px;
@@ -122,29 +143,25 @@ body {
     background: linear-gradient(135deg, #2D6A4F, #40916C);
     color: white;
     border-radius: 50px;
-    padding: 14px 18px;
+    padding: 14px 20px;
     border: none;
-    cursor: pointer;
     display: flex;
-    align-items: center;
     gap: 8px;
-    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
-    font-weight: 500;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 8px 18px rgba(0,0,0,0.2);
 }
 
 /* FOOTER */
 .footer {
     position: fixed;
     bottom: 0;
-    left: 0;
     width: 100%;
     background: #2D6A4F;
     color: white;
     padding: 12px 16px;
     display: flex;
     justify-content: space-between;
-    font-size: 14px;
-    z-index: 999;
 }
 
 </style>
@@ -153,102 +170,147 @@ body {
 
 <body>
 
-<!-- MENU -->
 <div id="menu-container"></div>
 
-<!-- MAIN -->
 <div class="main">
 
     <div class="page-header">
         <h1>Dashboard</h1>
     </div>
 
-    <!-- CARDS -->
+    <!-- STATS -->
     <div class="grid grid-4">
 
         <div class="card stat-card">
-            <i data-lucide="users"></i>
-            <div>
-                <div class="card-title">Clientes</div>
-                <div class="card-value">128</div>
+            <div class="stat-icon icon-blue">
+                <i data-lucide="stethoscope"></i>
             </div>
-        </div>
-
-        <div class="card stat-card">
-            <i data-lucide="paw-print"></i>
             <div>
-                <div class="card-title">Pacientes</div>
-                <div class="card-value">342</div>
-            </div>
-        </div>
-
-        <div class="card stat-card">
-            <i data-lucide="stethoscope"></i>
-            <div>
-                <div class="card-title">Atendimentos Hoje</div>
-                <div class="card-value">12</div>
-            </div>
-        </div>
-
-        <div class="card stat-card">
-            <i data-lucide="bed"></i>
-            <div>
-                <div class="card-title">Internações</div>
                 <div class="card-value">3</div>
+                <div class="card-title">Atendimentos</div>
+            </div>
+        </div>
+
+        <div class="card stat-card">
+            <div class="stat-icon icon-purple">
+                <i data-lucide="paw-print"></i>
+            </div>
+            <div>
+                <div class="card-value">128</div>
+                <div class="card-title">Pacientes</div>
+            </div>
+        </div>
+
+        <div class="card stat-card">
+            <div class="stat-icon icon-green">
+                <i data-lucide="users"></i>
+            </div>
+            <div>
+                <div class="card-value">78</div>
+                <div class="card-title">Clientes</div>
+            </div>
+        </div>
+
+        <div class="card stat-card">
+            <div class="stat-icon icon-orange">
+                <i data-lucide="bed"></i>
+            </div>
+            <div>
+                <div class="card-value">2</div>
+                <div class="card-title">Internações</div>
             </div>
         </div>
 
     </div>
 
-    <!-- AGENDA -->
-    <div class="section card">
-        <strong>Agenda</strong>
+    <!-- BLOCOS -->
+    <div class="grid grid-2" style="margin-top:20px;">
 
-        <div class="list-item">
-            <span>Thor - Consulta</span>
-            <span>09:00</span>
+        <!-- AGENDA -->
+        <div class="card">
+            <div class="card-header">
+                <span>Agenda</span>
+                <span>...</span>
+            </div>
+
+            <div class="item">
+                <div class="item-left">
+                    <div class="item-icon icon-blue">
+                        <i data-lucide="calendar"></i>
+                    </div>
+                    <div>
+                        <strong>Hoje</strong><br>
+                        <small>24 atendimentos</small>
+                    </div>
+                </div>
+                <i data-lucide="chevron-right"></i>
+            </div>
+
+            <div class="item">
+                <div class="item-left">
+                    <div class="item-icon icon-green">
+                        <i data-lucide="calendar-days"></i>
+                    </div>
+                    <div>
+                        <strong>Semana</strong><br>
+                        <small>24 atendimentos</small>
+                    </div>
+                </div>
+                <i data-lucide="chevron-right"></i>
+            </div>
+
         </div>
 
-        <div class="list-item">
-            <span>Mel - Vacina</span>
-            <span>10:30</span>
+        <!-- ALERTAS -->
+        <div class="card">
+            <div class="card-header">
+                <span>Alertas</span>
+                <span>...</span>
+            </div>
+
+            <div class="item">
+                <div class="item-left">
+                    <div class="item-icon icon-orange">
+                        <i data-lucide="alert-circle"></i>
+                    </div>
+                    <div>
+                        <strong>Produtos vencendo</strong><br>
+                        <small>26 itens</small>
+                    </div>
+                </div>
+                <i data-lucide="chevron-right"></i>
+            </div>
+
+            <div class="item">
+                <div class="item-left">
+                    <div class="item-icon icon-purple">
+                        <i data-lucide="syringe"></i>
+                    </div>
+                    <div>
+                        <strong>Vacinas vencendo</strong><br>
+                        <small>22 itens</small>
+                    </div>
+                </div>
+                <i data-lucide="chevron-right"></i>
+            </div>
+
         </div>
 
-        <div class="list-item">
-            <span>Rex - Retorno</span>
-            <span>14:00</span>
-        </div>
-    </div>
-
-    <!-- ALERTAS -->
-    <div class="section card">
-        <strong>Alertas</strong>
-
-        <div class="list-item">
-            <span>Vacinas vencendo</span>
-        </div>
-
-        <div class="list-item">
-            <span>Produtos próximos da validade</span>
-        </div>
     </div>
 
 </div>
 
-<!-- BOTÃO NOVO ATENDIMENTO -->
 <button class="fab">
     <i data-lucide="plus"></i>
     Novo Atendimento
 </button>
 
-<!-- FOOTER -->
 <div class="footer">
     <div>Usuário: Venício</div>
     <div>AppVet v1.0.0</div>
     <div>Sair</div>
 </div>
 
-<!-- MENU LOAD -->
 <script>
 fetch("menu/menu.html")
 .then(res => res.text())
@@ -257,7 +319,6 @@ fetch("menu/menu.html")
 });
 </script>
 
-<!-- LUCIDE -->
 <script src="https://unpkg.com/lucide@latest"></script>
 <script>
 lucide.createIcons();
