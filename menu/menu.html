@@ -1,49 +1,189 @@
-<div class="sidebar" id="sidebar">
+<!-- MENU APPVET -->
+<div class="appvet-menu">
 
-    <div class="logo">
-        <strong>AppVet</strong>
+    <!-- TOPBAR MOBILE -->
+    <div class="topbar">
+        <button id="menu-btn">
+            <i data-lucide="menu"></i>
+        </button>
+
+        <div class="page-title">AppVet</div>
     </div>
 
-    <nav>
-        <a href="index.html" class="menu-item">
-            <i data-lucide="home"></i>
-            <span>Dashboard</span>
-        </a>
+    <!-- SIDEBAR -->
+    <div class="sidebar" id="sidebar">
 
-        <a href="app/atendimentos.html" class="menu-item">
-            <i data-lucide="stethoscope"></i>
-            <span>Atendimentos</span>
-        </a>
+        <div class="logo">
+            <strong>AppVet</strong>
+        </div>
 
-        <a href="app/agenda.html" class="menu-item">
-            <i data-lucide="calendar"></i>
-            <span>Agenda</span>
-        </a>
+        <nav>
+            <a href="/index.html" class="menu-item">
+                <i data-lucide="home"></i>
+                <span>Dashboard</span>
+            </a>
 
-        <a href="app/clientes.html" class="menu-item">
-            <i data-lucide="users"></i>
-            <span>Clientes</span>
-        </a>
+            <a href="/app/atendimentos.html" class="menu-item">
+                <i data-lucide="stethoscope"></i>
+                <span>Atendimentos</span>
+            </a>
 
-        <a href="app/estoque.html" class="menu-item">
-            <i data-lucide="package"></i>
-            <span>Estoque</span>
-        </a>
+            <a href="/app/agenda.html" class="menu-item">
+                <i data-lucide="calendar"></i>
+                <span>Agenda</span>
+            </a>
 
-        <a href="app/financeiro.html" class="menu-item">
-            <i data-lucide="dollar-sign"></i>
-            <span>Financeiro</span>
-        </a>
+            <a href="/app/clientes.html" class="menu-item">
+                <i data-lucide="users"></i>
+                <span>Clientes</span>
+            </a>
 
-        <a href="app/relatorios.html" class="menu-item">
-            <i data-lucide="bar-chart"></i>
-            <span>Relatórios</span>
-        </a>
+            <a href="/app/estoque.html" class="menu-item">
+                <i data-lucide="package"></i>
+                <span>Estoque</span>
+            </a>
 
-        <a href="app/configuracoes.html" class="menu-item">
-            <i data-lucide="settings"></i>
-            <span>Configurações</span>
-        </a>
-    </nav>
+            <a href="/app/financeiro.html" class="menu-item">
+                <i data-lucide="dollar-sign"></i>
+                <span>Financeiro</span>
+            </a>
+
+            <a href="/app/relatorios.html" class="menu-item">
+                <i data-lucide="bar-chart"></i>
+                <span>Relatórios</span>
+            </a>
+
+            <a href="/app/configuracoes.html" class="menu-item">
+                <i data-lucide="settings"></i>
+                <span>Configurações</span>
+            </a>
+        </nav>
+
+    </div>
 
 </div>
+
+<!-- ESTILO EMBUTIDO -->
+<style>
+.appvet-menu * {
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+/* TOPBAR */
+.topbar {
+    display: none;
+    background: white;
+    padding: 12px;
+    border-bottom: 1px solid #E3E8EE;
+    align-items: center;
+    gap: 10px;
+}
+
+#menu-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.page-title {
+    font-weight: 600;
+}
+
+/* SIDEBAR */
+.sidebar {
+    width: 240px;
+    background: #1F2933;
+    color: white;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    padding: 20px;
+    transition: transform 0.3s ease;
+    z-index: 1000;
+}
+
+.logo {
+    margin-bottom: 30px;
+    font-size: 18px;
+}
+
+/* MENU ITEMS */
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    color: #D1D5DB;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: 0.2s;
+}
+
+.menu-item:hover {
+    background: rgba(255,255,255,0.1);
+}
+
+.menu-item.active {
+    background: #2D6A4F;
+    color: white;
+}
+
+.menu-item i {
+    width: 18px;
+    height: 18px;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+
+    .topbar {
+        display: flex;
+    }
+
+    .sidebar {
+        transform: translateX(-100%);
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+}
+</style>
+
+<!-- JS EMBUTIDO -->
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+
+function initMenu() {
+
+    const btn = document.getElementById("menu-btn");
+    const sidebar = document.getElementById("sidebar");
+
+    if (btn && sidebar) {
+        btn.addEventListener("click", () => {
+            sidebar.classList.toggle("open");
+        });
+    }
+
+    // Ativar ícones
+    if (window.lucide) {
+        lucide.createIcons();
+    }
+
+    // Link ativo automático
+    const links = document.querySelectorAll(".menu-item");
+    const current = window.location.pathname;
+
+    links.forEach(link => {
+        if (current.includes(link.getAttribute("href"))) {
+            link.classList.add("active");
+        }
+    });
+}
+
+// Garante execução mesmo com fetch
+setTimeout(initMenu, 100);
+
+</script>
