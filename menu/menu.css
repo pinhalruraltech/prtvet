@@ -6,29 +6,38 @@
 /* TOPO */
 .menu-top{
     text-align:center;
-    padding:16px;
+    padding:20px 16px 10px;
+    position:relative;
 }
 
+/* USUÁRIO NO TOPO DIREITO */
+.menu-user{
+    position:absolute;
+    right:16px;
+    top:16px;
+    font-size:13px;
+}
+
+/* LOGO MAIOR */
 .logo{
-    width:80px;
-    margin-bottom:8px;
+    width:120px;
+    margin-bottom:10px;
 }
 
+/* TEXTO */
 .menu-info strong{
     display:block;
-    font-size:14px;
+    font-size:16px;
 }
 
 .menu-info span{
-    font-size:12px;
-    opacity:0.8;
+    font-size:13px;
+    opacity:0.85;
 }
 
-/* TOGGLE */
+/* SETA */
 .menu-toggle{
-    display:flex;
-    justify-content:center;
-    padding:6px;
+    margin-top:10px;
     cursor:pointer;
 }
 
@@ -37,26 +46,27 @@
     height:26px;
 }
 
-/* MENU */
-.menu-horizontal{
-    display:flex;
-    overflow-x:auto;
-    gap:12px;
-    padding:12px;
+/* GRID (AQUI FOI O GRANDE AJUSTE) */
+.menu-grid{
+    display:grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap:14px;
+    padding:16px;
+    text-align:center;
 }
 
-.menu-horizontal a{
+/* ITENS */
+.menu-grid a{
     display:flex;
     flex-direction:column;
     align-items:center;
-    justify-content:center;
-    min-width:70px;
     text-decoration:none;
     color:#fff;
     font-size:12px;
 }
 
-.menu-horizontal i{
+/* ÍCONES */
+.menu-grid i{
     width:22px;
     height:22px;
     margin-bottom:4px;
@@ -65,29 +75,4 @@
 /* ESCONDIDO */
 .hidden{
     display:none;
-}
-
-/* FOOTER */
-.menu-footer{
-    padding:12px;
-    border-top:1px solid rgba(255,255,255,0.2);
-    font-size:13px;
-}
-
-.usuario{
-    margin-bottom:8px;
-}
-
-.suporte, .logout{
-    display:flex;
-    align-items:center;
-    gap:6px;
-    margin-bottom:6px;
-    cursor:pointer;
-}
-
-.dev{
-    margin-top:10px;
-    font-size:11px;
-    opacity:0.7;
 }
