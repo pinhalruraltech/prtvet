@@ -20,8 +20,9 @@
 
 /* LOGO MAIOR */
 .logo{
-    width:120px;
-    margin-bottom:10px;
+    width:180px; /* +50% maior */
+    max-width:80%;
+    margin-bottom:12px;
 }
 
 /* TEXTO */
