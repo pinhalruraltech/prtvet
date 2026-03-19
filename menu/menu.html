@@ -1,70 +1,102 @@
 <div class="menu-wrapper">
 
-    <!-- TOPO / LOGO -->
+    <!-- TOPO -->
     <div class="menu-top">
+
+        <div class="menu-user" id="usuarioNome">
+            👤 Usuário
+        </div>
+
         <img src="../logo/logo_rafael.png" class="logo">
+
         <div class="menu-info">
             <strong>Clínica Veterinária</strong>
             <span>Dr. Rafael Frutuoso</span>
         </div>
-    </div>
 
-    <!-- BOTÃO SETA -->
-    <div class="menu-toggle" onclick="toggleMenu()">
-        <i data-lucide="chevron-down" id="menuIcon"></i>
-    </div>
-
-    <!-- MENU -->
-    <div class="menu-horizontal hidden" id="menuHorizontal">
-
-        <a href="../app/index.html"><i data-lucide="home"></i><span>Início</span></a>
-
-        <a href="../app/lembretes.html"><i data-lucide="clipboard-list"></i><span>Lembretes</span></a>
-
-        <a href="../app/animais.html"><i data-lucide="paw-print"></i><span>Animais</span></a>
-
-        <a href="../app/clientes.html"><i data-lucide="users"></i><span>Clientes</span></a>
-
-        <a href="../app/atendimentos.html"><i data-lucide="stethoscope"></i><span>Atendimentos</span></a>
-
-        <a href="../app/vacinas.html"><i data-lucide="syringe"></i><span>Vacinas</span></a>
-
-        <a href="../app/internacao.html"><i data-lucide="bed"></i><span>Internação</span></a>
-
-        <a href="../app/agenda.html"><i data-lucide="calendar"></i><span>Agenda</span></a>
-
-        <a href="../app/estoque.html"><i data-lucide="package"></i><span>Estoque</span></a>
-
-        <a href="../app/vendas.html"><i data-lucide="shopping-cart"></i><span>Vendas</span></a>
-
-        <a href="../app/financeiro.html"><i data-lucide="dollar-sign"></i><span>Financeiro</span></a>
-
-        <a href="../app/relatorios.html"><i data-lucide="bar-chart"></i><span>Relatórios</span></a>
-
-        <a href="../app/documentos.html"><i data-lucide="file-text"></i><span>Documentos</span></a>
-
-        <a href="../app/configuracoes.html"><i data-lucide="settings"></i><span>Config</span></a>
-
-    </div>
-
-    <!-- RODAPÉ -->
-    <div class="menu-footer">
-
-        <div class="usuario">
-            👤 <span id="usuarioNome">Usuário</span>
+        <div class="menu-toggle" onclick="toggleMenu()">
+            <i data-lucide="chevron-down" id="menuIcon"></i>
         </div>
 
-        <a href="../app/suporte.html" class="suporte">
-            <i data-lucide="life-buoy"></i> Suporte
+    </div>
+
+    <!-- MENU GRID -->
+    <div class="menu-grid hidden" id="menuHorizontal">
+
+        <a href="../app/index.html">
+            <i data-lucide="home"></i>
+            <span>Início</span>
         </a>
 
-        <div class="logout" onclick="logout()">
-            <i data-lucide="log-out"></i> Sair
-        </div>
+        <a href="../app/lembretes.html">
+            <i data-lucide="clipboard-list"></i>
+            <span>Lembretes</span>
+        </a>
 
-        <div class="dev">
-            Desenvolvido por PRT Soluções
-        </div>
+        <a href="../app/animais.html">
+            <i data-lucide="paw-print"></i>
+            <span>Animais</span>
+        </a>
+
+        <a href="../app/clientes.html">
+            <i data-lucide="users"></i>
+            <span>Clientes</span>
+        </a>
+
+        <a href="../app/atendimentos.html">
+            <i data-lucide="stethoscope"></i>
+            <span>Atendimentos</span>
+        </a>
+
+        <a href="../app/vacinas.html">
+            <i data-lucide="syringe"></i>
+            <span>Vacinas</span>
+        </a>
+
+        <a href="../app/internacao.html">
+            <i data-lucide="bed"></i>
+            <span>Internação</span>
+        </a>
+
+        <a href="../app/agenda.html">
+            <i data-lucide="calendar"></i>
+            <span>Agenda</span>
+        </a>
+
+        <a href="../app/estoque.html">
+            <i data-lucide="package"></i>
+            <span>Estoque</span>
+        </a>
+
+        <a href="../app/vendas.html">
+            <i data-lucide="shopping-cart"></i>
+            <span>Vendas</span>
+        </a>
+
+        <a href="../app/financeiro.html">
+            <i data-lucide="dollar-sign"></i>
+            <span>Financeiro</span>
+        </a>
+
+        <a href="../app/relatorios.html">
+            <i data-lucide="bar-chart"></i>
+            <span>Relatórios</span>
+        </a>
+
+        <a href="../app/documentos.html">
+            <i data-lucide="file-text"></i>
+            <span>Documentos</span>
+        </a>
+
+        <a href="../app/configuracoes.html">
+            <i data-lucide="settings"></i>
+            <span>Config</span>
+        </a>
+
+        <a href="#" onclick="logout()">
+            <i data-lucide="log-out"></i>
+            <span>Sair</span>
+        </a>
 
     </div>
 
