@@ -1,1 +1,262 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>Atendimentos | AppVet</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+
+body {
+    margin:0;
+    font-family:'Inter',sans-serif;
+    background:#F1F5F9;
+}
+
+/* TOPBAR */
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:16px;
+    background:white;
+    border-bottom:1px solid #E5EAF0;
+}
+
+.topbar-left{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.main{
+    margin-left:240px;
+    padding:20px;
+}
+
+@media(max-width:768px){
+    .main{margin-left:0;}
+}
+
+/* HEADER */
+.header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:16px;
+}
+
+.btn{
+    background:#3B82F6;
+    color:white;
+    border:none;
+    padding:10px 14px;
+    border-radius:10px;
+    cursor:pointer;
+}
+
+/* BUSCA */
+.search{
+    width:100%;
+    padding:12px;
+    border-radius:10px;
+    border:1px solid #E5EAF0;
+    margin-bottom:10px;
+}
+
+/* FILTROS */
+.filters{
+    display:flex;
+    gap:10px;
+    margin-bottom:16px;
+}
+
+.filter{
+    padding:8px 12px;
+    border-radius:8px;
+    border:1px solid #E5EAF0;
+    background:white;
+    cursor:pointer;
+}
+
+/* DATA */
+.date{
+    margin:10px 0;
+    color:#6B7280;
+}
+
+/* CARD ATENDIMENTO */
+.card{
+    background:white;
+    border-radius:14px;
+    padding:12px;
+    margin-bottom:12px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    border:1px solid #E5EAF0;
+}
+
+/* ESQUERDA */
+.left{
+    display:flex;
+    gap:10px;
+    align-items:center;
+}
+
+.left img{
+    width:50px;
+    height:50px;
+    border-radius:10px;
+    object-fit:cover;
+}
+
+.info strong{
+    font-size:15px;
+}
+
+.info small{
+    color:#6B7280;
+}
+
+/* TAG */
+.tag{
+    padding:6px 10px;
+    border-radius:8px;
+    font-size:12px;
+}
+
+.consulta{background:#FEF3C7;color:#B45309;}
+.vacina{background:#DCFCE7;color:#166534;}
+.retorno{background:#E0F2FE;color:#0369A1;}
+
+/* HORAS */
+.time{
+    display:flex;
+    gap:10px;
+    align-items:center;
+}
+
+.time span{
+    background:#E5E7EB;
+    padding:6px 10px;
+    border-radius:8px;
+}
+
+.time .active{
+    background:#67C1C7;
+    color:white;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="menu-container"></div>
+
+<div class="topbar">
+    <div class="topbar-left">
+        <button id="menu-btn">☰</button>
+        <strong>Atendimentos</strong>
+    </div>
+
+    <button class="btn">+ Novo Atendimento</button>
+</div>
+
+<div class="main">
+
+    <input class="search" placeholder="Buscar paciente...">
+
+    <div class="filters">
+        <div class="filter">Hoje</div>
+        <div class="filter">Semana</div>
+        <div class="filter">Filtrar</div>
+    </div>
+
+    <div class="date">Abr 24, 2024</div>
+
+    <!-- ITEM -->
+    <div class="card">
+        <div class="left">
+            <img src="https://placedog.net/100?id=1">
+            <div class="info">
+                <strong>Thor</strong><br>
+                <small>Labrador • 4 anos</small>
+            </div>
+        </div>
+
+        <div class="time">
+            <span class="tag consulta">Consulta</span>
+            <span class="active">09:00</span>
+            <span>11:10</span>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="left">
+            <img src="https://placedog.net/100?id=2">
+            <div class="info">
+                <strong>Mel</strong><br>
+                <small>Jeão • 2 anos</small>
+            </div>
+        </div>
+
+        <div class="time">
+            <span class="tag vacina">Vacina</span>
+            <span class="active">10:00</span>
+            <span>11:30</span>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="left">
+            <img src="https://placedog.net/100?id=3">
+            <div class="info">
+                <strong>Ursinho</strong><br>
+                <small>Shih Tzu • 5 anos</small>
+            </div>
+        </div>
+
+        <div class="time">
+            <span class="tag retorno">Retorno</span>
+            <span class="active">08:00</span>
+            <span>12:10</span>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="left">
+            <img src="https://placedog.net/100?id=4">
+            <div class="info">
+                <strong>Zeus</strong><br>
+                <small>Golden • 8 anos</small>
+            </div>
+        </div>
+
+        <div class="time">
+            <span class="tag consulta">Consulta</span>
+            <span class="active">09:00</span>
+            <span>16:30</span>
+        </div>
+    </div>
+
+</div>
+
+<div class="footer" style="position:fixed;bottom:0;width:100%;background:#2D6A4F;color:white;padding:10px;display:flex;justify-content:space-between;">
+    <div>AppVet v1.0.0</div>
+    <div>PRT Soluções</div>
+</div>
+
+<script>
+fetch("menu/menu.html")
+.then(r=>r.text())
+.then(d=>document.getElementById("menu-container").innerHTML=d);
+</script>
+
+</body>
+</html>
