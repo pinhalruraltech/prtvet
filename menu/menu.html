@@ -1,69 +1,186 @@
-<!-- SIDEBAR -->
-<aside class="sidebar" id="sidebar">
+<div id="app-menu">
 
-  <!-- LOGO -->
-  <div class="logo">
-    APPVET
+  <!-- MENU LATERAL -->
+  <div class="menu" id="menu">
+
+    <div class="menu-header">
+      <strong>AppVet</strong>
+      <span>Gestão Veterinária</span>
+    </div>
+
+    <nav>
+
+      <a href="/prtvet/appvet/dashboard.html" data-key="dashboard">
+        <i data-lucide="home"></i>
+        <span>Dashboard</span>
+      </a>
+
+      <a href="/prtvet/appvet/app/clientes.html" data-key="clientes">
+        <i data-lucide="users"></i>
+        <span>Clientes</span>
+      </a>
+
+      <a href="/prtvet/appvet/app/animais.html" data-key="animais">
+        <i data-lucide="paw-print"></i>
+        <span>Animais</span>
+      </a>
+
+      <a href="/prtvet/appvet/app/atendimentos.html" data-key="atendimentos">
+        <i data-lucide="stethoscope"></i>
+        <span>Atendimentos</span>
+      </a>
+
+      <a href="/prtvet/appvet/app/agenda.html" data-key="agenda">
+        <i data-lucide="calendar"></i>
+        <span>Agenda</span>
+      </a>
+
+      <a href="/prtvet/appvet/app/estoque.html" data-key="estoque">
+        <i data-lucide="package"></i>
+        <span>Estoque</span>
+      </a>
+
+      <a href="/prtvet/appvet/app/financeiro.html" data-key="financeiro">
+        <i data-lucide="dollar-sign"></i>
+        <span>Financeiro</span>
+      </a>
+
+      <a href="/prtvet/appvet/app/internacao.html" data-key="internacao">
+        <i data-lucide="activity"></i>
+        <span>Internação</span>
+      </a>
+
+      <a href="/prtvet/appvet/app/documentos.html" data-key="documentos">
+        <i data-lucide="file-text"></i>
+        <span>Documentos</span>
+      </a>
+
+      <a href="/prtvet/appvet/app/protocolos.html" data-key="protocolos">
+        <i data-lucide="clipboard-list"></i>
+        <span>Protocolos</span>
+      </a>
+
+    </nav>
+
   </div>
 
-  <!-- MENU -->
-  <nav class="menu">
+  <!-- OVERLAY -->
+  <div class="overlay" id="overlay"></div>
 
-    <a href="../pages/dashboard.html">
-      <i data-lucide="layout-dashboard"></i>
-      <span>Dashboard</span>
-    </a>
+  <!-- HEADER -->
+  <div class="app-header">
 
-    <a href="../pages/clientes.html">
-      <i data-lucide="users"></i>
-      <span>Clientes</span>
-    </a>
+    <button class="menu-btn" onclick="toggleMenu()">
+      <i data-lucide="menu"></i>
+    </button>
 
-    <a href="../pages/animais.html">
-      <i data-lucide="paw-print"></i>
-      <span>Animais</span>
-    </a>
+    <div class="title" id="page-title">AppVet</div>
 
-    <a href="../pages/agenda.html">
-      <i data-lucide="calendar"></i>
-      <span>Agenda</span>
-    </a>
+  </div>
 
-    <a href="#">
-      <i data-lucide="file-text"></i>
-      <span>Prontuário</span>
-    </a>
+</div>
 
-    <a href="#">
-      <i data-lucide="package"></i>
-      <span>Produtos</span>
-    </a>
+<!-- 🔥 ESSENCIAL (ANTES NÃO EXISTIA) -->
+<div id="app-content"></div>
 
-    <a href="#">
-      <i data-lucide="pill"></i>
-      <span>Medicamentos</span>
-    </a>
+<style>
+.app-header{
+  height:60px;
+  background:#2E7D6B;
+  color:white;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:0 15px;
+  position:sticky;
+  top:0;
+  z-index:5;
+}
 
-    <a href="#">
-      <i data-lucide="dollar-sign"></i>
-      <span>Financeiro</span>
-    </a>
+.menu-btn{
+  background:none;
+  border:none;
+  color:white;
+  cursor:pointer;
+}
 
-    <a href="#">
-      <i data-lucide="bar-chart-3"></i>
-      <span>Relatórios</span>
-    </a>
+.menu{
+  position:fixed;
+  left:-260px;
+  top:0;
+  width:260px;
+  height:100%;
+  background:#2E7D6B;
+  color:white;
+  transition:.3s;
+  z-index:10;
+  padding:20px 15px;
+  overflow-y:auto;
+}
 
-    <a href="#">
-      <i data-lucide="user-cog"></i>
-      <span>Usuários</span>
-    </a>
+.menu.open{ left:0; }
 
-    <a href="#">
-      <i data-lucide="settings"></i>
-      <span>Configurações</span>
-    </a>
+.menu-header{ margin-bottom:20px; }
 
-  </nav>
+.menu-header strong{ display:block;font-size:18px; }
 
-</aside>
+.menu-header span{ font-size:12px;opacity:.8; }
+
+.menu nav a{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px;
+  border-radius:8px;
+  color:white;
+  text-decoration:none;
+}
+
+.menu nav a:hover{ background:#4DB6AC; }
+
+.menu nav a.active{
+  background:#1b5e55;
+}
+
+.overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.4);
+  display:none;
+  z-index:9;
+}
+
+.overlay.show{ display:block; }
+</style>
+
+<script>
+function toggleMenu(){
+  const menu = document.getElementById("menu");
+  const overlay = document.getElementById("overlay");
+
+  if(menu && overlay){
+    menu.classList.toggle("open");
+    overlay.classList.toggle("show");
+  }
+}
+
+setTimeout(()=>{
+  const overlay = document.getElementById("overlay");
+  if(overlay){
+    overlay.onclick = toggleMenu;
+  }
+
+  const path = window.location.pathname;
+
+  document.querySelectorAll(".menu nav a").forEach(link=>{
+    if(path.includes(link.dataset.key)){
+      link.classList.add("active");
+    }
+  });
+
+  if(window.lucide){
+    lucide.createIcons();
+  }
+
+},100);
+</script>

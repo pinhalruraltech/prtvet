@@ -7,9 +7,9 @@
 
 <title>Login | APPVET</title>
 
-<style>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
 
-/* VARIÁVEIS */
+<style>
 
 :root{
 --color-primary:#2D6A4F;
@@ -20,76 +20,79 @@
 --color-muted:#6B7280;
 }
 
-/* RESET */
-
 *{
 margin:0;
 padding:0;
 box-sizing:border-box;
 }
 
-/* BODY */
-
 body{
 font-family: 'Inter', sans-serif;
 background:var(--color-bg);
-height:100vh;
+min-height:100vh;
 display:flex;
 flex-direction:column;
 }
-
-/* CONTAINER */
 
 .container{
 flex:1;
 display:flex;
 }
 
-/* LADO ESQUERDO */
-
 .left{
 flex:1;
 background:linear-gradient(135deg,var(--color-primary),var(--color-secondary));
-color:#fff;
 display:flex;
 flex-direction:column;
 justify-content:center;
 align-items:center;
-padding:40px;
+padding:20px;
 text-align:center;
 }
 
 .left img{
-max-width:180px;
-margin-bottom:15px;
+max-width:420px;
+width:90%;
+margin-bottom:20px;
 }
 
-.left p{
+.nome{
+font-family:'Playfair Display', serif;
+color:#000;
+font-size:28px;
+letter-spacing:2px;
+margin-bottom:5px;
+}
+
+.subnome{
+font-family:'Playfair Display', serif;
 font-size:16px;
-opacity:0.9;
+color:#000;
+opacity:0.8;
 }
-
-/* LADO DIREITO */
 
 .right{
 flex:1;
 display:flex;
 justify-content:center;
 align-items:center;
-background:var(--color-white);
+padding:20px;
 }
 
 .login-box{
 width:100%;
-max-width:380px;
-padding:30px;
+max-width:400px;
+padding:25px;
+background:var(--color-white);
+border-radius:12px;
+box-shadow:0 10px 25px rgba(0,0,0,0.08);
 }
 
 .login-title{
 display:flex;
 align-items:center;
 gap:10px;
-margin-bottom:25px;
+margin-bottom:20px;
 color:var(--color-text);
 }
 
@@ -97,29 +100,6 @@ color:var(--color-text);
 width:22px;
 height:22px;
 }
-
-/* INPUTS */
-
-.form-group{
-margin-bottom:15px;
-}
-
-.form-group label{
-display:block;
-font-size:14px;
-margin-bottom:5px;
-color:var(--color-muted);
-}
-
-.form-group input{
-width:100%;
-padding:12px;
-border:1px solid #E3E8EE;
-border-radius:8px;
-font-size:14px;
-}
-
-/* SENHA */
 
 .password-wrapper{
 position:relative;
@@ -131,58 +111,49 @@ right:10px;
 top:50%;
 transform:translateY(-50%);
 cursor:pointer;
-width:18px;
-height:18px;
+width:20px;
+height:20px;
 color:#6B7280;
 }
 
-/* CHECKBOX */
-
-.options{
-display:flex;
-align-items:center;
-margin-bottom:15px;
-font-size:14px;
+.form-group{
+margin-bottom:12px;
 }
 
-/* BOTÃO */
+.form-group label{
+font-size:13px;
+color:var(--color-muted);
+}
+
+.form-group input{
+width:100%;
+padding:10px;
+border:1px solid #E3E8EE;
+border-radius:8px;
+}
 
 button{
 width:100%;
-padding:12px;
+padding:11px;
 background:var(--color-primary);
 color:#fff;
 border:none;
 border-radius:8px;
 cursor:pointer;
-font-size:15px;
 }
-
-button:hover{
-background:#1B4332;
-}
-
-/* LINK */
 
 .link{
-margin-top:10px;
-font-size:13px;
+margin-top:8px;
 text-align:center;
+font-size:12px;
 }
-
-.link a{
-color:#2F80ED;
-text-decoration:none;
-}
-
-/* ALERTA */
 
 .alert{
-font-size:13px;
+display:none;
 margin-bottom:10px;
 padding:10px;
 border-radius:6px;
-display:none;
+font-size:13px;
 }
 
 .alert.error{
@@ -192,28 +163,50 @@ color:#E63946;
 
 .alert.success{
 background:#e6f4ea;
-color:var(--color-primary);
+color:#2D6A4F;
 }
 
-/* FOOTER */
-
 .footer{
-text-align:center;
-font-size:12px;
-padding:10px;
-color:#6B7280;
+height:40px;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:11px;
+background:#fff;
 border-top:1px solid #E3E8EE;
 }
 
-/* RESPONSIVO */
-
 @media(max-width:768px){
+
 .container{
 flex-direction:column;
 }
+
 .left{
-padding:20px;
+height:40vh;
 }
+
+.left img{
+max-width:260px;
+}
+
+.nome{
+font-size:20px;
+}
+
+.subnome{
+font-size:13px;
+}
+
+.right{
+height:60vh;
+align-items:flex-start;
+}
+
+.login-box{
+margin-top:10px;
+}
+
 }
 
 </style>
@@ -224,16 +217,14 @@ padding:20px;
 
 <div class="container">
 
-<!-- ESQUERDA -->
-
 <div class="left">
 
-<img id="logoClinica" src="appvet/logo/logo_rafael.png">
-<p>Gestão Veterinária Inteligente</p>
+<img src="logo/logo_rafael.png">
+
+<div class="nome">RAFAEL FRUTUOSO</div>
+<div class="subnome">Médico Veterinário</div>
 
 </div>
-
-<!-- DIREITA -->
 
 <div class="right">
 
@@ -272,11 +263,6 @@ padding:20px;
 
 </div>
 
-<div class="options">
-<input type="checkbox" id="lembrar">
-<label style="margin-left:5px;">Lembrar de mim</label>
-</div>
-
 <button onclick="login()">Entrar</button>
 
 <div class="link">
@@ -293,22 +279,14 @@ padding:20px;
 Versão 1.0 | Suporte | Termos | Desenvolvido por PRT Soluções
 </div>
 
-<!-- FIREBASE -->
-
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-import {
-getAuth,
-signInWithEmailAndPassword,
-setPersistence,
-browserLocalPersistence,
-browserSessionPersistence
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
+/* 🔴 COLE SUA API KEY AQUI */
 const firebaseConfig = {
-apiKey: "YOUR_API_KEY",
+apiKey: "AIzaSyDR69colU9JHvemBpab3x8PLHqaUm_5EM0",
 authDomain: "appvet-prt.firebaseapp.com",
 projectId: "appvet-prt",
 storageBucket: "appvet-prt.firebasestorage.app",
@@ -330,13 +308,8 @@ window.login = async function(){
 
 const email = document.getElementById('email').value;
 const senha = document.getElementById('senha').value;
-const lembrar = document.getElementById('lembrar').checked;
 
 try{
-
-await setPersistence(auth,
-lembrar ? browserLocalPersistence : browserSessionPersistence
-);
 
 await signInWithEmailAndPassword(auth, email, senha);
 
@@ -362,8 +335,12 @@ case "auth/invalid-email":
 showAlert("Email inválido", "error");
 break;
 
+case "auth/invalid-api-key":
+showAlert("API Key inválida", "error");
+break;
+
 default:
-showAlert("Email ou senha incorretos", "error");
+showAlert("Erro: " + e.code, "error");
 
 }
 

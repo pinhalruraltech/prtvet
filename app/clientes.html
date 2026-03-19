@@ -1,281 +1,301 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Clientes | APPVET</title>
+<title>Clientes | AppVet</title>
 
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/lucide@latest"></script>
 
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
 <style>
+body{margin:0;font-family:'Inter';background:#F5F7F9;display:none}
 
-/* RESET */
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-}
-
-body{
-font-family:Arial, sans-serif;
-background:#F5F7F9;
-}
-
-/* BOTÃO MENU */
-#btnMenu{
-position:fixed;
-top:15px;
-left:15px;
-z-index:1100;
-background:#2D6A4F;
-color:#fff;
-border:none;
-padding:10px;
-border-radius:8px;
-}
-
-/* SIDEBAR */
-.sidebar{
-width:240px;
-height:100vh;
-background:#1F2933;
-position:fixed;
-top:0;
-left:0;
-transition:0.3s;
-z-index:1000;
-}
-
-/* MOBILE */
-@media(max-width:768px){
-.sidebar{
-transform:translateX(-100%);
-}
-.sidebar.active{
-transform:translateX(0);
-}
-}
-
-/* MAIN */
-.main{
-margin-left:240px;
-padding:20px;
-}
-
-@media(max-width:768px){
-.main{
-margin-left:0;
-}
-}
-
-/* HEADER */
-.header{
-margin-bottom:20px;
-}
+/* PAGE */
+.page{padding:20px;max-width:1000px;margin:auto}
 
 /* CARD */
-.card{
-background:#fff;
-padding:20px;
-border-radius:10px;
-box-shadow:0 4px 6px rgba(0,0,0,0.05);
-}
+.card{background:#FFF;border:1px solid #E3E8EE;border-radius:12px;padding:20px}
 
-/* FILTROS */
-.filters{
-display:flex;
-gap:10px;
-margin:10px 0;
-flex-wrap:wrap;
-}
+/* HEADER */
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
 
-.filters select,
-.filters button{
-padding:10px;
-border-radius:8px;
-border:1px solid #ccc;
-background:#fff;
-}
+/* BUTTON */
+.btn{background:#2D6A4F;color:#fff;border:none;padding:10px 16px;border-radius:8px;cursor:pointer}
 
 /* INPUT */
-input{
-width:100%;
-padding:12px;
-border-radius:8px;
-border:1px solid #ccc;
-}
+input{width:100%;padding:10px;border-radius:8px;border:1px solid #E3E8EE;margin-bottom:10px}
 
-/* TABLE */
-table{
-width:100%;
-border-collapse:collapse;
-margin-top:15px;
-}
-
-th, td{
-padding:12px;
-border-bottom:1px solid #eee;
-}
-
-/* BADGE */
-.badge{
-background:#E6F4EA;
-padding:5px 10px;
-border-radius:20px;
-font-size:12px;
-}
-
-/* AÇÕES */
-.actions{
-display:flex;
-gap:10px;
-}
-
-.actions button{
-border:none;
-background:#eee;
-padding:6px 10px;
-border-radius:6px;
-cursor:pointer;
+/* CARD CLIENTE */
+.cliente-card{
+  border:1px solid #E3E8EE;
+  border-radius:10px;
+  padding:15px;
+  margin-top:10px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
 }
 
 /* PAGINAÇÃO */
-.pagination{
-margin-top:15px;
-display:flex;
-justify-content:space-between;
-align-items:center;
+.pagination{display:flex;justify-content:center;gap:8px;margin-top:15px}
+.pagination button{padding:8px 12px;border:none;border-radius:8px;background:#E5E7EB}
+.pagination .active{background:#2D6A4F;color:white}
+
+/* MODAL */
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.4);
+  display:none;
+  align-items:center;
+  justify-content:center;
 }
 
-.pagination button{
-padding:8px 12px;
-border:none;
-background:#2D6A4F;
-color:#fff;
-border-radius:6px;
-cursor:pointer;
+.modal-content{
+  background:white;
+  padding:20px;
+  border-radius:12px;
+  width:95%;
+  max-width:500px;
+  max-height:90vh;
+  overflow:auto;
 }
 
+/* FOOTER */
+.footer{
+  text-align:center;
+  font-size:12px;
+  margin-top:20px;
+  color:#6B7280;
+}
 </style>
-
 </head>
 
-<body style="display:none">
-
-<button id="btnMenu">☰</button>
+<body>
 
 <div id="menu-container"></div>
 
-<div class="main">
+<script>
+const PERMISSAO_PAGINA = { area:"app", chave:"clientes" };
 
-<div class="header">
-<h1>Clientes</h1>
-<p>Gerencie proprietários e seus animais</p>
-</div>
+const firebaseConfig = {
+  apiKey: "AIzaSyDR69colU9JHvemBpab3x8PLHqaUm_5EM0",
+  authDomain: "appvet-prt.firebaseapp.com",
+  projectId: "appvet-prt"
+};
 
-<div class="card">
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const auth = firebase.auth();
 
-<input placeholder="Buscar cliente ou animal...">
+let clientes = [];
+let pagina = 1;
+const porPagina = 6;
 
-<div class="filters">
-<select>
-<option>Cidade</option>
-<option>Monte Belo</option>
-<option>Alfenas</option>
-</select>
+/* AUTH */
+auth.onAuthStateChanged(async user=>{
+  if(!user){
+    window.location.href="../login.html";
+    return;
+  }
 
-<select>
-<option>Possui animais</option>
-<option>Sim</option>
-<option>Não</option>
-</select>
+  await carregarMenu();
+  renderTela(); // continua igual
+  document.body.style.display="block";
+  carregarClientes();
+});
 
-<button>Limpar filtros</button>
-</div>
+/* MENU */
+async function carregarMenu(){
+  const res = await fetch("/prtvet/appvet/menu/menu.html");
+  document.getElementById("menu-container").innerHTML = await res.text();
 
-<table>
-<thead>
-<tr>
-<th>Nome</th>
-<th>Telefone</th>
-<th>Cidade</th>
-<th>Animais</th>
-<th>Última visita</th>
-<th>Ações</th>
-</tr>
-</thead>
+  setTimeout(()=>{
+    if(typeof initMenu==="function") initMenu();
 
-<tbody>
+    document.querySelectorAll(".menu nav a").forEach(link=>{
+      if(link.dataset.key==="clientes"){
+        link.classList.add("active");
+      }
 
-<tr>
-<td>João Silva</td>
-<td>(35) 99999-9999</td>
-<td>Monte Belo</td>
-<td><span class="badge">3</span></td>
-<td>10/03/2026</td>
-<td class="actions">
-<button>👁</button>
-<button>✏️</button>
-</td>
-</tr>
+      link.onclick = ()=>{
+        const menu = document.getElementById("menu");
+        const overlay = document.getElementById("overlay");
 
-<tr>
-<td>Maria Oliveira</td>
-<td>(35) 98888-8888</td>
-<td>Alfenas</td>
-<td><span class="badge">1</span></td>
-<td>02/03/2026</td>
-<td class="actions">
-<button>👁</button>
-<button>✏️</button>
-</td>
-</tr>
+        if(menu && overlay){
+          menu.classList.remove("open");
+          overlay.classList.remove("show");
+        }
+      };
+    });
 
-</tbody>
-</table>
-
-<div class="pagination">
-<span>Mostrando 1–10 de 230 clientes</span>
-
-<div>
-<button>‹</button>
-<button>1</button>
-<button>›</button>
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-<script type="module">
-
-fetch("../components/menu.html")
-.then(res => res.text())
-.then(html => {
-
-document.getElementById("menu-container").innerHTML = html;
-
-lucide.createIcons();
-
-// ATIVO
-document.querySelectorAll(".sidebar a").forEach(link=>{
-if(link.href === window.location.href){
-link.classList.add("active");
+  },100);
 }
-});
 
-// MENU MOBILE
-document.getElementById("btnMenu").addEventListener("click", ()=>{
-document.querySelector(".sidebar").classList.toggle("active");
-});
+/* TELA */
+function renderTela(){
 
-document.body.style.display = "block";
+  // 🔥 CORREÇÃO CRÍTICA (AQUI ESTAVA O ERRO)
+  let container = document.getElementById("app-content");
 
-});
+  if(!container){
+    console.error("app-content não encontrado");
+    return;
+  }
 
+  container.innerHTML = `
+  <div class="page">
+
+    <div class="card">
+
+      <div class="header">
+        <h2><i data-lucide="users"></i> Clientes</h2>
+        <button class="btn" onclick="abrirModal()">+ Novo</button>
+      </div>
+
+      <input id="busca" placeholder="Buscar..." oninput="filtrar()">
+
+      <div id="listaClientes"></div>
+
+      <div class="pagination" id="paginacao"></div>
+
+    </div>
+
+    <div class="footer">
+      Versão 1.0 | Suporte | Termos | Desenvolvido por PRT Soluções
+    </div>
+
+  </div>
+
+  <div class="modal" id="modal">
+    <div class="modal-content">
+
+      <h3>Novo Cliente</h3>
+
+      <input id="nome" placeholder="Nome completo">
+      <input id="cpf" placeholder="CPF">
+      <input id="telefone" placeholder="Telefone">
+      <input id="email" placeholder="Email">
+
+      <h4>Endereço</h4>
+      <input id="logradouro" placeholder="Rua">
+      <input id="numero" placeholder="Número">
+      <input id="bairro" placeholder="Bairro">
+      <input id="cidade" placeholder="Cidade">
+      <input id="estado" placeholder="Estado">
+      <input id="cep" placeholder="CEP">
+
+      <div style="display:flex;gap:10px;margin-top:10px;">
+        <button onclick="fecharModal()">Cancelar</button>
+        <button class="btn" onclick="salvarCliente()">Salvar</button>
+      </div>
+
+    </div>
+  </div>
+  `;
+
+  lucide.createIcons();
+}
+
+/* FIREBASE */
+async function carregarClientes(){
+  const snap = await db.collection("clientes").orderBy("nome").get();
+  clientes = [];
+  snap.forEach(doc=>clientes.push({id:doc.id,...doc.data()}));
+  render();
+}
+
+/* RENDER */
+function render(lista = clientes){
+  const inicio = (pagina-1)*porPagina;
+  const dados = lista.slice(inicio,inicio+porPagina);
+
+  const el = document.getElementById("listaClientes");
+  el.innerHTML="";
+
+  if(dados.length===0){
+    el.innerHTML="<p>Nenhum cliente encontrado</p>";
+    return;
+  }
+
+  dados.forEach(c=>{
+    el.innerHTML += `
+      <div class="cliente-card">
+        <div>
+          <strong>${c.nome||"-"}</strong><br>
+          📞 ${c.telefone||"-"}<br>
+          📍 ${c.endereco?.cidade||"-"}
+        </div>
+        <button class="btn" onclick="verCliente('${c.id}')">Ver</button>
+      </div>
+    `;
+  });
+
+  renderPaginacao(lista.length);
+}
+
+/* PAGINAÇÃO */
+function renderPaginacao(total){
+  const paginas = Math.ceil(total/porPagina);
+  const el = document.getElementById("paginacao");
+  el.innerHTML="";
+
+  for(let i=1;i<=paginas;i++){
+    el.innerHTML += `<button class="${i===pagina?'active':''}" onclick="irPagina(${i})">${i}</button>`;
+  }
+}
+
+function irPagina(p){
+  pagina=p;
+  render();
+}
+
+/* FILTRO */
+function filtrar(){
+  const t = document.getElementById("busca").value.toLowerCase();
+  pagina=1;
+  render(clientes.filter(c=>(c.nome||"").toLowerCase().includes(t)));
+}
+
+/* AÇÕES */
+function verCliente(id){
+  window.location.href="cliente.html?id="+id;
+}
+
+function abrirModal(){
+  document.getElementById("modal").style.display="flex";
+}
+
+function fecharModal(){
+  document.getElementById("modal").style.display="none";
+}
+
+async function salvarCliente(){
+  await db.collection("clientes").add({
+    nome: nome.value,
+    cpf: cpf.value,
+    telefone: telefone.value,
+    email: email.value,
+    endereco:{
+      logradouro:logradouro.value,
+      numero:numero.value,
+      bairro:bairro.value,
+      cidade:cidade.value,
+      estado:estado.value,
+      cep:cep.value
+    },
+    animais: [],
+    createdAt: new Date()
+  });
+
+  fecharModal();
+  carregarClientes();
+}
 </script>
 
 </body>
