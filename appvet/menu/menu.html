@@ -1,6 +1,6 @@
 <div id="app-menu">
 
-  <!-- MENU LATERAL (OVERLAY) -->
+  <!-- MENU LATERAL -->
   <div class="menu" id="menu">
 
     <div class="menu-header">
@@ -10,52 +10,52 @@
 
     <nav>
 
-      <a href="/prtvet/appvet/dashboard.html">
+      <a href="/prtvet/appvet/dashboard.html" data-key="dashboard">
         <i data-lucide="home"></i>
         <span>Dashboard</span>
       </a>
 
-      <a href="/prtvet/appvet/app/clientes.html">
+      <a href="/prtvet/appvet/app/clientes.html" data-key="clientes">
         <i data-lucide="users"></i>
         <span>Clientes</span>
       </a>
 
-      <a href="/prtvet/appvet/app/animais.html">
+      <a href="/prtvet/appvet/app/animais.html" data-key="animais">
         <i data-lucide="paw-print"></i>
         <span>Animais</span>
       </a>
 
-      <a href="/prtvet/appvet/app/atendimentos.html">
+      <a href="/prtvet/appvet/app/atendimentos.html" data-key="atendimentos">
         <i data-lucide="stethoscope"></i>
         <span>Atendimentos</span>
       </a>
 
-      <a href="/prtvet/appvet/app/agenda.html">
+      <a href="/prtvet/appvet/app/agenda.html" data-key="agenda">
         <i data-lucide="calendar"></i>
         <span>Agenda</span>
       </a>
 
-      <a href="/prtvet/appvet/app/estoque.html">
+      <a href="/prtvet/appvet/app/estoque.html" data-key="estoque">
         <i data-lucide="package"></i>
         <span>Estoque</span>
       </a>
 
-      <a href="/prtvet/appvet/app/financeiro.html">
+      <a href="/prtvet/appvet/app/financeiro.html" data-key="financeiro">
         <i data-lucide="dollar-sign"></i>
         <span>Financeiro</span>
       </a>
 
-      <a href="/prtvet/appvet/app/internacao.html">
+      <a href="/prtvet/appvet/app/internacao.html" data-key="internacao">
         <i data-lucide="activity"></i>
         <span>Internação</span>
       </a>
 
-      <a href="/prtvet/appvet/app/documentos.html">
+      <a href="/prtvet/appvet/app/documentos.html" data-key="documentos">
         <i data-lucide="file-text"></i>
         <span>Documentos</span>
       </a>
 
-      <a href="/prtvet/appvet/app/protocolos.html">
+      <a href="/prtvet/appvet/app/protocolos.html" data-key="protocolos">
         <i data-lucide="clipboard-list"></i>
         <span>Protocolos</span>
       </a>
@@ -80,8 +80,10 @@
 
 </div>
 
+<!-- 🔥 ESSENCIAL (ANTES NÃO EXISTIA) -->
+<div id="app-content"></div>
+
 <style>
-/* HEADER */
 .app-header{
   height:60px;
   background:#2E7D6B;
@@ -102,7 +104,6 @@
   cursor:pointer;
 }
 
-/* MENU */
 .menu{
   position:fixed;
   left:-260px;
@@ -117,26 +118,14 @@
   overflow-y:auto;
 }
 
-.menu.open{
-  left:0;
-}
+.menu.open{ left:0; }
 
-/* HEADER MENU */
-.menu-header{
-  margin-bottom:20px;
-}
+.menu-header{ margin-bottom:20px; }
 
-.menu-header strong{
-  display:block;
-  font-size:18px;
-}
+.menu-header strong{ display:block;font-size:18px; }
 
-.menu-header span{
-  font-size:12px;
-  opacity:.8;
-}
+.menu-header span{ font-size:12px;opacity:.8; }
 
-/* LINKS */
 .menu nav a{
   display:flex;
   align-items:center;
@@ -147,11 +136,12 @@
   text-decoration:none;
 }
 
-.menu nav a:hover{
-  background:#4DB6AC;
+.menu nav a:hover{ background:#4DB6AC; }
+
+.menu nav a.active{
+  background:#1b5e55;
 }
 
-/* OVERLAY */
 .overlay{
   position:fixed;
   inset:0;
@@ -160,9 +150,7 @@
   z-index:9;
 }
 
-.overlay.show{
-  display:block;
-}
+.overlay.show{ display:block; }
 </style>
 
 <script>
@@ -170,23 +158,29 @@ function toggleMenu(){
   const menu = document.getElementById("menu");
   const overlay = document.getElementById("overlay");
 
-  menu.classList.toggle("open");
-  overlay.classList.toggle("show");
-}
-
-document.getElementById("overlay").onclick = toggleMenu;
-
-/* ATIVO AUTOMÁTICO */
-const path = window.location.pathname;
-
-document.querySelectorAll(".menu nav a").forEach(link=>{
-  if(path.includes(link.getAttribute("href"))){
-    link.style.background = "#1b5e55";
+  if(menu && overlay){
+    menu.classList.toggle("open");
+    overlay.classList.toggle("show");
   }
-});
-
-/* ÍCONES */
-if(window.lucide){
-  lucide.createIcons();
 }
+
+setTimeout(()=>{
+  const overlay = document.getElementById("overlay");
+  if(overlay){
+    overlay.onclick = toggleMenu;
+  }
+
+  const path = window.location.pathname;
+
+  document.querySelectorAll(".menu nav a").forEach(link=>{
+    if(path.includes(link.dataset.key)){
+      link.classList.add("active");
+    }
+  });
+
+  if(window.lucide){
+    lucide.createIcons();
+  }
+
+},100);
 </script>
