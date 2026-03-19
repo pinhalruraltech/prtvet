@@ -1,264 +1,192 @@
-<div class="layout">
+<div id="app-menu">
 
-  <!-- OVERLAY -->
-  <div id="overlay"></div>
+  <!-- MENU LATERAL (OVERLAY) -->
+  <div class="menu" id="menu">
 
-  <!-- SIDEBAR -->
-  <aside class="sidebar collapsed" id="sidebar">
-
-    <!-- LOGO -->
-    <div class="logo">
-
-      <div class="logo-full">
-        <img src="/prtvet/appvet/logo/logo_rafael.png">
-        <div class="logo-text">
-          <strong>Rafael Frutuoso</strong>
-          <span>Médico Veterinário</span>
-        </div>
-      </div>
-
-      <div class="logo-mini">
-        <img src="/prtvet/appvet/logo/logo_rafael.png">
-      </div>
-
+    <div class="menu-header">
+      <strong>AppVet</strong>
+      <span>Gestão Veterinária</span>
     </div>
 
-    <!-- BOTÃO -->
-    <button class="toggle" id="toggle-menu">
-      <i data-lucide="menu"></i>
-    </button>
+    <nav>
 
-    <!-- MENU -->
-    <nav class="menu">
-
-      <a href="/prtvet/appvet/dashboard.html" class="menu-item" data-key="dashboard" data-name="Dashboard">
-        <i data-lucide="home"></i><span>Dashboard</span>
+      <a href="/prtvet/appvet/dashboard.html">
+        <i data-lucide="home"></i>
+        <span>Dashboard</span>
       </a>
 
-      <a href="/prtvet/appvet/app/clientes.html" class="menu-item" data-key="clientes" data-name="Clientes">
-        <i data-lucide="users"></i><span>Clientes</span>
+      <a href="/prtvet/appvet/app/clientes.html">
+        <i data-lucide="users"></i>
+        <span>Clientes</span>
       </a>
 
-      <a href="/prtvet/appvet/app/animais.html" class="menu-item" data-key="animais" data-name="Animais">
-        <i data-lucide="paw-print"></i><span>Animais</span>
+      <a href="/prtvet/appvet/app/animais.html">
+        <i data-lucide="paw-print"></i>
+        <span>Animais</span>
       </a>
 
-      <a href="/prtvet/appvet/app/atendimentos.html" class="menu-item" data-key="atendimentos" data-name="Atendimentos">
-        <i data-lucide="stethoscope"></i><span>Atendimentos</span>
+      <a href="/prtvet/appvet/app/atendimentos.html">
+        <i data-lucide="stethoscope"></i>
+        <span>Atendimentos</span>
       </a>
 
-      <a href="/prtvet/appvet/app/agenda.html" class="menu-item" data-key="agenda" data-name="Agenda">
-        <i data-lucide="calendar"></i><span>Agenda</span>
+      <a href="/prtvet/appvet/app/agenda.html">
+        <i data-lucide="calendar"></i>
+        <span>Agenda</span>
       </a>
 
-      <a href="/prtvet/appvet/app/estoque.html" class="menu-item" data-key="estoque" data-name="Estoque">
-        <i data-lucide="package"></i><span>Estoque</span>
+      <a href="/prtvet/appvet/app/estoque.html">
+        <i data-lucide="package"></i>
+        <span>Estoque</span>
       </a>
 
-      <a href="/prtvet/appvet/app/financeiro.html" class="menu-item" data-key="financeiro" data-name="Financeiro">
-        <i data-lucide="dollar-sign"></i><span>Financeiro</span>
+      <a href="/prtvet/appvet/app/financeiro.html">
+        <i data-lucide="dollar-sign"></i>
+        <span>Financeiro</span>
       </a>
 
-      <a href="/prtvet/appvet/app/internacao.html" class="menu-item" data-key="internacao" data-name="Internação">
-        <i data-lucide="activity"></i><span>Internação</span>
+      <a href="/prtvet/appvet/app/internacao.html">
+        <i data-lucide="activity"></i>
+        <span>Internação</span>
       </a>
 
-      <a href="/prtvet/appvet/app/documentos.html" class="menu-item" data-key="documentos" data-name="Documentos">
-        <i data-lucide="file-text"></i><span>Documentos</span>
+      <a href="/prtvet/appvet/app/documentos.html">
+        <i data-lucide="file-text"></i>
+        <span>Documentos</span>
       </a>
 
-      <a href="/prtvet/appvet/app/protocolos.html" class="menu-item" data-key="protocolos" data-name="Protocolos">
-        <i data-lucide="clipboard-list"></i><span>Protocolos</span>
+      <a href="/prtvet/appvet/app/protocolos.html">
+        <i data-lucide="clipboard-list"></i>
+        <span>Protocolos</span>
       </a>
 
     </nav>
 
-  </aside>
+  </div>
 
-  <!-- CONTEÚDO -->
-  <main class="main" id="app-content"></main>
+  <!-- OVERLAY -->
+  <div class="overlay" id="overlay"></div>
+
+  <!-- HEADER -->
+  <div class="app-header">
+
+    <button class="menu-btn" onclick="toggleMenu()">
+      <i data-lucide="menu"></i>
+    </button>
+
+    <div class="title" id="page-title">AppVet</div>
+
+  </div>
 
 </div>
 
-<script src="https://unpkg.com/lucide@latest"></script>
-
-<script>
-function initMenu() {
-
-  lucide.createIcons();
-
-  const sidebar = document.getElementById("sidebar");
-  const overlay = document.getElementById("overlay");
-  const btn = document.getElementById("toggle-menu");
-
-  function isMobile() {
-    return window.innerWidth <= 768;
-  }
-
-  btn.onclick = () => {
-    if (isMobile()) {
-      sidebar.classList.toggle("open");
-      overlay.classList.toggle("show");
-    } else {
-      sidebar.classList.toggle("collapsed");
-    }
-  };
-
-  overlay.onclick = () => {
-    sidebar.classList.remove("open");
-    overlay.classList.remove("show");
-  };
-
-  // ATIVO
-  const path = window.location.pathname;
-
-  let activeKey = "";
-
-  if (path.includes("cliente")) activeKey = "clientes";
-  else if (path.includes("clientes")) activeKey = "clientes";
-  else if (path.includes("animais")) activeKey = "animais";
-  else if (path.includes("atendimentos")) activeKey = "atendimentos";
-  else if (path.includes("agenda")) activeKey = "agenda";
-  else if (path.includes("estoque")) activeKey = "estoque";
-  else if (path.includes("financeiro")) activeKey = "financeiro";
-  else if (path.includes("internacao")) activeKey = "internacao";
-  else if (path.includes("documentos")) activeKey = "documentos";
-  else if (path.includes("protocolos")) activeKey = "protocolos";
-  else activeKey = "dashboard";
-
-  document.querySelectorAll(".menu-item").forEach(item => {
-    if (item.dataset.key === activeKey) {
-      item.classList.add("active");
-    }
-  });
-
-}
-</script>
-
 <style>
-* { margin:0; padding:0; box-sizing:border-box; }
-
-.layout {
-  display:flex;
-  min-height:100vh; /* 🔥 ajuste importante */
-}
-
-/* OVERLAY */
-#overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.4);
-  opacity: 0;
-  pointer-events: none;
-  transition: 0.3s;
-  z-index: 5;
-}
-
-#overlay.show {
-  opacity: 1;
-  pointer-events: all;
-}
-
-/* SIDEBAR */
-.sidebar {
-  width:240px;
+/* HEADER */
+.app-header{
+  height:60px;
   background:#2E7D6B;
+  color:white;
   display:flex;
-  flex-direction:column;
   align-items:center;
-  padding:20px 10px;
-  transition:0.3s;
-  z-index:10;
+  gap:12px;
+  padding:0 15px;
+  position:sticky;
+  top:0;
+  z-index:5;
 }
 
-.sidebar.collapsed { width:70px; }
-
-/* MOBILE */
-@media (max-width: 768px) {
-  .sidebar {
-    position: fixed;
-    left:-240px;
-    top:0;
-    height:100%;
-  }
-
-  .sidebar.open { left:0; }
-}
-
-/* LOGO */
-.logo { width:100%; text-align:center; margin-bottom:20px; }
-
-.logo-full img { width:150px; }
-.logo-mini img { width:40px; }
-
-.logo-text { color:white; font-size:13px; margin-top:8px; }
-
-.sidebar.collapsed .logo-full { display:none; }
-.sidebar:not(.collapsed) .logo-mini { display:none; }
-
-/* BOTÃO */
-.toggle {
+.menu-btn{
   background:none;
   border:none;
   color:white;
   cursor:pointer;
-  margin-bottom:20px;
 }
 
 /* MENU */
-.menu {
-  width:100%;
-  display:flex;
-  flex-direction:column;
-  gap:10px;
+.menu{
+  position:fixed;
+  left:-260px;
+  top:0;
+  width:260px;
+  height:100%;
+  background:#2E7D6B;
+  color:white;
+  transition:.3s;
+  z-index:10;
+  padding:20px 15px;
+  overflow-y:auto;
 }
 
-.menu-item {
+.menu.open{
+  left:0;
+}
+
+/* HEADER MENU */
+.menu-header{
+  margin-bottom:20px;
+}
+
+.menu-header strong{
+  display:block;
+  font-size:18px;
+}
+
+.menu-header span{
+  font-size:12px;
+  opacity:.8;
+}
+
+/* LINKS */
+.menu nav a{
   display:flex;
   align-items:center;
-  gap:12px;
-  height:50px;
-  padding:0 15px;
-  border-radius:12px;
+  gap:10px;
+  padding:12px;
+  border-radius:8px;
   color:white;
   text-decoration:none;
-  position:relative;
 }
 
-.menu-item i { font-size:22px; }
-
-.sidebar.collapsed .menu-item span { display:none; }
-.sidebar.collapsed .menu-item { justify-content:center; }
-
-.menu-item:hover { background:#4DB6AC; }
-
-.menu-item.active {
-  background:#1b5e55;
-  box-shadow: inset 0 0 0 2px rgba(255,255,255,0.15);
+.menu nav a:hover{
+  background:#4DB6AC;
 }
 
-.menu-item::after {
-  content: attr(data-name);
-  position:absolute;
-  left:75px;
-  background:#1F2933;
-  color:white;
-  padding:6px 10px;
-  border-radius:6px;
-  font-size:12px;
-  opacity:0;
-  transition:0.2s;
-  white-space:nowrap;
+/* OVERLAY */
+.overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.4);
+  display:none;
+  z-index:9;
 }
 
-.sidebar.collapsed .menu-item:hover::after {
-  opacity:1;
-}
-
-/* MAIN */
-.main {
-  flex:1;
-  background:#F5F7F9;
-  padding:20px;
+.overlay.show{
+  display:block;
 }
 </style>
+
+<script>
+function toggleMenu(){
+  const menu = document.getElementById("menu");
+  const overlay = document.getElementById("overlay");
+
+  menu.classList.toggle("open");
+  overlay.classList.toggle("show");
+}
+
+document.getElementById("overlay").onclick = toggleMenu;
+
+/* ATIVO AUTOMÁTICO */
+const path = window.location.pathname;
+
+document.querySelectorAll(".menu nav a").forEach(link=>{
+  if(path.includes(link.getAttribute("href"))){
+    link.style.background = "#1b5e55";
+  }
+});
+
+/* ÍCONES */
+if(window.lucide){
+  lucide.createIcons();
+}
+</script>
