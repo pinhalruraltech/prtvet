@@ -105,7 +105,7 @@ auth.onAuthStateChanged(async user=>{
   }
 
   await carregarMenu();
-  renderTela();
+  renderTela(); // continua igual
   document.body.style.display="block";
   carregarClientes();
 });
@@ -115,7 +115,6 @@ async function carregarMenu(){
   const res = await fetch("/prtvet/appvet/menu/menu.html");
   document.getElementById("menu-container").innerHTML = await res.text();
 
-  // garante execução correta
   setTimeout(()=>{
     if(typeof initMenu==="function") initMenu();
 
@@ -125,8 +124,13 @@ async function carregarMenu(){
       }
 
       link.onclick = ()=>{
-        document.getElementById("menu").classList.remove("open");
-        document.getElementById("overlay").classList.remove("show");
+        const menu = document.getElementById("menu");
+        const overlay = document.getElementById("overlay");
+
+        if(menu && overlay){
+          menu.classList.remove("open");
+          overlay.classList.remove("show");
+        }
       };
     });
 
@@ -135,7 +139,14 @@ async function carregarMenu(){
 
 /* TELA */
 function renderTela(){
-  const container = document.getElementById("app-content");
+
+  // 🔥 CORREÇÃO CRÍTICA (AQUI ESTAVA O ERRO)
+  let container = document.getElementById("app-content");
+
+  if(!container){
+    console.error("app-content não encontrado");
+    return;
+  }
 
   container.innerHTML = `
   <div class="page">
