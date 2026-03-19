@@ -8,6 +8,9 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
+<!-- MENU CSS -->
+<link rel="stylesheet" href="css/menu.css">
+
 <style>
 
 /* BASE */
@@ -17,38 +20,9 @@ body {
     background: #F1F5F9;
 }
 
-/* TOPBAR */
-.topbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px;
-    background: white;
-    border-bottom: 1px solid #E5EAF0;
-}
-
-.topbar-left {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-#menu-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-}
-
 /* MAIN */
 .main {
-    margin-left: 240px;
     padding: 20px;
-}
-
-@media (max-width: 768px) {
-    .main {
-        margin-left: 0;
-    }
 }
 
 /* GRID */
@@ -131,27 +105,12 @@ body {
 }
 
 </style>
-
 </head>
 
 <body>
 
 <!-- MENU -->
 <div id="menu-container"></div>
-
-<!-- TOPBAR -->
-<div class="topbar">
-    <div class="topbar-left">
-        <button id="menu-btn">
-            <i data-lucide="menu"></i>
-        </button>
-        <strong>Dashboard</strong>
-    </div>
-
-    <button onclick="novoAtendimento()" style="background:#2D6A4F;color:white;border:none;padding:10px 14px;border-radius:8px;">
-        + Novo Atendimento
-    </button>
-</div>
 
 <!-- MAIN -->
 <div class="main">
@@ -227,28 +186,22 @@ body {
 <script src="https://unpkg.com/lucide@latest"></script>
 
 <script>
-
-// MENU
 fetch("menu/menu.html")
 .then(res => res.text())
 .then(data => {
     document.getElementById("menu-container").innerHTML = data;
 
-    setTimeout(() => {
-        const btn = document.getElementById("menu-btn");
-        const sidebar = document.getElementById("sidebar");
-
-        if(btn && sidebar){
-            btn.addEventListener("click", () => {
-                sidebar.classList.toggle("open");
-            });
-        }
-
-        lucide.createIcons();
-    }, 100);
+    // injeta menu.js corretamente
+    const script = document.createElement("script");
+    script.type = "module";
+    script.src = "js/menu.js";
+    document.body.appendChild(script);
 });
+</script>
 
-// USUÁRIO (SIMULADO POR ENQUANTO)
+<script>
+
+// USUÁRIO (TEMP)
 const usuario = "Venício";
 document.getElementById("usuarioNome").innerText = "Usuário: " + usuario;
 
