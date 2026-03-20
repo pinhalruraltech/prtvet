@@ -179,7 +179,6 @@ fetch("../menu/menu.html")
 });
 </script>
 
-<script type="module">
 
 import { db } from "../js/firebase-init.js";
 import {
@@ -199,23 +198,82 @@ const storage = getStorage();
 
 let clientes = [];
 
+/* 🔥 GARANTE FUNÇÕES NO WINDOW */
+window.abrirModal = function(){
+    console.log("Abrindo modal...");
+    document.getElementById("modalCliente").style.display = "flex";
+}
+
+window.cancelar = function(){
+    if(confirm("Cancelar cadastro?")){
+        document.getElementById("modalCliente").style.display = "none";
+    }
+}
+
+window.salvarCliente = async function(){
+
+    try{
+
+        if(!confirm("Salvar cliente?")) return;
+
+        const file = document.getElementById("foto").files[0];
+        let fotoURL = "";
+
+        if(file){
+            const storageRef = ref(storage, "clientes/" + Date.now());
+            await uploadBytes(storageRef, file);
+            fotoURL = await getDownloadURL(storageRef);
+        }
+
+        await addDoc(collection(db,"clientes"),{
+            nome: document.getElementById("nome").value,
+            telefone: document.getElementById("telefone").value,
+            endereco:{
+                cidade: document.getElementById("cidade").value
+            },
+            foto: fotoURL
+        });
+
+        alert("Cliente salvo!");
+
+        document.getElementById("modalCliente").style.display = "none";
+
+        carregarClientes();
+
+    }catch(e){
+        console.error("Erro ao salvar:", e);
+        alert("Erro ao salvar cliente");
+    }
+}
+
+/* 🔥 CARREGAR CLIENTES */
 async function carregarClientes(){
 
-    console.log("Carregando clientes...");
+    try{
 
-    const snapshot = await getDocs(collection(db, "clientes"));
+        console.log("Buscando clientes...");
 
-    clientes = [];
+        const snapshot = await getDocs(collection(db, "clientes"));
 
-    snapshot.forEach(doc=>{
-        console.log(doc.data()); // 🔍 DEBUG
-        clientes.push({
-            id: doc.id,
-            ...doc.data()
+        console.log("Docs encontrados:", snapshot.size);
+
+        clientes = [];
+
+        snapshot.forEach(doc=>{
+            const data = doc.data();
+            console.log("Cliente:", data);
+
+            clientes.push({
+                id: doc.id,
+                ...data
+            });
         });
-    });
 
-    renderLista(clientes);
+        renderLista(clientes);
+
+    }catch(e){
+        console.error("Erro ao carregar clientes:", e);
+    }
 }
 
 function renderLista(lista){
@@ -250,47 +308,20 @@ function renderLista(lista){
     });
 }
 
-/* MODAL */
-window.abrirModal = ()=>{
-    document.getElementById("modalCliente").style.display = "flex";
-}
+/* BUSCA */
+document.getElementById("busca").addEventListener("input", function(){
 
-window.cancelar = ()=>{
-    if(confirm("Cancelar cadastro?")){
-        document.getElementById("modalCliente").style.display = "none";
-    }
-}
+    const termo = this.value.toLowerCase();
 
-/* SALVAR */
-window.salvarCliente = async ()=>{
+    const filtrado = clientes.filter(c =>
+        (c.nome || "").toLowerCase().includes(termo) ||
+        (c.telefone || "").includes(termo)
+    );
 
-    if(!confirm("Salvar cliente?")) return;
+    renderLista(filtrado);
+});
 
-    const file = document.getElementById("foto").files[0];
-    let fotoURL = "";
-
-    if(file){
-        const storageRef = ref(storage, "clientes/" + Date.now());
-        await uploadBytes(storageRef, file);
-        fotoURL = await getDownloadURL(storageRef);
-    }
-
-    await addDoc(collection(db,"clientes"),{
-        nome: document.getElementById("nome").value,
-        telefone: document.getElementById("telefone").value,
-        endereco:{
-            cidade: document.getElementById("cidade").value
-        },
-        foto: fotoURL
-    });
-
-    alert("Cliente salvo!");
-
-    document.getElementById("modalCliente").style.display = "none";
-
-    carregarClientes();
-}
-
+/* 🔥 EXECUTA */
 carregarClientes();
 
 </script>
