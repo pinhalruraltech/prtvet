@@ -13,7 +13,6 @@
 <link rel="stylesheet" href="../menu/menu.css">
 
 <style>
-
 *{box-sizing:border-box;}
 
 body{
@@ -23,7 +22,6 @@ body{
     color:#1F2933;
 }
 
-/* HEADER */
 .header{
     background:#2D6A4F;
     color:#fff;
@@ -35,7 +33,6 @@ body{
     gap:8px;
 }
 
-/* SEARCH */
 .search-box{
     padding:12px 16px;
     background:#fff;
@@ -50,10 +47,7 @@ body{
     font-size:14px;
 }
 
-/* LISTA */
-.lista{
-    padding:10px;
-}
+.lista{padding:10px;}
 
 .item{
     display:flex;
@@ -75,7 +69,6 @@ body{
 }
 
 .info{flex:1;}
-
 .nome{font-weight:600;}
 .sub{font-size:13px;color:#6B7280;}
 
@@ -112,9 +105,6 @@ body{
     border-radius:12px;
     padding:16px;
 }
-
-.hidden{display:none;}
-
 </style>
 
 </head>
@@ -145,7 +135,6 @@ body{
         <h3>Novo Cliente</h3>
 
         <input type="file" id="foto">
-
         <input placeholder="Nome" id="nome">
         <input placeholder="Telefone" id="telefone">
         <input placeholder="Cidade" id="cidade">
@@ -160,6 +149,7 @@ body{
 Versão 1.0.0 • Desenvolvido por PRT Soluções
 </div>
 
+<!-- MENU -->
 <script>
 fetch("../menu/menu.html")
 .then(res => res.text())
@@ -179,6 +169,8 @@ fetch("../menu/menu.html")
 });
 </script>
 
+<!-- 🔥 FIREBASE (CORRIGIDO) -->
+<script type="module">
 
 import { db } from "../js/firebase-init.js";
 import {
@@ -198,9 +190,8 @@ const storage = getStorage();
 
 let clientes = [];
 
-/* 🔥 GARANTE FUNÇÕES NO WINDOW */
+/* MODAL */
 window.abrirModal = function(){
-    console.log("Abrindo modal...");
     document.getElementById("modalCliente").style.display = "flex";
 }
 
@@ -212,9 +203,9 @@ window.cancelar = function(){
 
 window.salvarCliente = async function(){
 
-    try{
+    if(!confirm("Salvar cliente?")) return;
 
-        if(!confirm("Salvar cliente?")) return;
+    try{
 
         const file = document.getElementById("foto").files[0];
         let fotoURL = "";
@@ -235,45 +226,30 @@ window.salvarCliente = async function(){
         });
 
         alert("Cliente salvo!");
-
         document.getElementById("modalCliente").style.display = "none";
-
         carregarClientes();
 
     }catch(e){
-        console.error("Erro ao salvar:", e);
+        console.error(e);
         alert("Erro ao salvar cliente");
     }
 }
 
-/* 🔥 CARREGAR CLIENTES */
+/* LISTAR */
 async function carregarClientes(){
 
-    try{
+    const snapshot = await getDocs(collection(db, "clientes"));
 
-        console.log("Buscando clientes...");
+    clientes = [];
 
-        const snapshot = await getDocs(collection(db, "clientes"));
-
-        console.log("Docs encontrados:", snapshot.size);
-
-        clientes = [];
-
-        snapshot.forEach(doc=>{
-            const data = doc.data();
-            console.log("Cliente:", data);
-
-            clientes.push({
-                id: doc.id,
-                ...data
-            });
+    snapshot.forEach(doc=>{
+        clientes.push({
+            id: doc.id,
+            ...doc.data()
         });
+    });
 
-        renderLista(clientes);
-
-    }catch(e){
-        console.error("Erro ao carregar clientes:", e);
-    }
+    renderLista(clientes);
 }
 
 function renderLista(lista){
@@ -321,7 +297,6 @@ document.getElementById("busca").addEventListener("input", function(){
     renderLista(filtrado);
 });
 
-/* 🔥 EXECUTA */
 carregarClientes();
 
 </script>
