@@ -18,9 +18,9 @@ body{
     color:#1F2933;
 }
 
-/* HEADER ADM (neutro) */
+/* HEADER PADRÃO */
 .header{
-    background:#1F2933;
+    background:#2D6A4F;
     color:#fff;
     padding:16px;
     font-weight:600;
@@ -45,7 +45,7 @@ body{
     border:1px solid #E5E7EB;
 }
 
-/* TITULO */
+/* TÍTULO */
 .card-title{
     font-weight:600;
     margin-bottom:14px;
@@ -54,16 +54,16 @@ body{
     gap:6px;
 }
 
-/* INPUT PADRÃO */
+/* INPUT */
 .form-group{
-    margin-bottom:12px;
+    margin-bottom:14px;
 }
 
 label{
     font-size:13px;
     color:#6B7280;
     display:block;
-    margin-bottom:4px;
+    margin-bottom:6px;
 }
 
 input, select{
@@ -78,8 +78,8 @@ input, select{
 .check{
     display:flex;
     align-items:center;
-    gap:8px;
-    margin-bottom:8px;
+    gap:10px;
+    margin-bottom:10px;
     font-size:14px;
 }
 
@@ -103,7 +103,6 @@ input, select{
 
 <body>
 
-<!-- MENU FUTURO -->
 <div id="menu-adm"></div>
 
 <div class="header">
@@ -115,15 +114,13 @@ input, select{
 
 <!-- IDENTIDADE -->
 <div class="card">
-
 <div class="card-title">
-<i data-lucide="badge-check"></i>
-Identidade
+<i data-lucide="badge-check"></i> Identidade
 </div>
 
 <div class="form-group">
 <label>ID da Clínica</label>
-<input id="id" placeholder="clinica_exemplo">
+<input id="id">
 </div>
 
 <div class="form-group">
@@ -155,10 +152,8 @@ Identidade
 
 <!-- DADOS -->
 <div class="card">
-
 <div class="card-title">
-<i data-lucide="file-text"></i>
-Dados
+<i data-lucide="file-text"></i> Dados
 </div>
 
 <div class="form-group">
@@ -171,7 +166,7 @@ Dados
 
 <div class="form-group">
 <label>CPF / CNPJ</label>
-<input id="doc">
+<input id="docField">
 </div>
 
 <div class="form-group">
@@ -198,73 +193,43 @@ Dados
 
 <!-- ENDEREÇO -->
 <div class="card">
-
 <div class="card-title">
-<i data-lucide="map-pin"></i>
-Endereço
+<i data-lucide="map-pin"></i> Endereço
 </div>
 
-<div class="form-group">
-<label>Logradouro</label>
-<input id="logradouro">
-</div>
-
-<div class="form-group">
-<label>Número</label>
-<input id="numero">
-</div>
-
-<div class="form-group">
-<label>Bairro</label>
-<input id="bairro">
-</div>
-
-<div class="form-group">
-<label>Cidade</label>
-<input id="cidade">
-</div>
-
-<div class="form-group">
-<label>Estado</label>
-<input id="estado">
-</div>
-
-<div class="form-group">
-<label>CEP</label>
-<input id="cep">
-</div>
+<div class="form-group"><label>Logradouro</label><input id="logradouro"></div>
+<div class="form-group"><label>Número</label><input id="numero"></div>
+<div class="form-group"><label>Bairro</label><input id="bairro"></div>
+<div class="form-group"><label>Cidade</label><input id="cidade"></div>
+<div class="form-group"><label>Estado</label><input id="estado"></div>
+<div class="form-group"><label>CEP</label><input id="cep"></div>
 
 </div>
 
 <!-- MÓDULOS -->
 <div class="card">
-
 <div class="card-title">
-<i data-lucide="layout-grid"></i>
-Módulos
+<i data-lucide="layout-grid"></i> Módulos
 </div>
 
-<label class="check">
-<input type="checkbox" id="m_clientes"> Clientes
-</label>
-
-<label class="check">
-<input type="checkbox" id="m_animais"> Animais
-</label>
-
-<label class="check">
-<input type="checkbox" id="m_atendimentos"> Atendimentos
-</label>
-
-<label class="check">
-<input type="checkbox" id="m_financeiro"> Financeiro
-</label>
+<label class="check"><input type="checkbox" id="m_inicio"> Início</label>
+<label class="check"><input type="checkbox" id="m_clientes"> Clientes</label>
+<label class="check"><input type="checkbox" id="m_animais"> Animais</label>
+<label class="check"><input type="checkbox" id="m_atendimentos"> Atendimentos</label>
+<label class="check"><input type="checkbox" id="m_vacinas"> Vacinas</label>
+<label class="check"><input type="checkbox" id="m_internacao"> Internação</label>
+<label class="check"><input type="checkbox" id="m_agenda"> Agenda</label>
+<label class="check"><input type="checkbox" id="m_estoque"> Estoque</label>
+<label class="check"><input type="checkbox" id="m_vendas"> Vendas</label>
+<label class="check"><input type="checkbox" id="m_financeiro"> Financeiro</label>
+<label class="check"><input type="checkbox" id="m_relatorios"> Relatórios</label>
+<label class="check"><input type="checkbox" id="m_documentos"> Documentos</label>
+<label class="check"><input type="checkbox" id="m_config"> Config</label>
 
 </div>
 
 <button class="btn" onclick="salvar()">
-<i data-lucide="save"></i>
-Salvar Clínica
+<i data-lucide="save"></i> Salvar Clínica
 </button>
 
 </div>
@@ -272,17 +237,13 @@ Salvar Clínica
 <script type="module">
 
 import { db } from "../js/firebase-init.js";
-import {
-    doc, getDoc, setDoc
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-/* 🔐 PROTEÇÃO ADM */
 const papel = localStorage.getItem("papel");
 if(papel !== "adm"){
     window.location.href = "../index.html";
 }
 
-/* 🔎 PARAM */
 const params = new URLSearchParams(window.location.search);
 const idParam = params.get("id");
 
@@ -290,17 +251,16 @@ if(idParam){
     carregar(idParam);
 }
 
-/* 📥 LOAD */
-async function carregar(id){
+async function carregar(idParam){
 
-    const ref = doc(db,"clinicas",id);
+    const ref = doc(db,"clinicas",idParam);
     const snap = await getDoc(ref);
 
     if(!snap.exists()) return;
 
     const c = snap.data();
 
-    id.value = id;
+    document.getElementById("id").value = idParam;
     nome.value = c.nome || "";
     titulo.value = c.titulo || "";
     subtitulo.value = c.subtitulo || "";
@@ -308,7 +268,7 @@ async function carregar(id){
     corPrimaria.value = c.visual?.corPrimaria || "";
 
     tipo.value = c.tipo || "pj";
-    doc.value = c.doc || "";
+    docField.value = c.doc || "";
     responsavel.value = c.responsavel || "";
     email.value = c.email || "";
     telefone.value = c.telefone || "";
@@ -321,21 +281,26 @@ async function carregar(id){
     estado.value = c.endereco?.estado || "";
     cep.value = c.endereco?.cep || "";
 
-    m_clientes.checked = c.modulos?.clientes || false;
-    m_animais.checked = c.modulos?.animais || false;
-    m_atendimentos.checked = c.modulos?.atendimentos || false;
-    m_financeiro.checked = c.modulos?.financeiro || false;
+    const m = c.modulos || {};
+
+    m_inicio.checked = m.inicio || false;
+    m_clientes.checked = m.clientes || false;
+    m_animais.checked = m.animais || false;
+    m_atendimentos.checked = m.atendimentos || false;
+    m_vacinas.checked = m.vacinas || false;
+    m_internacao.checked = m.internacao || false;
+    m_agenda.checked = m.agenda || false;
+    m_estoque.checked = m.estoque || false;
+    m_vendas.checked = m.vendas || false;
+    m_financeiro.checked = m.financeiro || false;
+    m_relatorios.checked = m.relatorios || false;
+    m_documentos.checked = m.documentos || false;
+    m_config.checked = m.config || false;
 }
 
-/* 💾 SAVE */
 window.salvar = async ()=>{
 
     const idVal = id.value.trim();
-
-    if(!idVal){
-        alert("Informe o ID da clínica");
-        return;
-    }
 
     await setDoc(doc(db,"clinicas",idVal),{
 
@@ -349,7 +314,7 @@ window.salvar = async ()=>{
         },
 
         tipo: tipo.value,
-        doc: doc.value,
+        doc: docField.value,
         responsavel: responsavel.value,
         email: email.value,
         telefone: telefone.value,
@@ -365,10 +330,19 @@ window.salvar = async ()=>{
         },
 
         modulos:{
+            inicio: m_inicio.checked,
             clientes: m_clientes.checked,
             animais: m_animais.checked,
             atendimentos: m_atendimentos.checked,
-            financeiro: m_financeiro.checked
+            vacinas: m_vacinas.checked,
+            internacao: m_internacao.checked,
+            agenda: m_agenda.checked,
+            estoque: m_estoque.checked,
+            vendas: m_vendas.checked,
+            financeiro: m_financeiro.checked,
+            relatorios: m_relatorios.checked,
+            documentos: m_documentos.checked,
+            config: m_config.checked
         },
 
         ativa:true
@@ -376,7 +350,7 @@ window.salvar = async ()=>{
     });
 
     alert("Clínica salva com sucesso!");
-}
+};
 
 lucide.createIcons();
 
