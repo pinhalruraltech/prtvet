@@ -5,9 +5,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Login | APPVET</title>
+<title>Login | AppVet</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
 
 <style>
 :root{
@@ -29,8 +30,12 @@ display:flex;
 flex-direction:column;
 }
 
-.container{flex:1;display:flex;}
+.container{
+flex:1;
+display:flex;
+}
 
+/* LADO ESQUERDO */
 .left{
 flex:1;
 background:linear-gradient(135deg,var(--color-primary),var(--color-secondary));
@@ -43,14 +48,25 @@ text-align:center;
 }
 
 .left img{
-max-width:320px;
-width:90%;
+max-width:300px;
+width:85%;
 margin-bottom:20px;
 }
 
-.clinic{color:#fff;font-size:20px;font-weight:600;}
-.doctor{color:#fff;font-size:14px;opacity:0.9;}
+.clinic{
+color:#fff;
+font-size:22px;
+font-weight:600;
+margin-bottom:4px;
+}
 
+.doctor{
+color:#fff;
+font-size:14px;
+opacity:0.9;
+}
+
+/* LADO DIREITO */
 .right{
 flex:1;
 display:flex;
@@ -61,11 +77,11 @@ padding:20px;
 
 .login-box{
 width:100%;
-max-width:400px;
+max-width:420px;
 padding:25px;
-background:var(--color-white);
-border-radius:12px;
-box-shadow:0 10px 25px rgba(0,0,0,0.08);
+background:#fff;
+border-radius:14px;
+box-shadow:0 10px 30px rgba(0,0,0,0.08);
 }
 
 .login-title{
@@ -75,15 +91,45 @@ gap:10px;
 margin-bottom:20px;
 }
 
-.form-group{margin-bottom:12px;}
+.login-title svg{
+width:22px;
+height:22px;
+}
+
+/* FORM */
+.form-group{
+margin-bottom:12px;
+}
+
+.form-group label{
+font-size:13px;
+color:#6B7280;
+}
 
 .form-group input{
 width:100%;
 padding:12px;
-border:1.5px solid #D1D5DB;
 border-radius:10px;
+border:1.5px solid #D1D5DB;
+font-size:14px;
 }
 
+.password-wrapper{
+position:relative;
+}
+
+.password-wrapper svg{
+position:absolute;
+right:10px;
+top:50%;
+transform:translateY(-50%);
+cursor:pointer;
+width:20px;
+height:20px;
+color:#6B7280;
+}
+
+/* BOTÃO */
 button{
 width:100%;
 padding:12px;
@@ -95,6 +141,7 @@ font-weight:600;
 cursor:pointer;
 }
 
+/* ALERT */
 .alert{
 display:none;
 margin-bottom:10px;
@@ -103,14 +150,46 @@ border-radius:6px;
 font-size:13px;
 }
 
-.alert.error{background:#fdecea;color:#E63946;}
-.alert.success{background:#e6f4ea;color:#2D6A4F;}
+.alert.error{
+background:#fdecea;
+color:#E63946;
+}
 
+.alert.success{
+background:#e6f4ea;
+color:#2D6A4F;
+}
+
+.link{
+margin-top:10px;
+text-align:center;
+font-size:13px;
+}
+
+/* FOOTER */
 .footer{
 text-align:center;
 padding:20px;
 font-size:12px;
 color:#6B7280;
+}
+
+/* MOBILE */
+@media(max-width:768px){
+.container{flex-direction:column;}
+
+.left{
+height:42vh;
+}
+
+.right{
+height:58vh;
+align-items:flex-start;
+}
+
+.login-box{
+margin-top:10px;
+}
 }
 </style>
 
@@ -120,32 +199,49 @@ color:#6B7280;
 
 <div class="container">
 
+<!-- ESQUERDA -->
 <div class="left">
 
-<img src="logo/logo_prt.png">
+<img src="logo/logo_rafael.png">
 
-<div class="clinic">APPVET</div>
-<div class="doctor">Sistema de Gestão Veterinária</div>
+<div class="clinic">Clínica Veterinária</div>
+<div class="doctor">Dr. Rafael Frutuoso</div>
 
 </div>
 
+<!-- DIREITA -->
 <div class="right">
 
 <div class="login-box">
 
+<div class="login-title">
+<i data-lucide="lock"></i>
 <h2>Login</h2>
+</div>
 
 <div id="alert" class="alert"></div>
 
 <div class="form-group">
-<input type="email" id="email" placeholder="Email">
+<label>Email</label>
+<input type="email" id="email">
 </div>
 
 <div class="form-group">
-<input type="password" id="senha" placeholder="Senha">
+<label>Senha</label>
+
+<div class="password-wrapper">
+<input type="password" id="senha">
+
+<i data-lucide="eye" onclick="toggleSenha()"></i>
+</div>
+
 </div>
 
 <button onclick="login()">Entrar</button>
+
+<div class="link">
+<a href="#">Esqueceu a senha?</a>
+</div>
 
 </div>
 
@@ -157,7 +253,6 @@ color:#6B7280;
 Versão 1.0.0 • Desenvolvido por PRT Soluções
 </div>
 
-<!-- 🔥 SCRIPT CORRETO -->
 <script type="module">
 
 import { auth, db } from "./js/firebase-init.js";
@@ -167,7 +262,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 import {
-    collection, query, where, getDocs
+    doc, getDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 function showAlert(msg, type){
@@ -187,27 +282,22 @@ window.login = async function(){
         const cred = await signInWithEmailAndPassword(auth, email, senha);
         const uid = cred.user.uid;
 
-        // 🔎 busca usuário no Firestore
-        const q = query(
-            collection(db, "usuarios"),
-            where("uid", "==", uid)
-        );
+        // 🔥 forma correta
+        const ref = doc(db, "usuarios", uid);
+        const snap = await getDoc(ref);
 
-        const snap = await getDocs(q);
-
-        if (snap.empty) {
+        if (!snap.exists()) {
             showAlert("Usuário não encontrado", "error");
             return;
         }
 
-        const user = snap.docs[0].data();
+        const user = snap.data();
 
         if (!user.ativo) {
             showAlert("Usuário inativo", "error");
             return;
         }
 
-        // 🔐 salva sessão COMPLETA
         localStorage.setItem("uid", uid);
         localStorage.setItem("clinicaId", user.clinicaId);
         localStorage.setItem("papel", user.grupo);
@@ -220,23 +310,18 @@ window.login = async function(){
 
     }catch(e){
 
-        switch(e.code){
-            case "auth/user-not-found":
-                showAlert("Usuário não encontrado", "error");
-                break;
-            case "auth/wrong-password":
-                showAlert("Senha incorreta", "error");
-                break;
-            case "auth/invalid-email":
-                showAlert("Email inválido", "error");
-                break;
-            default:
-                showAlert("Erro: " + e.code, "error");
-        }
+        showAlert("Erro: " + e.code, "error");
 
     }
 
 }
+
+window.toggleSenha = function(){
+    const input = document.getElementById('senha');
+    input.type = input.type === "password" ? "text" : "password";
+}
+
+lucide.createIcons();
 
 </script>
 
