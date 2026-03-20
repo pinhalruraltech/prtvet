@@ -243,6 +243,13 @@ input, select{
 
 <script type="module">
 
+fetch("menu-adm.html")
+.then(res => res.text())
+.then(html => {
+    document.getElementById("menu-adm").innerHTML = html;
+    lucide.createIcons();
+});
+
 import { db } from "../js/firebase-init.js";
 import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
