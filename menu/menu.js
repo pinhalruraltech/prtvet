@@ -15,7 +15,7 @@ function toggleMenu(){
 
 /* USUÁRIO */
 function carregarUsuario(){
-    const nome = "Venício"; // depois vem do Firebase
+    const nome = "👤 Venício"; // depois vem do Firebase
     document.getElementById("usuarioNome").textContent = nome;
 }
 
