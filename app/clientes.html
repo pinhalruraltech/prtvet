@@ -65,12 +65,18 @@ body{
     margin-bottom:10px;
     border:1px solid #E3E8EE;
     cursor:pointer;
+    transition:0.15s;
 }
 
 .item:hover{
     background:#F9FAFB;
 }
 
+.item:active{
+    background:#F1F5F9;
+}
+
+/* FOTO */
 .foto{
     width:50px;
     height:50px;
@@ -78,6 +84,7 @@ body{
     background:#ddd;
 }
 
+/* INFO */
 .info{
     flex:1;
 }
@@ -121,8 +128,6 @@ body{
 
 </head>
 
-<script src="../menu/menu.js"></script>
-
 <body>
 
 <!-- MENU -->
@@ -158,12 +163,17 @@ opacity:0.8;
 Versão 1.0.0 • Desenvolvido por PRT Soluções
 </div>
 
-<!-- MENU LOAD -->
+<!-- MENU LOAD (PADRÃO CORRETO) -->
 <script>
 fetch("../menu/menu.html")
 .then(res => res.text())
 .then(data => {
     document.getElementById("menu-container").innerHTML = data;
+
+    // injeta o JS do menu corretamente
+    const script = document.createElement("script");
+    script.src = "../menu/menu.js";
+    document.body.appendChild(script);
 
     setTimeout(()=>{
         if(typeof initMenu === "function"){
