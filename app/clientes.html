@@ -28,6 +28,9 @@ body{
     padding:16px;
     font-size:18px;
     font-weight:600;
+    display:flex;
+    align-items:center;
+    gap:8px;
 }
 
 /* SEARCH */
@@ -118,20 +121,56 @@ body{
 
 <body>
 
+<!-- MENU -->
+<div id="menu-container"></div>
+
+<!-- HEADER -->
 <div class="header">
-    <i data-lucide="users"></i> Clientes
+    <i data-lucide="users"></i>
+    Clientes
 </div>
 
+<!-- SEARCH -->
 <div class="search-box">
     <input type="text" id="busca" placeholder="Buscar cliente por nome ou telefone">
 </div>
 
+<!-- LISTA -->
 <div class="lista" id="listaClientes"></div>
 
+<!-- BOTÃO -->
 <div class="fab" onclick="novoCliente()">
     <i data-lucide="plus"></i>
 </div>
 
+<!-- FOOTER -->
+<div style="
+text-align:center;
+padding:24px 16px;
+font-size:12px;
+color:#6B7280;
+opacity:0.8;
+">
+Versão 1.0.0 • Desenvolvido por PRT Soluções
+</div>
+
+<!-- MENU LOAD -->
+<script>
+fetch("../menu/menu.html")
+.then(res => res.text())
+.then(data => {
+    document.getElementById("menu-container").innerHTML = data;
+
+    setTimeout(()=>{
+        if(typeof initMenu === "function"){
+            initMenu();
+        }
+        lucide.createIcons();
+    },100);
+});
+</script>
+
+<!-- FIREBASE -->
 <script type="module">
 
 import { db } from "../js/firebase-init.js";
