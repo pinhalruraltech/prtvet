@@ -1,21 +1,20 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Atendimento | AppVet</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/lucide@latest"></script>
 
-<!-- MENU CSS -->
 <link rel="stylesheet" href="../menu/menu.css">
 
 <style>
 
-*{
-    box-sizing:border-box;
-}
+*{box-sizing:border-box;}
 
 body{
     margin:0;
@@ -24,7 +23,6 @@ body{
     color:#1F2933;
 }
 
-/* HEADER */
 .header{
     background:#2D6A4F;
     color:#fff;
@@ -36,13 +34,11 @@ body{
     gap:8px;
 }
 
-/* CONTAINER */
 .container{
     padding:16px;
     padding-bottom:80px;
 }
 
-/* CARD */
 .card{
     background:#fff;
     border-radius:14px;
@@ -51,7 +47,6 @@ body{
     box-shadow:0 4px 10px rgba(0,0,0,0.04);
 }
 
-/* INPUTS */
 label{
     font-size:13px;
     color:#6B7280;
@@ -73,7 +68,6 @@ input:focus, select:focus, textarea:focus{
     border-color:#2D6A4F;
 }
 
-/* BOTÕES */
 .btn{
     width:100%;
     padding:16px;
@@ -98,7 +92,6 @@ input:focus, select:focus, textarea:focus{
     color:#2D6A4F;
 }
 
-/* MINI CARD */
 .animal-card{
     display:flex;
     gap:12px;
@@ -117,12 +110,10 @@ input:focus, select:focus, textarea:focus{
     color:#6B7280;
 }
 
-/* HIDDEN */
 .hidden{
     display:none;
 }
 
-/* TÍTULO SEÇÃO */
 .section-title{
     font-weight:600;
     margin-bottom:10px;
@@ -132,6 +123,7 @@ input:focus, select:focus, textarea:focus{
 }
 
 </style>
+
 </head>
 
 <body>
@@ -146,13 +138,11 @@ input:focus, select:focus, textarea:focus{
 
 <div class="container">
 
-<!-- ANIMAL -->
 <div class="card">
     <label>Selecionar Animal</label>
     <select id="animalSelect"></select>
 </div>
 
-<!-- RESUMO -->
 <div class="card">
     <div class="animal-card">
         <div class="animal-photo"></div>
@@ -163,7 +153,6 @@ input:focus, select:focus, textarea:focus{
     </div>
 </div>
 
-<!-- FORM -->
 <div class="card">
 
     <div class="section-title">
@@ -193,7 +182,6 @@ input:focus, select:focus, textarea:focus{
 
 </div>
 
-<!-- EVOLUÇÃO -->
 <div class="card">
 
     <div class="section-title">
@@ -218,26 +206,20 @@ input:focus, select:focus, textarea:focus{
 
 </div>
 
-<!-- VACINA -->
 <div class="card hidden" id="vacinaBox">
     <label>Nome da vacina</label>
     <input type="text">
-
     <label>Data</label>
     <input type="date">
-
     <label>Próxima dose</label>
     <input type="date">
 </div>
 
-<!-- MEDICAÇÃO -->
 <div class="card hidden" id="medicacaoBox">
     <label>Medicamento</label>
     <input type="text">
-
     <label>Posologia</label>
-    <input type="text" placeholder="Ex: 6 em 6 horas">
-
+    <input type="text">
     <label>Via</label>
     <select>
         <option>Oral</option>
@@ -246,44 +228,29 @@ input:focus, select:focus, textarea:focus{
     </select>
 </div>
 
-<!-- EXAME -->
 <div class="card hidden" id="exameBox">
     <label>Tipo de exame</label>
     <input type="text">
-
     <label>Urgência</label>
     <select>
         <option>Normal</option>
         <option>Urgente</option>
     </select>
-
     <label>Observações</label>
-    <textarea rows="3"></textarea>
+    <textarea></textarea>
 </div>
 
-<!-- INTERNAÇÃO -->
 <div class="card hidden" id="internacaoBox">
     <label>Data início</label>
     <input type="date">
-
     <label>Data fim</label>
     <input type="date">
-
     <label>Medicação</label>
     <input type="text">
-
     <label>Dose</label>
     <input type="text">
-
-    <label>Via</label>
-    <select>
-        <option>IV</option>
-        <option>IM</option>
-        <option>Oral</option>
-    </select>
 </div>
 
-<!-- RETORNO -->
 <div class="card">
     <label>Agendar retorno</label>
     <input type="date" id="dataRetorno">
@@ -294,15 +261,8 @@ input:focus, select:focus, textarea:focus{
     <i data-lucide="save"></i> Salvar Atendimento
 </button>
 
-
-
-<div style="
-text-align:center;
-padding:20px;
-font-size:12px;
-color:#6B7280;
-">
-Versão: 1.0.0 • Desenvolvido por PRT Soluções
+<div style="text-align:center;padding:20px;font-size:12px;color:#6B7280;">
+Versão 1.0.0 • Desenvolvido por PRT Soluções
 </div>
 
 <!-- FIREBASE -->
@@ -349,25 +309,28 @@ window.salvarAtendimento = async function(){
 
 </script>
 
-<!-- MENU LOAD -->
+<!-- MENU LOAD PADRÃO -->
 <script>
-
 fetch("../menu/menu.html")
 .then(res => res.text())
-.then(html => {
-    document.getElementById("menu-container").innerHTML = html;
+.then(data => {
+    document.getElementById("menu-container").innerHTML = data;
 
     const script = document.createElement("script");
     script.src = "../menu/menu.js";
     document.body.appendChild(script);
 
-    lucide.createIcons();
+    setTimeout(()=>{
+        if(typeof initMenu === "function"){
+            initMenu();
+        }
+        lucide.createIcons();
+    },100);
 });
 
 function toggle(id){
     document.getElementById(id).classList.toggle("hidden");
 }
-
 </script>
 
 </body>
