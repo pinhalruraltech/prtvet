@@ -1,300 +1,332 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Cliente | AppVet</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-
 <script src="https://unpkg.com/lucide@latest"></script>
 
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<link rel="stylesheet" href="../menu/menu.css">
 
 <style>
-body {
-  margin: 0;
-  font-family: 'Inter', sans-serif;
-  background: #F5F7F9;
-  display: none;
+
+*{box-sizing:border-box;}
+
+body{
+    margin:0;
+    font-family:'Inter', sans-serif;
+    background:#F5F7F9;
 }
 
-/* LAYOUT */
-.page {
-  padding: 25px;
-  max-width: 1100px;
+/* HEADER */
+.header{
+    background:#2D6A4F;
+    color:#fff;
+    padding:16px;
+    font-size:18px;
+    font-weight:600;
+}
+
+/* CONTAINER */
+.container{
+    padding:16px;
 }
 
 /* CARD */
-.card {
-  background: #fff;
-  border: 1px solid #E3E8EE;
-  border-radius: 12px;
-  padding: 25px;
-  margin-bottom: 20px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.04);
-}
-
-/* TITULO */
-.section-title {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 20px;
-  font-size: 18px;
-  font-weight: 600;
-}
-
-/* GRID */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 15px;
-}
-
-.grid-3 {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 15px;
+.card{
+    background:#fff;
+    border-radius:14px;
+    padding:16px;
+    margin-bottom:16px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.04);
 }
 
 /* INPUT */
-input, select {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #E3E8EE;
-  border-radius: 8px;
-  background: #FAFBFC;
-  outline: none;
-  font-size: 14px;
+label{
+    font-size:13px;
+    color:#6B7280;
+    display:block;
+    margin-bottom:6px;
 }
 
-input:focus {
-  border-color: #2F80ED;
-  background: #fff;
+input{
+    width:100%;
+    padding:14px;
+    border-radius:12px;
+    border:1.8px solid #CBD5E1;
+    margin-bottom:12px;
 }
 
 /* BOTÕES */
-.actions {
-  display: flex;
-  gap: 10px;
-  margin-top: 20px;
+.btn{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:12px;
+    font-weight:600;
+    margin-top:6px;
 }
 
-button {
-  padding: 10px 16px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
+.btn-primary{
+    background:#2D6A4F;
+    color:#fff;
 }
 
-.primary { background: #2F80ED; color: white; }
-.secondary { background: #6B7280; color: white; }
+.btn-secondary{
+    background:#E5E7EB;
+}
+
+/* FOTO */
+.photo{
+    width:100px;
+    height:100px;
+    border-radius:50%;
+    background:#ddd;
+    margin:auto;
+    margin-bottom:10px;
+}
 
 /* ANIMAIS */
-.animais {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+.animal-item{
+    padding:12px;
+    border-radius:10px;
+    background:#F9FAFB;
+    margin-bottom:8px;
+    cursor:pointer;
 }
 
-.animal-card {
-  padding: 12px;
-  border: 1px solid #E3E8EE;
-  border-radius: 8px;
-  background: #FAFBFC;
+.hidden{
+    display:none;
 }
 
-/* FOOTER */
-.footer {
-  text-align: center;
-  font-size: 12px;
-  padding: 15px;
-  color: #6B7280;
-}
 </style>
+
 </head>
 
 <body>
 
 <div id="menu-container"></div>
 
+<div class="header">
+    Cliente
+</div>
+
+<div class="container">
+
+<!-- FOTO -->
+<div class="card">
+    <div class="photo"></div>
+    <button class="btn btn-secondary">Alterar Foto</button>
+</div>
+
+<!-- DADOS -->
+<div class="card">
+
+<label>Nome</label>
+<input id="nome">
+
+<label>Telefone</label>
+<input id="telefone">
+
+<label>Rua</label>
+<input id="logradouro">
+
+<label>Número</label>
+<input id="numero">
+
+<label>Bairro</label>
+<input id="bairro">
+
+<label>Cidade</label>
+<input id="cidade">
+
+<label>Estado</label>
+<input id="estado">
+
+</div>
+
+<!-- AÇÕES -->
+<div class="card">
+
+<button class="btn btn-primary hidden" id="btnSalvar">Salvar</button>
+<button class="btn btn-secondary hidden" id="btnCancelar">Cancelar</button>
+<button class="btn btn-primary" id="btnEditar">Editar</button>
+
+</div>
+
+<!-- ANIMAIS -->
+<div class="card">
+
+<strong>Animais</strong>
+
+<div id="listaAnimais"></div>
+
+<button class="btn btn-primary" onclick="novoAnimal()">
+    + Novo Animal
+</button>
+
+</div>
+
+</div>
+
+<div style="text-align:center;padding:20px;font-size:12px;color:#6B7280;">
+Versão 1.0.0 • Desenvolvido por PRT Soluções
+</div>
+
+<script type="module">
+
+import { db } from "../js/firebase-init.js";
+import {
+    doc,
+    getDoc,
+    updateDoc,
+    collection,
+    query,
+    where,
+    getDocs
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const urlParams = new URLSearchParams(window.location.search);
+const clienteId = urlParams.get("id");
+
+let modoEdicao = false;
+let dadosOriginais = {};
+
+/* CARREGAR CLIENTE */
+async function carregarCliente(){
+
+    if(!clienteId) return;
+
+    const ref = doc(db, "clientes", clienteId);
+    const snap = await getDoc(ref);
+
+    const data = snap.data();
+
+    dadosOriginais = data;
+
+    document.getElementById("nome").value = data.nome || "";
+    document.getElementById("telefone").value = data.telefone || "";
+
+    document.getElementById("logradouro").value = data.endereco?.logradouro || "";
+    document.getElementById("numero").value = data.endereco?.numero || "";
+    document.getElementById("bairro").value = data.endereco?.bairro || "";
+    document.getElementById("cidade").value = data.endereco?.cidade || "";
+    document.getElementById("estado").value = data.endereco?.estado || "";
+
+}
+
+carregarCliente();
+
+/* ANIMAIS */
+async function carregarAnimais(){
+
+    const q = query(collection(db,"animais"), where("clienteId","==",clienteId));
+    const snapshot = await getDocs(q);
+
+    const lista = document.getElementById("listaAnimais");
+    lista.innerHTML = "";
+
+    snapshot.forEach(doc=>{
+        const d = doc.data();
+
+        const div = document.createElement("div");
+        div.className = "animal-item";
+        div.innerText = d.nome;
+
+        div.onclick = ()=>{
+            window.location.href = `animal.html?id=${doc.id}`;
+        };
+
+        lista.appendChild(div);
+    });
+
+}
+
+carregarAnimais();
+
+/* EDITAR */
+document.getElementById("btnEditar").onclick = ()=>{
+    modoEdicao = true;
+
+    toggleBotoes(true);
+}
+
+/* SALVAR */
+document.getElementById("btnSalvar").onclick = async ()=>{
+
+    if(!confirm("Salvar alterações?")) return;
+
+    const ref = doc(db,"clientes",clienteId);
+
+    await updateDoc(ref,{
+        nome: document.getElementById("nome").value,
+        telefone: document.getElementById("telefone").value,
+        endereco:{
+            logradouro: document.getElementById("logradouro").value,
+            numero: document.getElementById("numero").value,
+            bairro: document.getElementById("bairro").value,
+            cidade: document.getElementById("cidade").value,
+            estado: document.getElementById("estado").value
+        }
+    });
+
+    alert("Salvo com sucesso");
+
+    modoEdicao = false;
+    toggleBotoes(false);
+}
+
+/* CANCELAR */
+document.getElementById("btnCancelar").onclick = ()=>{
+
+    if(!confirm("Cancelar alterações?")) return;
+
+    carregarCliente();
+
+    modoEdicao = false;
+    toggleBotoes(false);
+}
+
+/* BOTÕES */
+function toggleBotoes(editando){
+
+    document.getElementById("btnSalvar").classList.toggle("hidden", !editando);
+    document.getElementById("btnCancelar").classList.toggle("hidden", !editando);
+    document.getElementById("btnEditar").classList.toggle("hidden", editando);
+
+}
+
+/* NOVO ANIMAL */
+window.novoAnimal = ()=>{
+    window.location.href = `animal.html?clienteId=${clienteId}`;
+}
+
+</script>
+
 <script>
-const firebaseConfig = {
-  apiKey: "AIzaSyDR69colU9JHvemBpab3x8PLHqaUm_5EM0",
-  authDomain: "appvet-prt.firebaseapp.com",
-  projectId: "appvet-prt"
-};
 
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-const auth = firebase.auth();
+/* MENU */
+fetch("../menu/menu.html")
+.then(res => res.text())
+.then(data => {
+    document.getElementById("menu-container").innerHTML = data;
 
-let clienteId = null;
+    const script = document.createElement("script");
+    script.src = "../menu/menu.js";
+    document.body.appendChild(script);
 
-auth.onAuthStateChanged(async (user)=>{
-  if(!user){
-    window.location.href="../login.html";
-    return;
-  }
-
-  clienteId = new URLSearchParams(window.location.search).get("id");
-
-  await carregarMenu();
-  await montarTela();
-  await carregarCliente();
-
-  document.body.style.display="block";
+    setTimeout(()=>{
+        if(typeof initMenu === "function"){
+            initMenu();
+        }
+        lucide.createIcons();
+    },100);
 });
 
-async function carregarMenu(){
-  const res = await fetch("/prtvet/appvet/menu/menu.html");
-  document.getElementById("menu-container").innerHTML = await res.text();
-  if (typeof initMenu === "function") initMenu();
-}
-
-async function montarTela(){
-  const container = document.getElementById("app-content");
-
-  container.innerHTML = `
-    <div class="page">
-
-      <div class="card">
-        <div class="section-title">
-          <i data-lucide="user"></i> Dados do Cliente
-        </div>
-
-        <div class="grid">
-          <input id="nome" placeholder="Nome completo">
-          <input id="cpf" placeholder="CPF">
-        </div>
-
-        <div class="grid">
-          <input id="nascimento" type="date">
-          <input id="telefone" placeholder="Telefone">
-        </div>
-
-        <div class="grid">
-          <input id="email" placeholder="Email">
-          <select id="situacao">
-            <option value="ativo">Ativo</option>
-            <option value="inativo">Inativo</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="section-title">
-          <i data-lucide="map-pin"></i> Endereço
-        </div>
-
-        <div class="grid">
-          <input id="logradouro" placeholder="Logradouro">
-          <input id="numero" placeholder="Número">
-        </div>
-
-        <div class="grid">
-          <input id="bairro" placeholder="Bairro">
-          <input id="cidade" placeholder="Cidade">
-        </div>
-
-        <div class="grid-3">
-          <input id="cep" placeholder="CEP">
-          <input id="estado" placeholder="Estado">
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="section-title">
-          <i data-lucide="paw-print"></i> Animais do Cliente
-        </div>
-
-        <div id="listaAnimais" class="animais"></div>
-      </div>
-
-      <div class="actions">
-        <button class="primary" onclick="salvar()">Salvar</button>
-        <button class="secondary" onclick="voltar()">Voltar</button>
-      </div>
-
-      <div class="footer">
-        Desenvolvido por Pinhal Rural Tech • Versão 1.0
-      </div>
-
-    </div>
-  `;
-
-  lucide.createIcons();
-}
-
-async function carregarCliente(){
-  const doc = await db.collection("clientes").doc(clienteId).get();
-  const c = doc.data();
-
-  document.getElementById("nome").value = c.nome || "";
-  document.getElementById("cpf").value = c.cpf || "";
-  document.getElementById("nascimento").value = c.nascimento || "";
-  document.getElementById("telefone").value = c.telefone || "";
-  document.getElementById("email").value = c.email || "";
-  document.getElementById("situacao").value = c.situacao || "ativo";
-
-  const end = c.endereco || {};
-
-  document.getElementById("logradouro").value = end.logradouro || "";
-  document.getElementById("numero").value = end.numero || "";
-  document.getElementById("bairro").value = end.bairro || "";
-  document.getElementById("cidade").value = end.cidade || "";
-  document.getElementById("cep").value = end.cep || "";
-  document.getElementById("estado").value = end.estado || "";
-
-  carregarAnimais(c.animais || []);
-}
-
-function carregarAnimais(animais){
-  const div = document.getElementById("listaAnimais");
-
-  if(animais.length === 0){
-    div.innerHTML = "<small>Nenhum animal cadastrado</small>";
-    return;
-  }
-
-  div.innerHTML = "";
-
-  animais.forEach(a=>{
-    div.innerHTML += `
-      <div class="animal-card">
-        ${a}
-      </div>
-    `;
-  });
-}
-
-async function salvar(){
-  await db.collection("clientes").doc(clienteId).update({
-    nome: document.getElementById("nome").value,
-    cpf: document.getElementById("cpf").value,
-    nascimento: document.getElementById("nascimento").value,
-    telefone: document.getElementById("telefone").value,
-    email: document.getElementById("email").value,
-    situacao: document.getElementById("situacao").value,
-
-    endereco: {
-      logradouro: document.getElementById("logradouro").value,
-      numero: document.getElementById("numero").value,
-      bairro: document.getElementById("bairro").value,
-      cidade: document.getElementById("cidade").value,
-      cep: document.getElementById("cep").value,
-      estado: document.getElementById("estado").value
-    }
-  });
-
-  alert("Cliente atualizado!");
-}
-
-function voltar(){
-  window.location.href = "clientes.html";
-}
 </script>
 
 </body>

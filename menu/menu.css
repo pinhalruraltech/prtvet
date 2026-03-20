@@ -1,0 +1,110 @@
+.menu-wrapper{
+    background:#2D6A4F;
+    color:#fff;
+}
+
+/* TOPO */
+.menu-top{
+    text-align:center;
+    padding:24px 16px 12px;
+    position:relative;
+}
+
+/* USUÁRIO NO TOPO DIREITO */
+.menu-user{
+    position:absolute;
+    right:16px;
+    top:16px;
+    font-size:13px;
+    opacity:0.9;
+}
+
+/* LOGO */
+.logo{
+    width:220px;
+    max-width:85%;
+    margin-bottom:8px;
+}
+
+/* TEXTO */
+.menu-info strong{
+    display:block;
+    font-size:16px;
+    font-weight:600;
+}
+
+.menu-info span{
+    font-size:13px;
+    opacity:0.85;
+}
+
+/* SETA */
+.menu-toggle{
+    margin-top:10px;
+    cursor:pointer;
+}
+
+.menu-toggle i{
+    width:26px;
+    height:26px;
+}
+
+/* GRID */
+.menu-grid{
+    display:grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap:14px;
+    padding:16px;
+    text-align:center;
+}
+
+/* ITENS */
+.menu-item{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-decoration:none;
+    color:#fff;
+    font-size:12px;
+    padding:8px 4px;
+    border-radius:10px;
+    transition:all 0.2s ease;
+}
+
+/* ÍCONES */
+.menu-item i{
+    width:22px;
+    height:22px;
+    margin-bottom:4px;
+}
+
+/* HOVER / TOQUE */
+.menu-item:active{
+    background:rgba(255,255,255,0.15);
+}
+
+/* ATIVO (PÁGINA ATUAL) */
+.menu-item.active{
+    background:rgba(255,255,255,0.18);
+}
+
+.menu-item.active span{
+    font-weight:600;
+}
+
+.menu-item.active i{
+    transform:scale(1.1);
+}
+
+/* ESCONDIDO */
+.hidden{
+    display:none;
+}
+
+/* RESPONSIVO (CELULAR MENOR) */
+@media (max-width:380px){
+    .menu-grid{
+        grid-template-columns: repeat(4, 1fr);
+    }
+}

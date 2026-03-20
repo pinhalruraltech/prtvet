@@ -1,7 +1,18 @@
-const uid = localStorage.getItem("uid");
+import { auth } from "./firebase-init.js";
 
-if (!uid) {
+import {
+    onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-    window.location.href = "../index.html";
+onAuthStateChanged(auth, (user) => {
 
-}
+    if (!user) {
+        // 🔴 não logado
+        window.location.href = "../index.html";
+        return;
+    }
+
+    // ✅ logado — garante consistência
+    localStorage.setItem("uid", user.uid);
+
+});

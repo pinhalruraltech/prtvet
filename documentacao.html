@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>AppVet - Documentação Oficial</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f5f7fa;
+    margin: 0;
+    color: #1f2933;
+}
+
+header {
+    background: #2F80ED;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+section {
+    padding: 20px;
+    border-bottom: 1px solid #e3e8ee;
+}
+
+h2 {
+    margin-top: 0;
+}
+
+.card {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid #e3e8ee;
+    margin-top: 10px;
+}
+
+.wireframe {
+    background: #eef2f7;
+    padding: 15px;
+    border-radius: 8px;
+    font-family: monospace;
+    white-space: pre;
+    margin-top: 10px;
+}
+
+.tag {
+    background: #2F80ED;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+}
+</style>
+
+</head>
+
+<body>
+
+<header>
+    <h1>APPVET</h1>
+    <p>Documentação Oficial - Estrutura + UX</p>
+</header>
+
+<section>
+<h2>🧠 Fluxo Principal do Sistema</h2>
+<div class="card">
+<strong>Cliente → Animal → Atendimento</strong><br><br>
+Todo o sistema gira em torno do paciente.
+</div>
+</section>
+
+<section>
+<h2>📊 Dashboard</h2>
+<div class="card">
+Resumo do sistema, agenda do dia e alertas importantes.
+</div>
+
+<div class="wireframe">
+☰ Dashboard
+
+[ Cards ]
+Atendimentos hoje
+Internações
+Faturamento
+
+[ Agenda do dia ]
+
+[ Alertas ]
+Vacinas vencendo
+Produtos vencendo
+</div>
+</section>
+
+<section>
+<h2>👥 Clientes</h2>
+<div class="card">
+Lista de clientes com busca e cadastro.
+</div>
+
+<div class="wireframe">
+☰ Clientes
+
+[ Busca ]
+
+[ Lista ]
+Nome
+Telefone
+</div>
+</section>
+
+<section>
+<h2>📄 Cliente (Detalhe)</h2>
+<div class="card">
+Dados do cliente + lista de animais vinculados.
+</div>
+
+<div class="wireframe">
+☰ Cliente
+
+Nome
+Telefone
+CPF
+Endereço
+
+[ Animais ]
+
+🐶 Thor
+🐱 Mel
+
+[ + Novo Animal ]
+</div>
+</section>
+
+<section>
+<h2>🐶 Animal (Central do Paciente)</h2>
+
+<div class="card">
+🔥 Tela mais importante do sistema.<br>
+Central completa da vida do paciente.
+</div>
+
+<div class="wireframe">
+☰ Animal
+
+🐶 Thor
+Canino • Labrador • 3 anos
+Tutor: João
+
+[ Foto do animal ]
+
+Peso: 22kg
+Sexo: Macho
+
+--------------------------------
+
+[ 🩺 Atendimento ]
+[ 📋 Prontuário ]
+
+[ 💉 Vacinas ]
+[ 💊 Medicações ]
+
+[ 🔪 Cirurgias ]
+[ 🏥 Internações ]
+
+[ 📎 Exames ]
+[ 📊 Histórico ]
+
+--------------------------------
+
+Resumo:
+Último atendimento: 10/03
+Última vacina: V10
+Alergias: Nenhuma
+</div>
+
+</section>
+
+<section>
+<h2>🩺 Atendimento Clínico</h2>
+
+<div class="card">
+Registro completo do atendimento veterinário.
+</div>
+
+<div class="wireframe">
+☰ Atendimento
+
+[ Cabeçalho do paciente ]
+
+[ Resumo ]
+
+[ Anamnese ]
+[ Exame físico ]
+[ Exames complementares ]
+
+[ Diagnóstico ]
+[ Tratamento ]
+
+[ Prescrição ]
+
+[ Anexos ]
+
+[ Salvar ]
+[ Gerar Receita ]
+[ Enviar WhatsApp ]
+</div>
+
+</section>
+
+<section>
+<h2>📅 Agenda</h2>
+
+<div class="card">
+Controle de consultas diárias e semanais.
+</div>
+
+<div class="wireframe">
+☰ Agenda
+
+[ Calendário ]
+
+[ Horários ]
+
+[ Novo agendamento ]
+</div>
+
+</section>
+
+<section>
+<h2>💊 Estoque</h2>
+
+<div class="card">
+Controle de medicamentos com validade e lote.
+</div>
+
+<div class="wireframe">
+☰ Estoque
+
+[ Lista ]
+Produto
+Quantidade
+Validade
+</div>
+
+</section>
+
+<section>
+<h2>🏪 Vendas</h2>
+
+<div class="card">
+Venda de produtos com baixa automática de estoque.
+</div>
+
+<div class="wireframe">
+☰ Vendas
+
+Produto
+Quantidade
+Pagamento
+
+[ Finalizar venda ]
+</div>
+
+</section>
+
+<section>
+<h2>🏭 Fornecedores</h2>
+
+<div class="card">
+Cadastro de fornecedores e histórico de compras.
+</div>
+
+</section>
+
+<section>
+<h2>💰 Financeiro</h2>
+
+<div class="card">
+Controle de entradas, saídas e fluxo de caixa.
+</div>
+
+<div class="wireframe">
+☰ Financeiro
+
+Entradas
+Saídas
+
+Filtro por período
+</div>
+
+</section>
+
+<section>
+<h2>🏥 Internação</h2>
+
+<div class="card">
+Controle de pacientes internados e evolução.
+</div>
+</section>
+
+<section>
+<h2>🔪 Cirurgias</h2>
+
+<div class="card">
+Registro de procedimentos cirúrgicos.
+</div>
+</section>
+
+<section>
+<h2>📎 Exames / Documentos</h2>
+
+<div class="card">
+Upload e visualização de exames e arquivos.
+</div>
+</section>
+
+<section>
+<h2>📊 Relatórios</h2>
+
+<div class="card">
+Relatórios gerenciais do sistema.
+</div>
+</section>
+
+<section>
+<h2>👤 Usuários</h2>
+
+<div class="card">
+Controle de acesso e permissões.
+</div>
+</section>
+
+<section>
+<h2>⚙️ Configurações</h2>
+
+<div class="card">
+Configuração da clínica e do sistema.
+</div>
+</section>
+
+</body>
+</html>

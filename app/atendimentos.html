@@ -1,1 +1,337 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
 
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Atendimento | AppVet</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<link rel="stylesheet" href="../menu/menu.css">
+
+<style>
+
+*{box-sizing:border-box;}
+
+body{
+    margin:0;
+    font-family:'Inter', sans-serif;
+    background:#F5F7F9;
+    color:#1F2933;
+}
+
+.header{
+    background:#2D6A4F;
+    color:#fff;
+    padding:16px;
+    font-size:18px;
+    font-weight:600;
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.container{
+    padding:16px;
+    padding-bottom:80px;
+}
+
+.card{
+    background:#fff;
+    border-radius:14px;
+    padding:16px;
+    margin-bottom:16px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.04);
+}
+
+label{
+    font-size:13px;
+    color:#6B7280;
+    display:block;
+    margin-bottom:6px;
+}
+
+input, select, textarea{
+    width:100%;
+    padding:14px;
+    border-radius:12px;
+    border:1.8px solid #CBD5E1;
+    font-size:15px;
+    margin-bottom:12px;
+    outline:none;
+}
+
+input:focus, select:focus, textarea:focus{
+    border-color:#2D6A4F;
+}
+
+.btn{
+    width:100%;
+    padding:16px;
+    border:none;
+    border-radius:12px;
+    font-size:15px;
+    font-weight:600;
+    margin-top:8px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+}
+
+.btn-primary{
+    background:#2D6A4F;
+    color:#fff;
+}
+
+.btn-option{
+    background:#E8F5E9;
+    color:#2D6A4F;
+}
+
+.animal-card{
+    display:flex;
+    gap:12px;
+    align-items:center;
+}
+
+.animal-photo{
+    width:60px;
+    height:60px;
+    border-radius:12px;
+    background:#E5E7EB;
+}
+
+.small{
+    font-size:13px;
+    color:#6B7280;
+}
+
+.hidden{
+    display:none;
+}
+
+.section-title{
+    font-weight:600;
+    margin-bottom:10px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- MENU -->
+<div id="menu-container"></div>
+
+<div class="header">
+    <i data-lucide="stethoscope"></i>
+    Atendimento
+</div>
+
+<div class="container">
+
+<div class="card">
+    <label>Selecionar Animal</label>
+    <select id="animalSelect"></select>
+</div>
+
+<div class="card">
+    <div class="animal-card">
+        <div class="animal-photo"></div>
+        <div>
+            <strong id="animalNome">-</strong>
+            <div class="small">Resumo rápido do paciente</div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+
+    <div class="section-title">
+        <i data-lucide="clipboard"></i> Atendimento
+    </div>
+
+    <label>Tipo de atendimento</label>
+    <select id="tipo">
+        <option>Consulta</option>
+        <option>Vacina</option>
+        <option>Procedimento</option>
+        <option>Cirurgia</option>
+        <option>Emergência</option>
+    </select>
+
+    <label>Sintomas</label>
+    <textarea id="sintomas" rows="3"></textarea>
+
+    <label>Diagnóstico</label>
+    <textarea id="diagnostico" rows="3"></textarea>
+
+    <label>Procedimentos</label>
+    <textarea id="procedimentos" rows="3"></textarea>
+
+    <label>Observações</label>
+    <textarea id="observacoes" rows="3"></textarea>
+
+</div>
+
+<div class="card">
+
+    <div class="section-title">
+        <i data-lucide="activity"></i> Evolução do paciente
+    </div>
+
+    <button class="btn btn-option" onclick="toggle('vacinaBox')">
+        <i data-lucide="syringe"></i> Nova Vacina
+    </button>
+
+    <button class="btn btn-option" onclick="toggle('medicacaoBox')">
+        <i data-lucide="pill"></i> Prescrever Medicação
+    </button>
+
+    <button class="btn btn-option" onclick="toggle('exameBox')">
+        <i data-lucide="flask-conical"></i> Solicitar Exame
+    </button>
+
+    <button class="btn btn-option" onclick="toggle('internacaoBox')">
+        <i data-lucide="bed"></i> Internação
+    </button>
+
+</div>
+
+<div class="card hidden" id="vacinaBox">
+    <label>Nome da vacina</label>
+    <input type="text">
+    <label>Data</label>
+    <input type="date">
+    <label>Próxima dose</label>
+    <input type="date">
+</div>
+
+<div class="card hidden" id="medicacaoBox">
+    <label>Medicamento</label>
+    <input type="text">
+    <label>Posologia</label>
+    <input type="text">
+    <label>Via</label>
+    <select>
+        <option>Oral</option>
+        <option>IM</option>
+        <option>SC</option>
+    </select>
+</div>
+
+<div class="card hidden" id="exameBox">
+    <label>Tipo de exame</label>
+    <input type="text">
+    <label>Urgência</label>
+    <select>
+        <option>Normal</option>
+        <option>Urgente</option>
+    </select>
+    <label>Observações</label>
+    <textarea></textarea>
+</div>
+
+<div class="card hidden" id="internacaoBox">
+    <label>Data início</label>
+    <input type="date">
+    <label>Data fim</label>
+    <input type="date">
+    <label>Medicação</label>
+    <input type="text">
+    <label>Dose</label>
+    <input type="text">
+</div>
+
+<div class="card">
+    <label>Agendar retorno</label>
+    <input type="date" id="dataRetorno">
+    <input type="time" id="horaRetorno">
+</div>
+
+<button class="btn btn-primary" onclick="salvarAtendimento()">
+    <i data-lucide="save"></i> Salvar Atendimento
+</button>
+
+<div style="text-align:center;padding:20px;font-size:12px;color:#6B7280;">
+Versão 1.0.0 • Desenvolvido por PRT Soluções
+</div>
+
+<!-- FIREBASE -->
+<script type="module">
+
+import { db } from "../js/firebase-init.js";
+import {
+    collection,
+    getDocs,
+    addDoc,
+    serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+async function carregarAnimais(){
+    const snapshot = await getDocs(collection(db, "animais"));
+    const select = document.getElementById("animalSelect");
+
+    snapshot.forEach(doc=>{
+        const option = document.createElement("option");
+        option.value = doc.id;
+        option.textContent = doc.data().nome;
+        select.appendChild(option);
+    });
+}
+
+carregarAnimais();
+
+window.salvarAtendimento = async function(){
+
+    const data = {
+        animalId: document.getElementById("animalSelect").value,
+        tipo: document.getElementById("tipo").value,
+        sintomas: document.getElementById("sintomas").value,
+        diagnostico: document.getElementById("diagnostico").value,
+        procedimentos: document.getElementById("procedimentos").value,
+        observacoes: document.getElementById("observacoes").value,
+        createdAt: serverTimestamp()
+    };
+
+    await addDoc(collection(db, "atendimentos"), data);
+
+    alert("Atendimento salvo!");
+}
+
+</script>
+
+<!-- MENU LOAD PADRÃO -->
+<script>
+fetch("../menu/menu.html")
+.then(res => res.text())
+.then(data => {
+    document.getElementById("menu-container").innerHTML = data;
+
+    const script = document.createElement("script");
+    script.src = "../menu/menu.js";
+    document.body.appendChild(script);
+
+    setTimeout(()=>{
+        if(typeof initMenu === "function"){
+            initMenu();
+        }
+        lucide.createIcons();
+    },100);
+});
+
+function toggle(id){
+    document.getElementById(id).classList.toggle("hidden");
+}
+</script>
+
+</body>
+</html>
