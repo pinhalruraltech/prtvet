@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+.<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 
@@ -65,18 +65,8 @@ body{
     margin-bottom:10px;
     border:1px solid #E3E8EE;
     cursor:pointer;
-    transition:0.15s;
 }
 
-.item:hover{
-    background:#F9FAFB;
-}
-
-.item:active{
-    background:#F1F5F9;
-}
-
-/* FOTO */
 .foto{
     width:50px;
     height:50px;
@@ -84,22 +74,11 @@ body{
     background:#ddd;
 }
 
-/* INFO */
-.info{
-    flex:1;
-}
+.info{flex:1;}
 
-.nome{
-    font-weight:600;
-    font-size:15px;
-}
+.nome{font-weight:600;}
+.sub{font-size:13px;color:#6B7280;}
 
-.sub{
-    font-size:13px;
-    color:#6B7280;
-}
-
-/* BOTÃO */
 .fab{
     position:fixed;
     bottom:20px;
@@ -112,17 +91,29 @@ body{
     display:flex;
     align-items:center;
     justify-content:center;
-    font-size:24px;
-    box-shadow:0 6px 12px rgba(0,0,0,0.15);
-    cursor:pointer;
 }
 
-/* EMPTY */
-.empty{
-    text-align:center;
-    margin-top:40px;
-    color:#6B7280;
+/* MODAL */
+.modal{
+    position:fixed;
+    top:0;left:0;
+    width:100%;height:100%;
+    background:rgba(0,0,0,0.5);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:16px;
 }
+
+.modal-content{
+    background:#fff;
+    width:100%;
+    max-width:400px;
+    border-radius:12px;
+    padding:16px;
+}
+
+.hidden{display:none;}
 
 </style>
 
@@ -130,47 +121,51 @@ body{
 
 <body>
 
-<!-- MENU -->
 <div id="menu-container"></div>
 
-<!-- HEADER -->
 <div class="header">
     <i data-lucide="users"></i>
     Clientes
 </div>
 
-<!-- SEARCH -->
 <div class="search-box">
     <input type="text" id="busca" placeholder="Buscar cliente por nome ou telefone">
 </div>
 
-<!-- LISTA -->
 <div class="lista" id="listaClientes"></div>
 
-<!-- BOTÃO -->
-<div class="fab" onclick="novoCliente()">
+<div class="fab" onclick="abrirModal()">
     <i data-lucide="plus"></i>
 </div>
 
-<!-- FOOTER -->
-<div style="
-text-align:center;
-padding:24px 16px;
-font-size:12px;
-color:#6B7280;
-opacity:0.8;
-">
+<!-- MODAL -->
+<div class="modal" id="modalCliente">
+    <div class="modal-content">
+
+        <h3>Novo Cliente</h3>
+
+        <input type="file" id="foto">
+
+        <input placeholder="Nome" id="nome">
+        <input placeholder="Telefone" id="telefone">
+        <input placeholder="Cidade" id="cidade">
+
+        <button onclick="salvarCliente()">Salvar</button>
+        <button onclick="cancelar()">Cancelar</button>
+
+    </div>
+</div>
+
+<div style="text-align:center;padding:24px 16px;font-size:12px;color:#6B7280;">
 Versão 1.0.0 • Desenvolvido por PRT Soluções
 </div>
 
-<!-- MENU LOAD (PADRÃO CORRETO) -->
 <script>
 fetch("../menu/menu.html")
 .then(res => res.text())
 .then(data => {
     document.getElementById("menu-container").innerHTML = data;
 
-    // injeta o JS do menu corretamente
     const script = document.createElement("script");
     script.src = "../menu/menu.js";
     document.body.appendChild(script);
@@ -184,24 +179,36 @@ fetch("../menu/menu.html")
 });
 </script>
 
-<!-- FIREBASE -->
 <script type="module">
 
 import { db } from "../js/firebase-init.js";
 import {
     collection,
-    getDocs
+    getDocs,
+    addDoc
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+import {
+    getStorage,
+    ref,
+    uploadBytes,
+    getDownloadURL
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+
+const storage = getStorage();
 
 let clientes = [];
 
 async function carregarClientes(){
+
+    console.log("Carregando clientes...");
 
     const snapshot = await getDocs(collection(db, "clientes"));
 
     clientes = [];
 
     snapshot.forEach(doc=>{
+        console.log(doc.data()); // 🔍 DEBUG
         clientes.push({
             id: doc.id,
             ...doc.data()
@@ -217,7 +224,7 @@ function renderLista(lista){
     container.innerHTML = "";
 
     if(lista.length === 0){
-        container.innerHTML = `<div class="empty">Nenhum cliente encontrado</div>`;
+        container.innerHTML = `<div>Nenhum cliente encontrado</div>`;
         return;
     }
 
@@ -237,31 +244,51 @@ function renderLista(lista){
                 <div class="sub">${cliente.telefone || ""}</div>
                 <div class="sub">${cliente.endereco?.cidade || ""}</div>
             </div>
-            <i data-lucide="chevron-right"></i>
         `;
 
         container.appendChild(div);
     });
-
-    lucide.createIcons();
 }
 
-/* BUSCA */
-document.getElementById("busca").addEventListener("input", function(){
+/* MODAL */
+window.abrirModal = ()=>{
+    document.getElementById("modalCliente").style.display = "flex";
+}
 
-    const termo = this.value.toLowerCase();
+window.cancelar = ()=>{
+    if(confirm("Cancelar cadastro?")){
+        document.getElementById("modalCliente").style.display = "none";
+    }
+}
 
-    const filtrado = clientes.filter(c =>
-        (c.nome || "").toLowerCase().includes(termo) ||
-        (c.telefone || "").includes(termo)
-    );
+/* SALVAR */
+window.salvarCliente = async ()=>{
 
-    renderLista(filtrado);
-});
+    if(!confirm("Salvar cliente?")) return;
 
-/* NOVO CLIENTE */
-window.novoCliente = function(){
-    window.location.href = "cliente.html";
+    const file = document.getElementById("foto").files[0];
+    let fotoURL = "";
+
+    if(file){
+        const storageRef = ref(storage, "clientes/" + Date.now());
+        await uploadBytes(storageRef, file);
+        fotoURL = await getDownloadURL(storageRef);
+    }
+
+    await addDoc(collection(db,"clientes"),{
+        nome: document.getElementById("nome").value,
+        telefone: document.getElementById("telefone").value,
+        endereco:{
+            cidade: document.getElementById("cidade").value
+        },
+        foto: fotoURL
+    });
+
+    alert("Cliente salvo!");
+
+    document.getElementById("modalCliente").style.display = "none";
+
+    carregarClientes();
 }
 
 carregarClientes();
