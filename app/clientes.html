@@ -124,7 +124,8 @@ body{
 
 <div class="lista" id="listaClientes"></div>
 
-<div class="fab" onclick="abrirModal()">
+<!-- ✅ BOTÃO CORRIGIDO -->
+<div class="fab" id="btnNovoCliente">
     <i data-lucide="plus"></i>
 </div>
 
@@ -169,7 +170,7 @@ fetch("../menu/menu.html")
 });
 </script>
 
-<!-- 🔥 FIREBASE (CORRIGIDO) -->
+<!-- FIREBASE -->
 <script type="module">
 
 import { db } from "../js/firebase-init.js";
@@ -190,11 +191,12 @@ const storage = getStorage();
 
 let clientes = [];
 
-/* MODAL */
-window.abrirModal = function(){
+/* ✅ EVENTO DO BOTÃO (CORREÇÃO PRINCIPAL) */
+document.getElementById("btnNovoCliente").addEventListener("click", () => {
     document.getElementById("modalCliente").style.display = "flex";
-}
+});
 
+/* MODAL */
 window.cancelar = function(){
     if(confirm("Cancelar cadastro?")){
         document.getElementById("modalCliente").style.display = "none";
