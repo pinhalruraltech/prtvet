@@ -1,224 +1,225 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Dashboard | AppVet</title>
+<title>Início | AppVet</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
 
-<!-- MENU CSS -->
-<link rel="stylesheet" href="css/menu.css">
+<link rel="stylesheet" href="menu/menu.css">
+
+<!-- 🔐 AUTH -->
+<script type="module" src="js/auth-guard.js"></script>
 
 <style>
+*{box-sizing:border-box;}
+body{margin:0;font-family:'Inter';background:#F5F7F9;}
 
-/* BASE */
-body {
-    margin: 0;
-    font-family: 'Inter', sans-serif;
-    background: #F1F5F9;
+.header{
+    background:#2D6A4F;
+    color:#fff;
+    padding:20px;
 }
 
-/* MAIN */
-.main {
-    padding: 20px;
+.header h1{
+    margin:0;
+    font-size:20px;
 }
 
-/* GRID */
-.grid {
-    display: grid;
-    gap: 16px;
+.container{
+    padding:16px;
 }
 
-.grid-4 {
-    grid-template-columns: repeat(4, 1fr);
+/* CARDS */
+.cards{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+    margin-bottom:16px;
 }
 
-.grid-2 {
-    grid-template-columns: repeat(2, 1fr);
-}
-
-@media (max-width: 900px) {
-    .grid-4, .grid-2 {
-        grid-template-columns: 1fr;
-    }
-}
-
-/* CARD */
-.card {
-    background: white;
-    border-radius: 16px;
-    padding: 16px;
-    border: 1px solid #E5EAF0;
-}
-
-/* STATS */
-.stat-card {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-}
-
-.stat-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.icon-blue { background:#E0F2FE; color:#0284C7; }
-.icon-green { background:#DCFCE7; color:#16A34A; }
-.icon-purple { background:#EDE9FE; color:#7C3AED; }
-.icon-orange { background:#FFF7ED; color:#EA580C; }
-
-.card-title { font-size: 13px; color:#6B7280; }
-.card-value { font-size:22px; font-weight:600; }
-
-/* ITEM */
-.item {
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:12px;
+.card{
+    background:#fff;
     border-radius:12px;
-    cursor:pointer;
+    padding:14px;
+    border:1px solid #E5E7EB;
 }
 
-.item:hover {
-    background:#F8FAFC;
+.card-title{
+    font-size:13px;
+    color:#6B7280;
 }
 
-/* FOOTER */
-.footer {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    background: #2D6A4F;
-    color: white;
-    padding: 12px;
-    display: flex;
-    justify-content: space-between;
-    font-size: 13px;
+.card-value{
+    font-size:22px;
+    font-weight:600;
+    margin-top:4px;
 }
 
+/* LISTA */
+.section{
+    background:#fff;
+    border-radius:12px;
+    padding:14px;
+    border:1px solid #E5E7EB;
+}
+
+.section-title{
+    font-weight:600;
+    margin-bottom:10px;
+}
+
+.item{
+    padding:10px;
+    border-bottom:1px solid #eee;
+    font-size:14px;
+}
+
+.item:last-child{
+    border-bottom:none;
+}
 </style>
+
 </head>
 
 <body>
 
-<!-- MENU -->
 <div id="menu-container"></div>
 
-<!-- MAIN -->
-<div class="main">
+<div class="header">
+    <h1>Início</h1>
+</div>
 
-    <div class="grid grid-4">
+<div class="container">
 
-        <div class="card stat-card">
-            <div class="stat-icon icon-blue"><i data-lucide="stethoscope"></i></div>
-            <div><div class="card-value">3</div><div class="card-title">Atendimentos</div></div>
+    <!-- 📊 CARDS -->
+    <div class="cards">
+        <div class="card">
+            <div class="card-title">Clientes</div>
+            <div class="card-value" id="totalClientes">0</div>
         </div>
 
-        <div class="card stat-card">
-            <div class="stat-icon icon-purple"><i data-lucide="paw-print"></i></div>
-            <div><div class="card-value">128</div><div class="card-title">Pacientes</div></div>
+        <div class="card">
+            <div class="card-title">Animais</div>
+            <div class="card-value" id="totalAnimais">0</div>
         </div>
-
-        <div class="card stat-card">
-            <div class="stat-icon icon-green"><i data-lucide="users"></i></div>
-            <div><div class="card-value">78</div><div class="card-title">Clientes</div></div>
-        </div>
-
-        <div class="card stat-card">
-            <div class="stat-icon icon-orange"><i data-lucide="bed"></i></div>
-            <div><div class="card-value">2</div><div class="card-title">Internações</div></div>
-        </div>
-
     </div>
 
-    <div class="grid grid-2" style="margin-top:20px;">
-
-        <!-- AGENDA -->
-        <div class="card">
-            <strong>Agenda</strong>
-
-            <div class="item" onclick="irAgenda('hoje')">
-                <span>Hoje - 24 atendimentos</span>
-                <i data-lucide="chevron-right"></i>
-            </div>
-
-            <div class="item" onclick="irAgenda('semana')">
-                <span>Semana - 24 atendimentos</span>
-                <i data-lucide="chevron-right"></i>
-            </div>
+    <!-- 📅 AGENDA -->
+    <div class="section">
+        <div class="section-title">Agenda de Hoje</div>
+        <div id="listaAgenda">
+            Nenhum agendamento hoje
         </div>
-
-        <!-- ALERTAS -->
-        <div class="card">
-            <strong>Alertas</strong>
-
-            <div class="item" onclick="abrirAlerta('produtos')">
-                <span>Produtos vencendo</span>
-                <i data-lucide="chevron-right"></i>
-            </div>
-
-            <div class="item" onclick="abrirAlerta('vacinas')">
-                <span>Vacinas vencendo</span>
-                <i data-lucide="chevron-right"></i>
-            </div>
-        </div>
-
     </div>
 
 </div>
 
-<!-- FOOTER -->
-<div class="footer">
-    <div id="usuarioNome">Usuário: ...</div>
-    <div>AppVet v1.0.0</div>
-    <div>PRT Soluções</div>
-</div>
-
-<!-- SCRIPTS -->
-<script src="https://unpkg.com/lucide@latest"></script>
-
+<!-- MENU LOAD -->
 <script>
 fetch("menu/menu.html")
-.then(res => res.text())
-.then(data => {
-    document.getElementById("menu-container").innerHTML = data;
+.then(r=>r.text())
+.then(html=>{
+    document.getElementById("menu-container").innerHTML = html;
 
-    // injeta menu.js corretamente
     const script = document.createElement("script");
-    script.type = "module";
-    script.src = "js/menu.js";
+    script.src = "menu/menu.js";
     document.body.appendChild(script);
+
+    setTimeout(()=>lucide.createIcons(),100);
 });
 </script>
 
-<script>
+<!-- 🔥 SCRIPT PRINCIPAL -->
+<script type="module">
 
-// USUÁRIO (TEMP)
-const usuario = "Venício";
-document.getElementById("usuarioNome").innerText = "Usuário: " + usuario;
+import { db } from "./js/firebase-init.js";
+import { carregarClinica } from "./js/clinica-loader.js";
 
-// AÇÕES
-function novoAtendimento(){
-    window.location.href = "app/atendimentos.html";
+import {
+    collection, getDocs, query, where
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const clinicaId = localStorage.getItem("clinicaId");
+
+if(!clinicaId){
+    alert("Erro: clínica não identificada");
 }
 
-function irAgenda(tipo){
-    window.location.href = "app/agenda.html?view=" + tipo;
+/* 🔧 CARREGA CONFIG DA CLÍNICA */
+await carregarClinica();
+
+/* 📊 CLIENTES */
+async function carregarClientes(){
+
+    const q = query(
+        collection(db,"clientes"),
+        where("clinicaId","==",clinicaId)
+    );
+
+    const snap = await getDocs(q);
+
+    document.getElementById("totalClientes").innerText = snap.size;
 }
 
-function abrirAlerta(tipo){
-    window.location.href = "app/estoque.html?alerta=" + tipo;
+/* 🐶 ANIMAIS */
+async function carregarAnimais(){
+
+    const q = query(
+        collection(db,"animais"),
+        where("clinicaId","==",clinicaId)
+    );
+
+    const snap = await getDocs(q);
+
+    document.getElementById("totalAnimais").innerText = snap.size;
 }
+
+/* 📅 AGENDA (base simples) */
+async function carregarAgenda(){
+
+    const q = query(
+        collection(db,"agenda"),
+        where("clinicaId","==",clinicaId)
+    );
+
+    const snap = await getDocs(q);
+
+    const lista = document.getElementById("listaAgenda");
+
+    if(snap.empty){
+        lista.innerHTML = "Nenhum agendamento hoje";
+        return;
+    }
+
+    lista.innerHTML = "";
+
+    snap.forEach(doc=>{
+        const d = doc.data();
+
+        const div = document.createElement("div");
+        div.className = "item";
+
+        div.innerHTML = `
+            <strong>${d.hora || "--:--"}</strong> - ${d.titulo || "Atendimento"}
+        `;
+
+        lista.appendChild(div);
+    });
+}
+
+/* 🚀 INIT */
+carregarClientes();
+carregarAnimais();
+carregarAgenda();
 
 </script>
+
+<script>lucide.createIcons();</script>
 
 </body>
 </html>

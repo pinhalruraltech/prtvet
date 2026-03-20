@@ -270,9 +270,10 @@ fetch("../menu/menu.html")
 <script type="module">
 
 import { db, storage } from "../js/firebase-init.js";
+import { carregarClinica } from "../js/clinica-loader.js";
 
 import {
-    collection, getDocs, addDoc, query, where
+    collection, getDocs, addDoc, query, where, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 import {
@@ -281,8 +282,16 @@ import {
 
 const clinicaId = localStorage.getItem("clinicaId");
 
+if(!clinicaId){
+    alert("Erro: clínica não identificada");
+}
+
+// 🔧 carrega config da clínica
+await carregarClinica();
+
 let clientes = [];
 
+/* MODAL */
 document.getElementById("btnNovoCliente").addEventListener("click", ()=>{
     modalCliente.style.display="flex";
 });
@@ -291,6 +300,7 @@ window.cancelar = ()=>{
     modalCliente.style.display="none";
 };
 
+/* SALVAR */
 window.salvarCliente = async ()=>{
 
     if(!clinicaId){
@@ -298,8 +308,15 @@ window.salvarCliente = async ()=>{
         return;
     }
 
+    const nomeVal = document.getElementById("nome").value.trim();
+
+    if(!nomeVal){
+        alert("Nome é obrigatório");
+        return;
+    }
+
     let fotoURL = "";
-    const file = foto.files[0];
+    const file = document.getElementById("foto").files[0];
 
     if(file){
         const storageRef = ref(storage, "clientes/"+Date.now());
@@ -310,21 +327,21 @@ window.salvarCliente = async ()=>{
     await addDoc(collection(db,"clientes"),{
 
         clinicaId,
-        nome: nome.value,
-        telefone: telefone.value,
-        email: email.value,
-        cpf: cpf.value,
+        nome: nomeVal,
+        telefone: document.getElementById("telefone").value,
+        email: document.getElementById("email").value,
+        cpf: document.getElementById("cpf").value,
         situacao: "ativo",
         codigo: "CLI-" + Date.now(),
-        createdAt: new Date(),
+        createdAt: serverTimestamp(),
 
         endereco:{
-            logradouro: logradouro.value,
-            numero: numero.value,
-            bairro: bairro.value,
-            cidade: cidade.value,
-            estado: estado.value,
-            cep: cep.value
+            logradouro: document.getElementById("logradouro").value,
+            numero: document.getElementById("numero").value,
+            bairro: document.getElementById("bairro").value,
+            cidade: document.getElementById("cidade").value,
+            estado: document.getElementById("estado").value,
+            cep: document.getElementById("cep").value
         },
 
         animais: [],
@@ -333,10 +350,16 @@ window.salvarCliente = async ()=>{
     });
 
     alert("Cliente cadastrado!");
+
+    // limpa campos
+    document.querySelectorAll("#modalCliente input").forEach(i=>i.value="");
+
     modalCliente.style.display="none";
+
     carregarClientes();
 };
 
+/* LISTAR */
 async function carregarClientes(){
 
     const q = query(
@@ -355,6 +378,7 @@ async function carregarClientes(){
     render();
 }
 
+/* RENDER */
 function render(lista = clientes){
 
     listaClientes.innerHTML="";
@@ -382,6 +406,7 @@ function render(lista = clientes){
     });
 }
 
+/* BUSCA */
 busca.addEventListener("input", e=>{
     const t=e.target.value.toLowerCase();
     render(clientes.filter(c=>
@@ -389,6 +414,7 @@ busca.addEventListener("input", e=>{
     ));
 });
 
+/* INIT */
 carregarClientes();
 
 </script>

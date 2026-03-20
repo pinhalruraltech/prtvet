@@ -10,7 +10,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
 <style>
-
 :root{
 --color-primary:#2D6A4F;
 --color-secondary:#74C69D;
@@ -20,24 +19,17 @@
 --color-muted:#6B7280;
 }
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-}
+*{margin:0;padding:0;box-sizing:border-box;}
 
 body{
-font-family: 'Inter', sans-serif;
+font-family:'Inter',sans-serif;
 background:var(--color-bg);
 min-height:100vh;
 display:flex;
 flex-direction:column;
 }
 
-.container{
-flex:1;
-display:flex;
-}
+.container{flex:1;display:flex;}
 
 .left{
 flex:1;
@@ -56,19 +48,8 @@ width:90%;
 margin-bottom:20px;
 }
 
-/* TEXTO PADRONIZADO */
-.clinic{
-color:#fff;
-font-size:20px;
-font-weight:600;
-margin-bottom:4px;
-}
-
-.doctor{
-color:#fff;
-font-size:14px;
-opacity:0.9;
-}
+.clinic{color:#fff;font-size:20px;font-weight:600;}
+.doctor{color:#fff;font-size:14px;opacity:0.9;}
 
 .right{
 flex:1;
@@ -92,44 +73,15 @@ display:flex;
 align-items:center;
 gap:10px;
 margin-bottom:20px;
-color:var(--color-text);
 }
 
-.login-title svg{
-width:22px;
-height:22px;
-}
-
-.password-wrapper{
-position:relative;
-}
-
-.password-wrapper svg{
-position:absolute;
-right:10px;
-top:50%;
-transform:translateY(-50%);
-cursor:pointer;
-width:20px;
-height:20px;
-color:#6B7280;
-}
-
-.form-group{
-margin-bottom:12px;
-}
-
-.form-group label{
-font-size:13px;
-color:var(--color-muted);
-}
+.form-group{margin-bottom:12px;}
 
 .form-group input{
 width:100%;
 padding:12px;
 border:1.5px solid #D1D5DB;
 border-radius:10px;
-font-size:14px;
 }
 
 button{
@@ -139,14 +91,8 @@ background:var(--color-primary);
 color:#fff;
 border:none;
 border-radius:10px;
-cursor:pointer;
 font-weight:600;
-}
-
-.link{
-margin-top:10px;
-text-align:center;
-font-size:13px;
+cursor:pointer;
 }
 
 .alert{
@@ -157,15 +103,8 @@ border-radius:6px;
 font-size:13px;
 }
 
-.alert.error{
-background:#fdecea;
-color:#E63946;
-}
-
-.alert.success{
-background:#e6f4ea;
-color:#2D6A4F;
-}
+.alert.error{background:#fdecea;color:#E63946;}
+.alert.success{background:#e6f4ea;color:#2D6A4F;}
 
 .footer{
 text-align:center;
@@ -173,40 +112,6 @@ padding:20px;
 font-size:12px;
 color:#6B7280;
 }
-
-@media(max-width:768px){
-
-.container{
-flex-direction:column;
-}
-
-.left{
-height:42vh;
-}
-
-.left img{
-max-width:220px;
-}
-
-.clinic{
-font-size:18px;
-}
-
-.doctor{
-font-size:13px;
-}
-
-.right{
-height:58vh;
-align-items:flex-start;
-}
-
-.login-box{
-margin-top:10px;
-}
-
-}
-
 </style>
 
 </head>
@@ -217,10 +122,10 @@ margin-top:10px;
 
 <div class="left">
 
-<img src="logo/logo_rafael.png">
+<img src="logo/logo_prt.png">
 
-<div class="clinic">Clínica Veterinária</div>
-<div class="doctor">Dr. Rafael Frutuoso</div>
+<div class="clinic">APPVET</div>
+<div class="doctor">Sistema de Gestão Veterinária</div>
 
 </div>
 
@@ -228,44 +133,19 @@ margin-top:10px;
 
 <div class="login-box">
 
-<div class="login-title">
-
-<svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-<rect x="3" y="11" width="18" height="11" rx="2"/>
-<path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-</svg>
-
 <h2>Login</h2>
-
-</div>
 
 <div id="alert" class="alert"></div>
 
 <div class="form-group">
-<label>Email</label>
-<input type="email" id="email">
+<input type="email" id="email" placeholder="Email">
 </div>
 
 <div class="form-group">
-<label>Senha</label>
-
-<div class="password-wrapper">
-<input type="password" id="senha">
-
-<svg onclick="toggleSenha()" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-<circle cx="12" cy="12" r="3"/>
-</svg>
-
-</div>
-
+<input type="password" id="senha" placeholder="Senha">
 </div>
 
 <button onclick="login()">Entrar</button>
-
-<div class="link">
-<a href="#">Esqueceu a senha?</a>
-</div>
 
 </div>
 
@@ -277,73 +157,85 @@ margin-top:10px;
 Versão 1.0.0 • Desenvolvido por PRT Soluções
 </div>
 
+<!-- 🔥 SCRIPT CORRETO -->
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { auth, db } from "./js/firebase-init.js";
 
-const firebaseConfig = {
-apiKey: "AIzaSyDR69colU9JHvemBpab3x8PLHqaUm_5EM0",
-authDomain: "appvet-prt.firebaseapp.com",
-projectId: "appvet-prt",
-storageBucket: "appvet-prt.firebasestorage.app",
-messagingSenderId: "26046923372",
-appId: "1:26046923372:web:fdbe180eadced87018e49"
-};
+import {
+    signInWithEmailAndPassword
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+import {
+    collection, query, where, getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 function showAlert(msg, type){
-const alert = document.getElementById("alert");
-alert.innerText = msg;
-alert.className = "alert " + type;
-alert.style.display = "block";
+    const alert = document.getElementById("alert");
+    alert.innerText = msg;
+    alert.className = "alert " + type;
+    alert.style.display = "block";
 }
 
 window.login = async function(){
 
-const email = document.getElementById('email').value;
-const senha = document.getElementById('senha').value;
+    const email = document.getElementById('email').value.trim();
+    const senha = document.getElementById('senha').value.trim();
 
-try{
+    try{
 
-await signInWithEmailAndPassword(auth, email, senha);
+        const cred = await signInWithEmailAndPassword(auth, email, senha);
+        const uid = cred.user.uid;
 
-showAlert("Login realizado com sucesso!", "success");
+        // 🔎 busca usuário no Firestore
+        const q = query(
+            collection(db, "usuarios"),
+            where("uid", "==", uid)
+        );
 
-setTimeout(()=>{
-window.location.href = "index.html";
-},1000);
+        const snap = await getDocs(q);
 
-}catch(e){
+        if (snap.empty) {
+            showAlert("Usuário não encontrado", "error");
+            return;
+        }
 
-switch(e.code){
+        const user = snap.docs[0].data();
 
-case "auth/user-not-found":
-showAlert("Usuário não encontrado", "error");
-break;
+        if (!user.ativo) {
+            showAlert("Usuário inativo", "error");
+            return;
+        }
 
-case "auth/wrong-password":
-showAlert("Senha incorreta", "error");
-break;
+        // 🔐 salva sessão COMPLETA
+        localStorage.setItem("uid", uid);
+        localStorage.setItem("clinicaId", user.clinicaId);
+        localStorage.setItem("papel", user.grupo);
 
-case "auth/invalid-email":
-showAlert("Email inválido", "error");
-break;
+        showAlert("Login realizado com sucesso!", "success");
 
-default:
-showAlert("Erro: " + e.code, "error");
+        setTimeout(()=>{
+            window.location.href = "index.html";
+        },800);
 
-}
+    }catch(e){
 
-}
+        switch(e.code){
+            case "auth/user-not-found":
+                showAlert("Usuário não encontrado", "error");
+                break;
+            case "auth/wrong-password":
+                showAlert("Senha incorreta", "error");
+                break;
+            case "auth/invalid-email":
+                showAlert("Email inválido", "error");
+                break;
+            default:
+                showAlert("Erro: " + e.code, "error");
+        }
 
-}
+    }
 
-window.toggleSenha = function(){
-const input = document.getElementById('senha');
-input.type = input.type === "password" ? "text" : "password";
 }
 
 </script>

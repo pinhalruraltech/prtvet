@@ -1,3 +1,10 @@
+import { auth } from "../js/firebase-init.js";
+
+import {
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
 // ===============================
 // ELEMENTOS
 // ===============================
@@ -6,25 +13,25 @@ const overlay = document.getElementById("overlay");
 const toggleBtn = document.getElementById("menuToggle");
 
 // ===============================
-// ABRIR / FECHAR MENU
+// MENU
 // ===============================
-toggleBtn.addEventListener("click", () => {
+toggleBtn?.addEventListener("click", () => {
   sidebar.classList.add("active");
   overlay.classList.add("active");
 });
 
-overlay.addEventListener("click", () => {
+overlay?.addEventListener("click", () => {
   sidebar.classList.remove("active");
   overlay.classList.remove("active");
 });
 
 // ===============================
-// ATIVAR ÍCONES LUCIDE
+// ÍCONES
 // ===============================
 lucide.createIcons();
 
 // ===============================
-// MARCAR MENU ATIVO AUTOMATICAMENTE
+// MENU ATIVO
 // ===============================
 const currentPage = window.location.pathname.split("/").pop();
 
@@ -37,7 +44,7 @@ document.querySelectorAll(".menu-item").forEach(link => {
 });
 
 // ===============================
-// TÍTULO DINÂMICO NA TOPBAR
+// TÍTULO
 // ===============================
 const pageMap = {
   "index.html": "Início",
@@ -59,40 +66,23 @@ if (pageMap[currentPage]) {
 }
 
 // ===============================
-// FIREBASE - USUÁRIO
+// USUÁRIO
 // ===============================
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
-const auth = getAuth();
-
 onAuthStateChanged(auth, (user) => {
   if (user) {
     let nome = user.displayName || user.email || "Usuário";
-
-    // pega só o primeiro nome
     nome = nome.split(" ")[0];
 
-    document.getElementById("userNome").innerText = nome;
+    const el = document.getElementById("userNome");
+    if (el) el.innerText = nome;
   }
 });
 
 // ===============================
 // LOGOUT
 // ===============================
-document.getElementById("logoutBtn").addEventListener("click", () => {
+document.getElementById("logoutBtn")?.addEventListener("click", () => {
   signOut(auth).then(() => {
     window.location.href = "../login.html";
   });
 });
-
-// ===============================
-// (PRONTO PARA PERMISSÕES FUTURAS)
-// ===============================
-// Aqui você pode esconder menus por grupo depois
-// Exemplo:
-//
-// const grupo = "FUNCIONARIO";
-//
-// if (grupo !== "ADM") {
-//   document.querySelector('a[href="usuarios.html"]').style.display = "none";
-// }
