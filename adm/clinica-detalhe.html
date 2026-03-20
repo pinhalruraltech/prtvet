@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Clínica | ADM</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<style>
+body{
+    font-family:Inter;
+    background:#F5F7F9;
+    margin:0;
+    color:#1F2933;
+}
+
+.header{
+    background:#1F2933;
+    color:#fff;
+    padding:16px;
+    font-weight:600;
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.container{
+    padding:16px;
+}
+
+.card{
+    background:#fff;
+    border-radius:14px;
+    padding:16px;
+    margin-bottom:16px;
+    border:1px solid #E5E7EB;
+}
+
+.card-title{
+    font-weight:600;
+    margin-bottom:12px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+}
+
+.full{
+    grid-column:1 / -1;
+}
+
+label{
+    font-size:13px;
+    color:#6B7280;
+}
+
+input, select{
+    width:100%;
+    padding:12px;
+    border-radius:10px;
+    border:1.5px solid #CBD5E1;
+}
+
+.btn{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:12px;
+    font-weight:600;
+    background:#2D6A4F;
+    color:#fff;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+    <i data-lucide="building"></i>
+    Clínica
+</div>
+
+<div class="container">
+
+<!-- IDENTIDADE -->
+<div class="card">
+
+<div class="card-title">
+<i data-lucide="badge-check"></i>
+Identidade
+</div>
+
+<div class="grid">
+
+<div class="full">
+<label>ID da Clínica</label>
+<input id="id" placeholder="clinica_exemplo">
+</div>
+
+<div class="full">
+<label>Nome da Clínica</label>
+<input id="nome">
+</div>
+
+<div>
+<label>Título (linha 1)</label>
+<input id="titulo">
+</div>
+
+<div>
+<label>Subtítulo (linha 2)</label>
+<input id="subtitulo">
+</div>
+
+<div class="full">
+<label>Logo</label>
+<input id="logo">
+</div>
+
+<div class="full">
+<label>Cor Primária</label>
+<input id="corPrimaria">
+</div>
+
+</div>
+
+</div>
+
+<!-- DADOS -->
+<div class="card">
+
+<div class="card-title">
+<i data-lucide="file-text"></i>
+Dados
+</div>
+
+<div class="grid">
+
+<div>
+<label>Tipo</label>
+<select id="tipo">
+<option value="pf">Pessoa Física</option>
+<option value="pj">Jurídica</option>
+</select>
+</div>
+
+<div>
+<label>CPF / CNPJ</label>
+<input id="doc">
+</div>
+
+<div class="full">
+<label>Responsável</label>
+<input id="responsavel">
+</div>
+
+<div class="full">
+<label>Email</label>
+<input id="email">
+</div>
+
+<div>
+<label>Telefone</label>
+<input id="telefone">
+</div>
+
+<div>
+<label>Celular</label>
+<input id="celular">
+</div>
+
+</div>
+
+</div>
+
+<!-- ENDEREÇO -->
+<div class="card">
+
+<div class="card-title">
+<i data-lucide="map-pin"></i>
+Endereço
+</div>
+
+<div class="grid">
+
+<div class="full">
+<label>Logradouro</label>
+<input id="logradouro">
+</div>
+
+<div>
+<label>Número</label>
+<input id="numero">
+</div>
+
+<div>
+<label>Bairro</label>
+<input id="bairro">
+</div>
+
+<div>
+<label>Cidade</label>
+<input id="cidade">
+</div>
+
+<div>
+<label>Estado</label>
+<input id="estado">
+</div>
+
+<div>
+<label>CEP</label>
+<input id="cep">
+</div>
+
+</div>
+
+</div>
+
+<!-- MÓDULOS -->
+<div class="card">
+
+<div class="card-title">
+<i data-lucide="layout-grid"></i>
+Módulos
+</div>
+
+<div class="grid">
+
+<label><input type="checkbox" id="m_clientes"> Clientes</label>
+<label><input type="checkbox" id="m_animais"> Animais</label>
+<label><input type="checkbox" id="m_atendimentos"> Atendimentos</label>
+<label><input type="checkbox" id="m_financeiro"> Financeiro</label>
+
+</div>
+
+</div>
+
+<button class="btn" onclick="salvar()">
+<i data-lucide="save"></i> Salvar Clínica
+</button>
+
+</div>
+
+<script type="module">
+
+import { db } from "../js/firebase-init.js";
+import {
+    doc, getDoc, setDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+// 🔐 proteção ADM
+const papel = localStorage.getItem("papel");
+if(papel !== "adm"){
+    window.location.href = "../index.html";
+}
+
+// 🔎 pegar ID da URL
+const params = new URLSearchParams(window.location.search);
+const idParam = params.get("id");
+
+if(idParam){
+    carregar(idParam);
+}
+
+// 📥 carregar
+async function carregar(id){
+
+    const ref = doc(db,"clinicas",id);
+    const snap = await getDoc(ref);
+
+    if(!snap.exists()) return;
+
+    const c = snap.data();
+
+    idInput.value = id;
+    nome.value = c.nome || "";
+    titulo.value = c.titulo || "";
+    subtitulo.value = c.subtitulo || "";
+    logo.value = c.visual?.logo || "";
+    corPrimaria.value = c.visual?.corPrimaria || "";
+
+    tipo.value = c.tipo || "pj";
+    doc.value = c.doc || "";
+    responsavel.value = c.responsavel || "";
+    email.value = c.email || "";
+    telefone.value = c.telefone || "";
+    celular.value = c.celular || "";
+
+    logradouro.value = c.endereco?.logradouro || "";
+    numero.value = c.endereco?.numero || "";
+    bairro.value = c.endereco?.bairro || "";
+    cidade.value = c.endereco?.cidade || "";
+    estado.value = c.endereco?.estado || "";
+    cep.value = c.endereco?.cep || "";
+
+    m_clientes.checked = c.modulos?.clientes || false;
+    m_animais.checked = c.modulos?.animais || false;
+    m_atendimentos.checked = c.modulos?.atendimentos || false;
+    m_financeiro.checked = c.modulos?.financeiro || false;
+}
+
+// 💾 salvar
+window.salvar = async ()=>{
+
+    const id = idInput.value.trim();
+
+    if(!id){
+        alert("Informe o ID da clínica");
+        return;
+    }
+
+    await setDoc(doc(db,"clinicas",id),{
+
+        nome: nome.value,
+        titulo: titulo.value,
+        subtitulo: subtitulo.value,
+
+        visual:{
+            logo: logo.value,
+            corPrimaria: corPrimaria.value
+        },
+
+        tipo: tipo.value,
+        doc: doc.value,
+        responsavel: responsavel.value,
+        email: email.value,
+        telefone: telefone.value,
+        celular: celular.value,
+
+        endereco:{
+            logradouro: logradouro.value,
+            numero: numero.value,
+            bairro: bairro.value,
+            cidade: cidade.value,
+            estado: estado.value,
+            cep: cep.value
+        },
+
+        modulos:{
+            clientes: m_clientes.checked,
+            animais: m_animais.checked,
+            atendimentos: m_atendimentos.checked,
+            financeiro: m_financeiro.checked
+        },
+
+        ativa:true
+
+    });
+
+    alert("Clínica salva com sucesso!");
+}
+
+lucide.createIcons();
+
+</script>
+
+</body>
+</html>
