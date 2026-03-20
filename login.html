@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -13,7 +14,10 @@
 <style>
 :root{
 --color-primary:#2D6A4F;
---color-secondary:#74C69D;
+
+/* 🔥 GRADIENTE MAIS CLARO (ajustado) */
+--color-secondary:#8FD9C3;
+
 --color-bg:#F5F7F9;
 --color-white:#FFFFFF;
 --color-text:#1F2933;
@@ -35,7 +39,7 @@ flex:1;
 display:flex;
 }
 
-/* LADO ESQUERDO */
+/* ESQUERDA */
 .left{
 flex:1;
 background:linear-gradient(135deg,var(--color-primary),var(--color-secondary));
@@ -48,14 +52,15 @@ text-align:center;
 }
 
 .left img{
-max-width:300px;
-width:85%;
-margin-bottom:20px;
+max-width:260px;
+width:80%;
+margin-bottom:25px;
 }
 
+/* 🔥 TEXO ATUALIZADO */
 .clinic{
 color:#fff;
-font-size:22px;
+font-size:20px;
 font-weight:600;
 margin-bottom:4px;
 }
@@ -66,7 +71,7 @@ font-size:14px;
 opacity:0.9;
 }
 
-/* LADO DIREITO */
+/* DIREITA */
 .right{
 flex:1;
 display:flex;
@@ -176,14 +181,17 @@ color:#6B7280;
 
 /* MOBILE */
 @media(max-width:768px){
-.container{flex-direction:column;}
+
+.container{
+flex-direction:column;
+}
 
 .left{
-height:42vh;
+height:45vh;
 }
 
 .right{
-height:58vh;
+height:55vh;
 align-items:flex-start;
 }
 
@@ -202,10 +210,10 @@ margin-top:10px;
 <!-- ESQUERDA -->
 <div class="left">
 
-<img src="logo/logo_rafael.png">
+<img src="logo/logo_prt.png">
 
-<div class="clinic">Clínica Veterinária</div>
-<div class="doctor">Dr. Rafael Frutuoso</div>
+<div class="clinic">APPVET</div>
+<div class="doctor">Sistema de Gestão Veterinária</div>
 
 </div>
 
@@ -231,7 +239,6 @@ margin-top:10px;
 
 <div class="password-wrapper">
 <input type="password" id="senha">
-
 <i data-lucide="eye" onclick="toggleSenha()"></i>
 </div>
 
@@ -282,7 +289,6 @@ window.login = async function(){
         const cred = await signInWithEmailAndPassword(auth, email, senha);
         const uid = cred.user.uid;
 
-        // 🔥 forma correta
         const ref = doc(db, "usuarios", uid);
         const snap = await getDoc(ref);
 
@@ -309,9 +315,7 @@ window.login = async function(){
         },800);
 
     }catch(e){
-
         showAlert("Erro: " + e.code, "error");
-
     }
 
 }
