@@ -12,8 +12,11 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
 
     e.preventDefault();
 
-    const email = email.value.trim();
-    const senha = senha.value.trim();
+    const emailInput = document.getElementById("email");
+    const senhaInput = document.getElementById("senha");
+
+    const email = emailInput.value.trim();
+    const senha = senhaInput.value.trim();
 
     try {
 
@@ -39,11 +42,13 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
             return;
         }
 
+        // 🔐 salva dados
         localStorage.setItem("uid", uid);
         localStorage.setItem("clinicaId", user.clinicaId);
         localStorage.setItem("papel", user.grupo);
 
-        window.location.href = "app/dashboard.html";
+        // 🚀 redireciona
+        window.location.href = "index.html";
 
     } catch (err) {
         alert("Erro: " + err.message);
