@@ -22,6 +22,9 @@ body{
     color:#fff;
     padding:16px;
     font-weight:600;
+    display:flex;
+    align-items:center;
+    gap:8px;
 }
 
 .container{
@@ -30,53 +33,42 @@ body{
 
 .card{
     background:#fff;
-    padding:16px;
-    border-radius:12px;
-    margin-bottom:16px;
-    border:1px solid #E5E7EB;
-}
-
-label{
-    font-size:13px;
-    color:#6B7280;
-    display:block;
-    margin-bottom:4px;
-}
-
-input, select{
-    width:100%;
-    padding:10px;
-    border-radius:10px;
-    border:1px solid #CBD5E1;
+    border-radius:14px;
+    padding:14px;
     margin-bottom:10px;
+    border:1px solid #E5E7EB;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    cursor:pointer;
 }
 
-.grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:10px;
+.card:hover{
+    background:#f9fafb;
 }
 
-.btn{
-    background:#2D6A4F;
-    color:#fff;
-    padding:12px;
-    border:none;
-    border-radius:10px;
-    width:100%;
+.nome{
     font-weight:600;
 }
 
-.checkbox-group{
-    display:flex;
-    flex-wrap:wrap;
-    gap:10px;
+.sub{
+    font-size:12px;
+    color:#6B7280;
 }
 
-.checkbox-group label{
+.fab{
+    position:fixed;
+    bottom:20px;
+    right:20px;
+    width:56px;
+    height:56px;
+    border-radius:50%;
+    background:#2D6A4F;
+    color:#fff;
     display:flex;
-    gap:6px;
     align-items:center;
+    justify-content:center;
+    box-shadow:0 6px 15px rgba(0,0,0,0.2);
 }
 </style>
 
@@ -85,225 +77,70 @@ input, select{
 <body>
 
 <div class="header">
-    <i data-lucide="settings"></i> Administração de Clínicas
+    <i data-lucide="building"></i>
+    Clínicas
 </div>
 
-<div class="container">
+<div class="container" id="lista"></div>
 
-<!-- IDENTIDADE -->
-<div class="card">
-    <h3>Identidade</h3>
-
-    <label>ID da Clínica</label>
-    <input id="clinicaId" placeholder="clinica_padrao">
-
-    <label>Nome da Clínica</label>
-    <input id="nome">
-
-    <label>Título (linha 1)</label>
-    <input id="titulo">
-
-    <label>Subtítulo (linha 2)</label>
-    <input id="subtitulo">
-
-    <label>Logo (URL ou caminho)</label>
-    <input id="logo">
-
-    <label>Cor Primária</label>
-    <input id="corPrimaria" placeholder="#2D6A4F">
-
+<div class="fab" onclick="novaClinica()">
+    <i data-lucide="plus"></i>
 </div>
 
-<!-- DADOS -->
-<div class="card">
-    <h3>Dados</h3>
-
-    <div class="grid">
-        <div>
-            <label>Tipo</label>
-            <select id="tipoPessoa">
-                <option value="PJ">Jurídica</option>
-                <option value="PF">Física</option>
-            </select>
-        </div>
-
-        <div>
-            <label>CPF/CNPJ</label>
-            <input id="documento">
-        </div>
-    </div>
-
-    <label>Responsável</label>
-    <input id="responsavel">
-
-    <label>Email</label>
-    <input id="email">
-
-    <label>Telefone</label>
-    <input id="telefone">
-
-    <label>Celular</label>
-    <input id="celular">
-
-</div>
-
-<!-- ENDEREÇO -->
-<div class="card">
-    <h3>Endereço</h3>
-
-    <label>Logradouro</label>
-    <input id="logradouro">
-
-    <div class="grid">
-        <input id="numero" placeholder="Número">
-        <input id="bairro" placeholder="Bairro">
-    </div>
-
-    <div class="grid">
-        <input id="cidade" placeholder="Cidade">
-        <input id="estado" placeholder="Estado">
-    </div>
-
-    <input id="cep" placeholder="CEP">
-
-</div>
-
-<!-- PLANO -->
-<div class="card">
-    <h3>Plano</h3>
-
-    <select id="plano">
-        <option value="starter">Starter</option>
-        <option value="profissional">Profissional</option>
-        <option value="enterprise">Enterprise</option>
-    </select>
-
-</div>
-
-<!-- MODULOS -->
-<div class="card">
-    <h3>Módulos</h3>
-
-    <div class="checkbox-group">
-
-        <label><input type="checkbox" id="m_inicio"> Início</label>
-        <label><input type="checkbox" id="m_clientes"> Clientes</label>
-        <label><input type="checkbox" id="m_animais"> Animais</label>
-        <label><input type="checkbox" id="m_atendimentos"> Atendimentos</label>
-        <label><input type="checkbox" id="m_financeiro"> Financeiro</label>
-        <label><input type="checkbox" id="m_estoque"> Estoque</label>
-
-    </div>
-
-</div>
-
-<button class="btn" onclick="salvar()">Salvar Clínica</button>
-
-</div>
-
-<!-- FIREBASE -->
 <script type="module">
 
 import { db } from "../js/firebase-init.js";
 import {
-    doc, setDoc, getDoc
+    collection, getDocs
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// 🔐 PROTEÇÃO ADM
+// 🔐 PROTEÇÃO
 const papel = localStorage.getItem("papel");
-
 if(papel !== "adm"){
     window.location.href = "../index.html";
 }
 
-window.salvar = async function(){
+const lista = document.getElementById("lista");
 
-    const id = clinicaId.value.trim();
+async function carregar(){
 
-    if(!id){
-        alert("Informe o ID da clínica");
-        return;
-    }
+    const snap = await getDocs(collection(db,"clinicas"));
 
-    const data = {
+    lista.innerHTML = "";
 
-        nome: nome.value,
+    snap.forEach(doc=>{
 
-        tipoPessoa: tipoPessoa.value,
-        documento: documento.value,
+        const c = doc.data();
 
-        responsavel: responsavel.value,
+        const div = document.createElement("div");
+        div.className="card";
 
-        contato:{
-            email: email.value,
-            telefone: telefone.value,
-            celular: celular.value
-        },
+        div.innerHTML = `
+            <div>
+                <div class="nome">${c.nome || "Sem nome"}</div>
+                <div class="sub">${doc.id}</div>
+            </div>
 
-        endereco:{
-            logradouro: logradouro.value,
-            numero: numero.value,
-            bairro: bairro.value,
-            cidade: cidade.value,
-            estado: estado.value,
-            cep: cep.value
-        },
+            <i data-lucide="chevron-right"></i>
+        `;
 
-        financeiro:{
-            plano: plano.value
-        },
+        div.onclick = ()=>{
+            window.location.href = "clinica-detalhe.html?id=" + doc.id;
+        };
 
-        visual:{
-            titulo: titulo.value,
-            subtitulo: subtitulo.value,
-            logo: logo.value,
-            corPrimaria: corPrimaria.value
-        },
+        lista.appendChild(div);
+    });
 
-        modulos:{
-            inicio: m_inicio.checked,
-            clientes: m_clientes.checked,
-            animais: m_animais.checked,
-            atendimentos: m_atendimentos.checked,
-            financeiro: m_financeiro.checked,
-            estoque: m_estoque.checked
-        },
+    lucide.createIcons();
+}
 
-        ativa:true
+window.novaClinica = ()=>{
+    window.location.href = "clinica-detalhe.html";
+}
 
-    };
-
-    await setDoc(doc(db,"clinicas",id), data);
-
-    alert("Clínica salva com sucesso!");
-
-};
-
-// 🔄 CARREGAR (se existir)
-window.onload = async ()=>{
-
-    const id = clinicaId.value || localStorage.getItem("clinicaId");
-
-    if(!id) return;
-
-    const ref = doc(db,"clinicas",id);
-    const snap = await getDoc(ref);
-
-    if(!snap.exists()) return;
-
-    const c = snap.data();
-
-    nome.value = c.nome || "";
-    titulo.value = c.visual?.titulo || "";
-    subtitulo.value = c.visual?.subtitulo || "";
-    logo.value = c.visual?.logo || "";
-    corPrimaria.value = c.visual?.corPrimaria || "";
-
-};
+carregar();
 
 </script>
-
-<script>lucide.createIcons();</script>
 
 </body>
 </html>
