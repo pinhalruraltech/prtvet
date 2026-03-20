@@ -110,6 +110,13 @@ body{
 
 <script type="module">
 
+fetch("menu-adm.html")
+.then(res => res.text())
+.then(html => {
+    document.getElementById("menu-adm").innerHTML = html;
+    lucide.createIcons();
+});
+
 import { db } from "../js/firebase-init.js";
 import {
     collection, getDocs
