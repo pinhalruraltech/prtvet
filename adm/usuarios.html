@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Usuários | ADM</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<style>
+*{box-sizing:border-box;}
+
+body{
+    font-family:Inter;
+    background:#F5F7F9;
+    margin:0;
+    color:#1F2933;
+}
+
+.header{
+    background:#2D6A4F;
+    color:#fff;
+    padding:16px;
+    font-weight:600;
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.container{
+    padding:16px;
+    max-width:600px;
+    margin:auto;
+}
+
+.clinica{
+    background:#fff;
+    border-radius:14px;
+    border:1px solid #E5E7EB;
+    margin-bottom:12px;
+    overflow:hidden;
+}
+
+.clinica-header{
+    padding:14px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    cursor:pointer;
+}
+
+.usuarios{
+    border-top:1px solid #E5E7EB;
+    display:none;
+}
+
+.usuario{
+    padding:12px 14px;
+    border-bottom:1px solid #F1F5F9;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    cursor:pointer;
+}
+
+.usuario:hover{
+    background:#F9FAFB;
+}
+
+.badge{
+    font-size:11px;
+    padding:4px 8px;
+    border-radius:8px;
+    font-weight:500;
+}
+
+.ativo{
+    background:#DCFCE7;
+    color:#166534;
+}
+
+.inativo{
+    background:#FEE2E2;
+    color:#991B1B;
+}
+
+.fab{
+    position:fixed;
+    bottom:20px;
+    right:20px;
+    width:56px;
+    height:56px;
+    border-radius:50%;
+    background:#2D6A4F;
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+/* MODAL */
+.modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.4);
+    display:none;
+    align-items:center;
+    justify-content:center;
+}
+
+.modal-content{
+    background:#fff;
+    padding:20px;
+    border-radius:14px;
+    width:90%;
+    max-width:400px;
+}
+
+input, select{
+    width:100%;
+    padding:12px;
+    border-radius:10px;
+    border:1px solid #CBD5E1;
+    margin-bottom:10px;
+}
+
+.btn{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:10px;
+    background:#2D6A4F;
+    color:#fff;
+    font-weight:600;
+    cursor:pointer;
+}
+
+.btn-sec{
+    background:#6B7280;
+    margin-top:8px;
+}
+</style>
+
+</head>
+
+<body>
+
+<div id="menu-adm"></div>
+
+<div class="header">
+<i data-lucide="users"></i>
+Usuários
+</div>
+
+<div class="container" id="lista"></div>
+
+<div class="fab" onclick="abrirModal()">
+<i data-lucide="plus"></i>
+</div>
+
+<!-- MODAL -->
+<div class="modal" id="modal">
+<div class="modal-content">
+
+<h3>Novo Usuário</h3>
+
+<select id="clinicaId"></select>
+<input id="nome" placeholder="Nome completo">
+<input id="email" placeholder="Email">
+<input id="senha" placeholder="Senha provisória">
+
+<select id="grupo">
+<option value="ADM">Administrador</option>
+<option value="GERENTE">Gerente</option>
+<option value="FUNCIONARIO">Funcionário</option>
+</select>
+
+<button class="btn" onclick="criarUsuario()">Criar Usuário</button>
+
+<button class="btn btn-sec" onclick="resetSenha()">
+Enviar redefinição de senha
+</button>
+
+</div>
+</div>
+
+<script type="module">
+
+import { db } from "../js/firebase-init.js";
+
+import {
+    getAuth,
+    createUserWithEmailAndPassword,
+    sendPasswordResetEmail,
+    signOut
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+import {
+    collection, getDocs, doc, setDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const auth = getAuth();
+
+/* MENU */
+fetch("menu-adm.html")
+.then(r=>r.text())
+.then(html=>{
+    document.getElementById("menu-adm").innerHTML = html;
+    lucide.createIcons();
+});
+
+/* PROTEÇÃO */
+const papel = localStorage.getItem("papel");
+if(papel !== "adm"){
+    window.location.href="../index.html";
+}
+
+const lista = document.getElementById("lista");
+
+/* LOAD */
+async function carregar(){
+
+    const clinicasSnap = await getDocs(collection(db,"clinicas"));
+    const usuariosSnap = await getDocs(collection(db,"usuarios"));
+
+    lista.innerHTML="";
+
+    clinicasSnap.forEach(cDoc=>{
+
+        const c = cDoc.data();
+
+        const div = document.createElement("div");
+        div.className="clinica";
+
+        div.innerHTML=`
+            <div class="clinica-header">
+                <div>
+                    <strong>${c.nome}</strong><br>
+                    <small>${cDoc.id}</small>
+                </div>
+                <i data-lucide="chevron-down"></i>
+            </div>
+
+            <div class="usuarios"></div>
+        `;
+
+        const listaUsuarios = div.querySelector(".usuarios");
+
+        usuariosSnap.forEach(uDoc=>{
+            const u = uDoc.data();
+
+            if(u.clinicaId === cDoc.id){
+
+                const el = document.createElement("div");
+                el.className="usuario";
+
+                el.innerHTML=`
+                    <div>
+                        ${u.nome}<br>
+                        <small>${u.grupo}</small>
+                    </div>
+
+                    <span class="badge ${u.ativo?'ativo':'inativo'}">
+                        ${u.ativo?'Ativo':'Inativo'}
+                    </span>
+                `;
+
+                el.onclick = ()=>{
+                    window.location.href="usuario-detalhe.html?id="+uDoc.id;
+                };
+
+                listaUsuarios.appendChild(el);
+            }
+        });
+
+        div.querySelector(".clinica-header").onclick = ()=>{
+            listaUsuarios.style.display =
+                listaUsuarios.style.display==="block" ? "none":"block";
+        };
+
+        lista.appendChild(div);
+    });
+
+    lucide.createIcons();
+}
+
+/* MODAL */
+window.abrirModal = async ()=>{
+    modal.style.display="flex";
+
+    const snap = await getDocs(collection(db,"clinicas"));
+
+    clinicaId.innerHTML="";
+
+    snap.forEach(doc=>{
+        clinicaId.innerHTML += `<option value="${doc.id}">${doc.data().nome}</option>`;
+    });
+};
+
+/* CRIAR USUÁRIO */
+window.criarUsuario = async ()=>{
+
+    const emailVal = email.value.trim();
+    const nomeVal = nome.value.trim();
+    const grupoVal = grupo.value;
+    const clinicaVal = clinicaId.value;
+    const senhaVal = senha.value.trim();
+
+    if(!emailVal || !nomeVal || !senhaVal){
+        alert("Preencha todos os campos");
+        return;
+    }
+
+    try{
+
+        const userCred = await createUserWithEmailAndPassword(
+            auth,
+            emailVal,
+            senhaVal
+        );
+
+        const uid = userCred.user.uid;
+
+        await setDoc(doc(db,"usuarios",uid),{
+            nome: nomeVal,
+            email: emailVal,
+            clinicaId: clinicaVal,
+            grupo: grupoVal,
+            ativo:true
+        });
+
+        alert("Usuário criado com sucesso!");
+
+        modal.style.display="none";
+
+        await signOut(auth);
+        location.reload();
+
+    }catch(e){
+        alert("Erro: " + e.message);
+    }
+};
+
+/* RESET SENHA */
+window.resetSenha = async ()=>{
+
+    const emailVal = email.value.trim();
+
+    if(!emailVal){
+        alert("Informe o email");
+        return;
+    }
+
+    try{
+        await sendPasswordResetEmail(auth, emailVal);
+        alert("Email de redefinição enviado!");
+    }catch(e){
+        alert("Erro: " + e.message);
+    }
+};
+
+carregar();
+
+</script>
+
+</body>
+</html>
