@@ -17,6 +17,7 @@ body{
     background:#F5F7F9;
     margin:0;
     color:#1F2933;
+    display:none;
 }
 
 .header{
@@ -74,7 +75,6 @@ input, select{
 .btn-save{background:#2D6A4F;color:#fff;}
 .btn-sec{background:#6B7280;color:#fff;}
 .btn-danger{background:#E63946;color:#fff;}
-
 </style>
 
 </head>
@@ -98,11 +98,7 @@ Usuário
 <input id="nome" placeholder="Nome completo">
 <input id="email" placeholder="Email">
 
-<select id="grupo">
-<option value="ADM">Administrador</option>
-<option value="GERENTE">Gerente</option>
-<option value="FUNCIONARIO">Funcionário</option>
-</select>
+<select id="grupo"></select>
 
 <select id="ativo">
 <option value="true">Ativo</option>
@@ -139,28 +135,64 @@ collection, getDocs, doc, getDoc, updateDoc
 
 import {
 getAuth,
+onAuthStateChanged,
 sendPasswordResetEmail
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 const auth = getAuth();
 
-/* MENU */
-fetch("menu-adm.html")
-.then(r=>r.text())
-.then(html=>{
-    document.getElementById("menu-adm").innerHTML = html;
-    lucide.createIcons();
-});
-
-/* PROTEÇÃO */
-const papel = localStorage.getItem("papel");
-if(papel !== "adm"){
-    window.location.href="../index.html";
-}
-
-/* PARAM */
 const params = new URLSearchParams(window.location.search);
 const userId = params.get("id");
+
+/* 🔐 AUTH + PERMISSÃO */
+onAuthStateChanged(auth, async (user)=>{
+
+    if(!user){
+        window.location.href="../index.html";
+        return;
+    }
+
+    try{
+
+        const userSnap = await getDoc(doc(db,"usuarios",user.uid));
+
+        if(!userSnap.exists()) return;
+
+        const usuario = userSnap.data();
+
+        if(!usuario.ativo){
+            alert("Usuário inativo");
+            return;
+        }
+
+        const gruposSnap = await getDoc(doc(db,"config","grupos"));
+        const grupos = gruposSnap.data().lista;
+
+        const grupoUser = grupos.find(g => g.id === usuario.grupo);
+
+        if(!grupoUser?.permissoes?.adm?.usuarios){
+            alert("Sem permissão");
+            window.location.href="../index.html";
+            return;
+        }
+
+        /* MENU */
+        fetch("menu-adm.html")
+        .then(r=>r.text())
+        .then(html=>{
+            document.getElementById("menu-adm").innerHTML = html;
+            lucide.createIcons();
+        });
+
+        document.body.style.display="block";
+
+        carregar();
+
+    }catch(e){
+        alert("Erro: " + e.message);
+    }
+
+});
 
 /* LOAD */
 async function carregar(){
@@ -169,6 +201,7 @@ async function carregar(){
 
     if(!snapUser.exists()){
         alert("Usuário não encontrado");
+        voltar();
         return;
     }
 
@@ -176,7 +209,6 @@ async function carregar(){
 
     nome.value = u.nome || "";
     email.value = u.email || "";
-    grupo.value = u.grupo || "FUNCIONARIO";
     ativo.value = u.ativo ? "true" : "false";
 
     uidLabel.innerText = "UID: " + userId;
@@ -189,6 +221,16 @@ async function carregar(){
     snapClinicas.forEach(doc=>{
         const selected = doc.id === u.clinicaId ? "selected" : "";
         clinicaId.innerHTML += `<option value="${doc.id}" ${selected}>${doc.data().nome}</option>`;
+    });
+
+    /* GRUPOS DINÂMICOS */
+    const gruposSnap = await getDoc(doc(db,"config","grupos"));
+
+    grupo.innerHTML = "";
+
+    gruposSnap.data().lista.forEach(g=>{
+        const selected = g.id === u.grupo ? "selected" : "";
+        grupo.innerHTML += `<option value="${g.id}" ${selected}>${g.nome}</option>`;
     });
 }
 
@@ -209,26 +251,29 @@ window.salvar = async ()=>{
 /* RESET SENHA */
 window.resetSenha = async ()=>{
 
-    const emailVal = email.value;
+    if(!email.value){
+        alert("Informe o email");
+        return;
+    }
 
     try{
-        await sendPasswordResetEmail(auth, emailVal);
+        await sendPasswordResetEmail(auth, email.value);
         alert("Email enviado!");
     }catch(e){
         alert("Erro: " + e.message);
     }
 };
 
-/* TOGGLE ATIVO */
+/* TOGGLE */
 window.toggleAtivo = async ()=>{
 
-    const novoStatus = ativo.value === "true" ? false : true;
+    const novo = ativo.value === "true" ? false : true;
 
     await updateDoc(doc(db,"usuarios",userId),{
-        ativo: novoStatus
+        ativo: novo
     });
 
-    ativo.value = novoStatus.toString();
+    ativo.value = novo.toString();
 
     alert("Status atualizado!");
 };
@@ -238,7 +283,7 @@ window.voltar = ()=>{
     window.location.href="usuarios.html";
 };
 
-carregar();
+lucide.createIcons();
 
 </script>
 
