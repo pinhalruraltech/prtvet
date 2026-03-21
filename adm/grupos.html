@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grupos | ADM</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<style>
+body{
+    font-family:Inter;
+    background:#F5F7F9;
+    margin:0;
+}
+
+.header{
+    background:#2D6A4F;
+    color:#fff;
+    padding:16px;
+    font-weight:600;
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.container{
+    padding:16px;
+    max-width:600px;
+    margin:auto;
+}
+
+.card{
+    background:#fff;
+    border-radius:14px;
+    padding:14px;
+    margin-bottom:10px;
+    border:1px solid #E5E7EB;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    cursor:pointer;
+}
+
+.card:hover{
+    background:#f9fafb;
+}
+
+.badge{
+    font-size:11px;
+    padding:4px 8px;
+    border-radius:8px;
+    background:#E5E7EB;
+}
+
+.fab{
+    position:fixed;
+    bottom:20px;
+    right:20px;
+    width:56px;
+    height:56px;
+    border-radius:50%;
+    background:#2D6A4F;
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+</style>
+
+</head>
+
+<body>
+
+<div id="menu-adm"></div>
+
+<div class="header">
+<i data-lucide="users"></i>
+Grupos
+</div>
+
+<div class="container" id="lista"></div>
+
+<div class="fab" onclick="novoGrupo()">
+<i data-lucide="plus"></i>
+</div>
+
+<script type="module">
+
+import { db } from "../js/firebase-init.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+fetch("menu-adm.html")
+.then(r=>r.text())
+.then(html=>{
+    document.getElementById("menu-adm").innerHTML = html;
+    lucide.createIcons();
+});
+
+const papel = localStorage.getItem("papel");
+if(papel !== "adm"){
+    window.location.href="../index.html";
+}
+
+const lista = document.getElementById("lista");
+
+async function carregar(){
+
+    const ref = doc(db,"config","grupos");
+    const snap = await getDoc(ref);
+
+    lista.innerHTML="";
+
+    if(!snap.exists()) return;
+
+    const grupos = snap.data().lista || [];
+
+    grupos.forEach(g=>{
+
+        const div = document.createElement("div");
+        div.className="card";
+
+        div.innerHTML=`
+            <div>
+                <strong>${g.nome}</strong><br>
+                <small>${g.id}</small>
+            </div>
+
+            <div>
+                ${g.sistema ? '<span class="badge">Sistema</span>' : ''}
+                <i data-lucide="chevron-right"></i>
+            </div>
+        `;
+
+        div.onclick = ()=>{
+            window.location.href="grupo-detalhe.html?id="+g.id;
+        };
+
+        lista.appendChild(div);
+    });
+
+    lucide.createIcons();
+}
+
+window.novoGrupo = ()=>{
+    window.location.href="grupo-detalhe.html";
+}
+
+carregar();
+
+</script>
+
+</body>
+</html>
