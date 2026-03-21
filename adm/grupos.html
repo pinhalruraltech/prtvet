@@ -10,10 +10,13 @@
 <script src="https://unpkg.com/lucide@latest"></script>
 
 <style>
+*{box-sizing:border-box;}
+
 body{
     font-family:Inter;
     background:#F5F7F9;
     margin:0;
+    display:none;
 }
 
 .header{
@@ -42,6 +45,7 @@ body{
     justify-content:space-between;
     align-items:center;
     cursor:pointer;
+    transition:0.2s;
 }
 
 .card:hover{
@@ -90,22 +94,72 @@ Grupos
 <script type="module">
 
 import { db } from "../js/firebase-init.js";
-import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-fetch("menu-adm.html")
-.then(r=>r.text())
-.then(html=>{
-    document.getElementById("menu-adm").innerHTML = html;
-    lucide.createIcons();
-});
+import {
+doc,
+getDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-const papel = localStorage.getItem("papel");
-if(papel !== "adm"){
-    window.location.href="../index.html";
-}
+import {
+getAuth,
+onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const auth = getAuth();
 
 const lista = document.getElementById("lista");
 
+/* 🔐 AUTH + PERMISSÃO */
+onAuthStateChanged(auth, async (user)=>{
+
+    if(!user){
+        window.location.href="../index.html";
+        return;
+    }
+
+    try{
+
+        const userSnap = await getDoc(doc(db,"usuarios",user.uid));
+
+        if(!userSnap.exists()) return;
+
+        const usuario = userSnap.data();
+
+        if(!usuario.ativo){
+            alert("Usuário inativo");
+            return;
+        }
+
+        const gruposSnap = await getDoc(doc(db,"config","grupos"));
+        const grupos = gruposSnap.data().lista;
+
+        const grupoUser = grupos.find(g => g.id === usuario.grupo);
+
+        if(!grupoUser?.permissoes?.adm?.grupos){
+            alert("Sem permissão");
+            window.location.href="../index.html";
+            return;
+        }
+
+        /* MENU */
+        fetch("menu-adm.html")
+        .then(r=>r.text())
+        .then(html=>{
+            document.getElementById("menu-adm").innerHTML = html;
+            lucide.createIcons();
+        });
+
+        document.body.style.display="block";
+
+        carregar();
+
+    }catch(e){
+        alert("Erro: " + e.message);
+    }
+
+});
+
+/* LOAD */
 async function carregar(){
 
     const ref = doc(db,"config","grupos");
@@ -113,7 +167,10 @@ async function carregar(){
 
     lista.innerHTML="";
 
-    if(!snap.exists()) return;
+    if(!snap.exists()){
+        lista.innerHTML = `<div style="text-align:center;color:#6B7280;">Nenhum grupo cadastrado</div>`;
+        return;
+    }
 
     const grupos = snap.data().lista || [];
 
@@ -144,11 +201,10 @@ async function carregar(){
     lucide.createIcons();
 }
 
+/* NOVO */
 window.novoGrupo = ()=>{
     window.location.href="grupo-detalhe.html";
-}
-
-carregar();
+};
 
 </script>
 
