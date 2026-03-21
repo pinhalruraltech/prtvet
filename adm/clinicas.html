@@ -16,9 +16,10 @@ body{
     background:#F5F7F9;
     margin:0;
     color:#1F2933;
+    display:none;
 }
 
-/* HEADER PADRÃO (IGUAL LOGIN) */
+/* HEADER */
 .header{
     background:#2D6A4F;
     color:#fff;
@@ -29,7 +30,7 @@ body{
     gap:8px;
 }
 
-/* CONTAINER PADRÃO */
+/* CONTAINER */
 .container{
     padding:16px;
     max-width:600px;
@@ -47,14 +48,12 @@ body{
     justify-content:space-between;
     align-items:center;
     cursor:pointer;
-    transition:0.2s;
 }
 
 .card:hover{
     background:#f9fafb;
 }
 
-/* TEXTO */
 .nome{
     font-weight:600;
     font-size:15px;
@@ -94,7 +93,6 @@ body{
 
 <body>
 
-<!-- FUTURO MENU ADM -->
 <div id="menu-adm"></div>
 
 <div class="header">
@@ -110,27 +108,110 @@ body{
 
 <script type="module">
 
-fetch("menu-adm.html")
-.then(res => res.text())
-.then(html => {
-    document.getElementById("menu-adm").innerHTML = html;
-    lucide.createIcons();
-});
-
 import { db } from "../js/firebase-init.js";
+
 import {
-    collection, getDocs
+    collection, getDocs, doc, getDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-/* 🔐 PROTEÇÃO */
-const papel = localStorage.getItem("papel");
-if(papel !== "adm"){
-    window.location.href = "../index.html";
-}
+import {
+    getAuth, onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
+const auth = getAuth();
 const lista = document.getElementById("lista");
 
-/* 📥 CARREGAR */
+/* 🔐 AUTH GUARD COMPLETO */
+onAuthStateChanged(auth, async (user)=>{
+
+    if(!user){
+        window.location.href = "../index.html";
+        return;
+    }
+
+    try{
+
+        /* 🔎 BUSCAR USUÁRIO */
+        const userRef = doc(db,"usuarios",user.uid);
+        const userSnap = await getDoc(userRef);
+
+        if(!userSnap.exists()){
+            alert("Usuário não encontrado");
+            window.location.href = "../index.html";
+            return;
+        }
+
+        const usuario = userSnap.data();
+
+        if(usuario.ativo === false){
+            alert("Usuário inativo");
+            window.location.href = "../index.html";
+            return;
+        }
+
+        /* 🔎 BUSCAR CLÍNICA */
+        const clinicaRef = doc(db,"clinicas",usuario.clinicaId);
+        const clinicaSnap = await getDoc(clinicaRef);
+
+        if(!clinicaSnap.exists()){
+            alert("Clínica não encontrada");
+            return;
+        }
+
+        const clinica = clinicaSnap.data();
+
+        /* 🔎 BUSCAR GRUPOS */
+        const gruposSnap = await getDoc(doc(db,"config","grupos"));
+
+        if(!gruposSnap.exists()){
+            alert("Configuração de grupos não encontrada");
+            return;
+        }
+
+        const grupos = gruposSnap.data().lista || [];
+
+        const grupo = grupos.find(g => g.id === usuario.grupo);
+
+        if(!grupo){
+            alert("Grupo do usuário não encontrado");
+            return;
+        }
+
+        /* 🔐 VALIDA PERMISSÃO ADM */
+        const temPermissao = grupo.permissoes?.adm?.clinicas === true;
+
+        if(!temPermissao){
+            alert("Acesso negado");
+            window.location.href = "../index.html";
+            return;
+        }
+
+        /* 💾 SALVA CONTEXTO */
+        localStorage.setItem("uid", user.uid);
+        localStorage.setItem("clinicaId", usuario.clinicaId);
+        localStorage.setItem("grupo", usuario.grupo);
+
+        /* 📦 CARREGA MENU */
+        fetch("menu-adm.html")
+        .then(res => res.text())
+        .then(html => {
+            document.getElementById("menu-adm").innerHTML = html;
+            lucide.createIcons();
+        });
+
+        /* 🚀 LIBERA TELA */
+        document.body.style.display = "block";
+
+        /* 📥 CARREGA DADOS */
+        carregar();
+
+    }catch(e){
+        alert("Erro: " + e.message);
+    }
+
+});
+
+/* 📥 LISTA CLÍNICAS */
 async function carregar(){
 
     const snap = await getDocs(collection(db,"clinicas"));
@@ -142,9 +223,9 @@ async function carregar(){
         return;
     }
 
-    snap.forEach(doc=>{
+    snap.forEach(docItem=>{
 
-        const c = doc.data();
+        const c = docItem.data();
 
         const div = document.createElement("div");
         div.className="card";
@@ -152,14 +233,14 @@ async function carregar(){
         div.innerHTML = `
             <div>
                 <div class="nome">${c.nome || "Sem nome"}</div>
-                <div class="sub">${doc.id}</div>
+                <div class="sub">${docItem.id}</div>
             </div>
 
             <i data-lucide="chevron-right"></i>
         `;
 
         div.onclick = ()=>{
-            window.location.href = "clinica-detalhe.html?id=" + doc.id;
+            window.location.href = "clinica-detalhe.html?id=" + docItem.id;
         };
 
         lista.appendChild(div);
@@ -172,8 +253,6 @@ async function carregar(){
 window.novaClinica = ()=>{
     window.location.href = "clinica-detalhe.html";
 };
-
-carregar();
 
 </script>
 
