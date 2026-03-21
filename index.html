@@ -10,10 +10,18 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/lucide@latest"></script>
 
-<link rel="stylesheet" href="menu/menu.css">
+<link rel="stylesheet" href="./menu/menu.css">
+
+<!-- 🔐 PERMISSÃO DA PÁGINA -->
+<script>
+const PERMISSAO_PAGINA = {
+    area: "app",
+    chave: "inicio"
+};
+</script>
 
 <!-- 🔐 AUTH -->
-<script type="module" src="js/auth-guard.js"></script>
+<script type="module" src="./js/auth-guard.js"></script>
 
 <style>
 *{box-sizing:border-box;}
@@ -86,7 +94,7 @@ body{margin:0;font-family:'Inter';background:#F5F7F9;}
 
 </head>
 
-<body>
+<body style="display:none;">
 
 <div id="menu-container"></div>
 
@@ -96,7 +104,6 @@ body{margin:0;font-family:'Inter';background:#F5F7F9;}
 
 <div class="container">
 
-    <!-- 📊 CARDS -->
     <div class="cards">
         <div class="card">
             <div class="card-title">Clientes</div>
@@ -109,7 +116,6 @@ body{margin:0;font-family:'Inter';background:#F5F7F9;}
         </div>
     </div>
 
-    <!-- 📅 AGENDA -->
     <div class="section">
         <div class="section-title">Agenda de Hoje</div>
         <div id="listaAgenda">
@@ -118,21 +124,6 @@ body{margin:0;font-family:'Inter';background:#F5F7F9;}
     </div>
 
 </div>
-
-<!-- MENU LOAD -->
-<script>
-fetch("menu/menu.html")
-.then(r=>r.text())
-.then(html=>{
-    document.getElementById("menu-container").innerHTML = html;
-
-    const script = document.createElement("script");
-    script.src = "menu/menu.js";
-    document.body.appendChild(script);
-
-    setTimeout(()=>lucide.createIcons(),100);
-});
-</script>
 
 <!-- 🔥 SCRIPT PRINCIPAL -->
 <script type="module">
@@ -144,13 +135,15 @@ import {
     collection, getDocs, query, where
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+/* 🔐 DADOS DO USUÁRIO */
+const uid = localStorage.getItem("uid");
 const clinicaId = localStorage.getItem("clinicaId");
 
-if(!clinicaId){
-    alert("Erro: clínica não identificada");
+if(!uid || !clinicaId){
+    window.location.href = "./login.html";
 }
 
-/* 🔧 CARREGA CONFIG DA CLÍNICA */
+/* 🔧 CARREGA IDENTIDADE DA CLÍNICA */
 await carregarClinica();
 
 /* 📊 CLIENTES */
@@ -162,7 +155,6 @@ async function carregarClientes(){
     );
 
     const snap = await getDocs(q);
-
     document.getElementById("totalClientes").innerText = snap.size;
 }
 
@@ -175,11 +167,10 @@ async function carregarAnimais(){
     );
 
     const snap = await getDocs(q);
-
     document.getElementById("totalAnimais").innerText = snap.size;
 }
 
-/* 📅 AGENDA (base simples) */
+/* 📅 AGENDA */
 async function carregarAgenda(){
 
     const q = query(
@@ -219,7 +210,37 @@ carregarAgenda();
 
 </script>
 
-<script>lucide.createIcons();</script>
+<!-- 🔥 MENU (PADRÃO OFICIAL) -->
+<script>
+
+fetch("./menu/menu.html")
+.then(res => res.text())
+.then(html => {
+
+    document.getElementById("menu-container").innerHTML = html;
+
+    /* MARCAR LINK ATIVO */
+    const links = document.querySelectorAll(".menu-item");
+
+    links.forEach(link=>{
+        if(link.getAttribute("data-link") === "inicio"){
+            link.classList.add("active");
+        }
+    });
+
+    /* INJETAR SCRIPT DO MENU */
+    const script = document.createElement("script");
+    script.src = "./menu/menu.js";
+
+    script.onload = ()=>{
+        document.body.style.display = "block";
+    };
+
+    document.body.appendChild(script);
+
+});
+
+</script>
 
 </body>
 </html>
