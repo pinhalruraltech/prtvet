@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Usuário | ADM</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<style>
+*{box-sizing:border-box;}
+
+body{
+    font-family:Inter;
+    background:#F5F7F9;
+    margin:0;
+    color:#1F2933;
+}
+
+.header{
+    background:#2D6A4F;
+    color:#fff;
+    padding:16px;
+    font-weight:600;
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.container{
+    padding:16px;
+    max-width:600px;
+    margin:auto;
+}
+
+.card{
+    background:#fff;
+    border-radius:14px;
+    padding:16px;
+    margin-bottom:16px;
+    border:1px solid #E5E7EB;
+}
+
+.card-title{
+    font-weight:600;
+    margin-bottom:12px;
+}
+
+input, select{
+    width:100%;
+    padding:12px;
+    border-radius:10px;
+    border:1px solid #CBD5E1;
+    margin-bottom:12px;
+}
+
+.uid{
+    font-size:12px;
+    color:#6B7280;
+}
+
+.btn{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:10px;
+    font-weight:600;
+    margin-top:8px;
+    cursor:pointer;
+}
+
+.btn-save{background:#2D6A4F;color:#fff;}
+.btn-sec{background:#6B7280;color:#fff;}
+.btn-danger{background:#E63946;color:#fff;}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="menu-adm"></div>
+
+<div class="header">
+<i data-lucide="user"></i>
+Usuário
+</div>
+
+<div class="container">
+
+<div class="card">
+
+<div class="card-title">Dados do Usuário</div>
+
+<select id="clinicaId"></select>
+<input id="nome" placeholder="Nome completo">
+<input id="email" placeholder="Email">
+
+<select id="grupo">
+<option value="ADM">Administrador</option>
+<option value="GERENTE">Gerente</option>
+<option value="FUNCIONARIO">Funcionário</option>
+</select>
+
+<select id="ativo">
+<option value="true">Ativo</option>
+<option value="false">Inativo</option>
+</select>
+
+<div class="uid" id="uidLabel"></div>
+
+</div>
+
+<button class="btn btn-save" onclick="salvar()">Salvar Alterações</button>
+
+<button class="btn btn-sec" onclick="resetSenha()">
+Resetar senha (email)
+</button>
+
+<button class="btn btn-danger" onclick="toggleAtivo()">
+Ativar / Inativar
+</button>
+
+<button class="btn btn-sec" onclick="voltar()">
+Voltar
+</button>
+
+</div>
+
+<script type="module">
+
+import { db } from "../js/firebase-init.js";
+
+import {
+collection, getDocs, doc, getDoc, updateDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+import {
+getAuth,
+sendPasswordResetEmail
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const auth = getAuth();
+
+/* MENU */
+fetch("menu-adm.html")
+.then(r=>r.text())
+.then(html=>{
+    document.getElementById("menu-adm").innerHTML = html;
+    lucide.createIcons();
+});
+
+/* PROTEÇÃO */
+const papel = localStorage.getItem("papel");
+if(papel !== "adm"){
+    window.location.href="../index.html";
+}
+
+/* PARAM */
+const params = new URLSearchParams(window.location.search);
+const userId = params.get("id");
+
+/* LOAD */
+async function carregar(){
+
+    const snapUser = await getDoc(doc(db,"usuarios",userId));
+
+    if(!snapUser.exists()){
+        alert("Usuário não encontrado");
+        return;
+    }
+
+    const u = snapUser.data();
+
+    nome.value = u.nome || "";
+    email.value = u.email || "";
+    grupo.value = u.grupo || "FUNCIONARIO";
+    ativo.value = u.ativo ? "true" : "false";
+
+    uidLabel.innerText = "UID: " + userId;
+
+    /* CLÍNICAS */
+    const snapClinicas = await getDocs(collection(db,"clinicas"));
+
+    clinicaId.innerHTML = "";
+
+    snapClinicas.forEach(doc=>{
+        const selected = doc.id === u.clinicaId ? "selected" : "";
+        clinicaId.innerHTML += `<option value="${doc.id}" ${selected}>${doc.data().nome}</option>`;
+    });
+}
+
+/* SALVAR */
+window.salvar = async ()=>{
+
+    await updateDoc(doc(db,"usuarios",userId),{
+        nome: nome.value,
+        email: email.value,
+        grupo: grupo.value,
+        clinicaId: clinicaId.value,
+        ativo: ativo.value === "true"
+    });
+
+    alert("Salvo com sucesso!");
+};
+
+/* RESET SENHA */
+window.resetSenha = async ()=>{
+
+    const emailVal = email.value;
+
+    try{
+        await sendPasswordResetEmail(auth, emailVal);
+        alert("Email enviado!");
+    }catch(e){
+        alert("Erro: " + e.message);
+    }
+};
+
+/* TOGGLE ATIVO */
+window.toggleAtivo = async ()=>{
+
+    const novoStatus = ativo.value === "true" ? false : true;
+
+    await updateDoc(doc(db,"usuarios",userId),{
+        ativo: novoStatus
+    });
+
+    ativo.value = novoStatus.toString();
+
+    alert("Status atualizado!");
+};
+
+/* VOLTAR */
+window.voltar = ()=>{
+    window.location.href="usuarios.html";
+};
+
+carregar();
+
+</script>
+
+</body>
+</html>
