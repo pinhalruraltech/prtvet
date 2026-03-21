@@ -210,7 +210,7 @@ carregarAgenda();
 
 </script>
 
-<!-- 🔥 MENU (PADRÃO OFICIAL) -->
+<!-- 🔥 MENU (SEM menu.js EXTERNO) -->
 <script>
 
 fetch("./menu/menu.html")
@@ -228,15 +228,12 @@ fetch("./menu/menu.html")
         }
     });
 
-    /* INJETAR SCRIPT DO MENU */
-    const script = document.createElement("script");
-    script.src = "./menu/menu.js";
+    /* AGORA O SCRIPT DO MENU JÁ VEM EMBUTIDO */
 
-    script.onload = ()=>{
+    setTimeout(()=>{
+        lucide.createIcons();
         document.body.style.display = "block";
-    };
-
-    document.body.appendChild(script);
+    },50);
 
 });
 
