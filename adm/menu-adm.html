@@ -2,6 +2,7 @@
 
     <!-- HEADER -->
     <div class="menu-header">
+
         <div class="menu-logo">
             <img src="../logo/logo_prt.png">
         </div>
@@ -12,9 +13,10 @@
         <div class="menu-toggle" onclick="toggleMenu()">
             <i data-lucide="chevron-up"></i>
         </div>
+
     </div>
 
-    <!-- GRID MENU -->
+    <!-- MENU -->
     <div class="menu-grid" id="menuGrid">
 
         <a href="clinicas.html" class="menu-item">
@@ -27,9 +29,14 @@
             <span>Usuários</span>
         </a>
 
+        <a href="grupos.html" class="menu-item">
+            <i data-lucide="shield"></i>
+            <span>Grupos</span>
+        </a>
+
         <a href="administrador.html" class="menu-item">
             <i data-lucide="settings"></i>
-            <span>Administrador</span>
+            <span>Admin</span>
         </a>
 
         <a href="../index.html" class="menu-item" onclick="logout()">
@@ -50,16 +57,17 @@
     padding:20px 10px 10px;
 }
 
-/* LOGO */
+/* LOGO AJUSTADA */
 .menu-logo img{
-    width:90px;
+    width:120px;
+    max-width:80%;
     margin-bottom:10px;
 }
 
 /* TITULOS */
 .menu-title{
     font-weight:600;
-    font-size:16px;
+    font-size:18px;
 }
 
 .menu-sub{
@@ -74,12 +82,14 @@
     cursor:pointer;
 }
 
-/* GRID */
+/* MENU EM LINHA */
 .menu-grid{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:14px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
     padding:10px;
+    overflow-x:auto;
 }
 
 /* ITEM */
@@ -90,7 +100,9 @@
     flex-direction:column;
     align-items:center;
     gap:6px;
-    font-size:13px;
+    font-size:12px;
+    min-width:60px;
+    flex-shrink:0;
 }
 
 .menu-item i{
@@ -98,6 +110,7 @@
     height:26px;
 }
 
+/* ESCONDER */
 .menu-hidden{
     display:none;
 }
