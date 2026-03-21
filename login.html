@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -14,10 +13,7 @@
 <style>
 :root{
 --color-primary:#2D6A4F;
-
-/* 🔥 GRADIENTE MAIS CLARO (ajustado) */
 --color-secondary:#8FD9C3;
-
 --color-bg:#F5F7F9;
 --color-white:#FFFFFF;
 --color-text:#1F2933;
@@ -39,7 +35,6 @@ flex:1;
 display:flex;
 }
 
-/* ESQUERDA */
 .left{
 flex:1;
 background:linear-gradient(135deg,var(--color-primary),var(--color-secondary));
@@ -57,7 +52,6 @@ width:80%;
 margin-bottom:25px;
 }
 
-/* 🔥 TEXO ATUALIZADO */
 .clinic{
 color:#fff;
 font-size:20px;
@@ -71,7 +65,6 @@ font-size:14px;
 opacity:0.9;
 }
 
-/* DIREITA */
 .right{
 flex:1;
 display:flex;
@@ -101,7 +94,6 @@ width:22px;
 height:22px;
 }
 
-/* FORM */
 .form-group{
 margin-bottom:12px;
 }
@@ -134,7 +126,6 @@ height:20px;
 color:#6B7280;
 }
 
-/* BOTÃO */
 button{
 width:100%;
 padding:12px;
@@ -146,7 +137,6 @@ font-weight:600;
 cursor:pointer;
 }
 
-/* ALERT */
 .alert{
 display:none;
 margin-bottom:10px;
@@ -171,7 +161,6 @@ text-align:center;
 font-size:13px;
 }
 
-/* FOOTER */
 .footer{
 text-align:center;
 padding:20px;
@@ -179,7 +168,6 @@ font-size:12px;
 color:#6B7280;
 }
 
-/* MOBILE */
 @media(max-width:768px){
 
 .container{
@@ -207,17 +195,12 @@ margin-top:10px;
 
 <div class="container">
 
-<!-- ESQUERDA -->
 <div class="left">
-
 <img src="logo/logo_prt.png">
-
 <div class="clinic">APPVET</div>
 <div class="doctor">Sistema de Gestão Veterinária</div>
-
 </div>
 
-<!-- DIREITA -->
 <div class="right">
 
 <div class="login-box">
@@ -289,24 +272,50 @@ window.login = async function(){
         const cred = await signInWithEmailAndPassword(auth, email, senha);
         const uid = cred.user.uid;
 
-        const ref = doc(db, "usuarios", uid);
-        const snap = await getDoc(ref);
+        /* 🔥 USUÁRIO */
+        const userSnap = await getDoc(doc(db, "usuarios", uid));
 
-        if (!snap.exists()) {
+        if (!userSnap.exists()) {
             showAlert("Usuário não encontrado", "error");
             return;
         }
 
-        const user = snap.data();
+        const user = userSnap.data();
 
         if (!user.ativo) {
             showAlert("Usuário inativo", "error");
             return;
         }
 
+        /* 🔥 CLÍNICA */
+        const clinicaSnap = await getDoc(doc(db,"clinicas",user.clinicaId));
+
+        if(!clinicaSnap.exists() || !clinicaSnap.data().ativa){
+            showAlert("Clínica inválida ou inativa", "error");
+            return;
+        }
+
+        /* 🔥 GRUPOS */
+        const gruposSnap = await getDoc(doc(db,"config","grupos"));
+
+        if(!gruposSnap.exists()){
+            showAlert("Configuração de grupos não encontrada", "error");
+            return;
+        }
+
+        const grupos = gruposSnap.data().lista || [];
+
+        const grupoUser = grupos.find(g => g.id === user.grupo);
+
+        if(!grupoUser){
+            showAlert("Grupo de usuário inválido", "error");
+            return;
+        }
+
+        /* ✅ SALVAR CONTEXTO */
         localStorage.setItem("uid", uid);
         localStorage.setItem("clinicaId", user.clinicaId);
-        localStorage.setItem("papel", user.grupo);
+        localStorage.setItem("grupo", user.grupo);
 
         showAlert("Login realizado com sucesso!", "success");
 
