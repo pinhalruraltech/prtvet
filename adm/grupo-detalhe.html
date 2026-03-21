@@ -10,10 +10,13 @@
 <script src="https://unpkg.com/lucide@latest"></script>
 
 <style>
+*{box-sizing:border-box;}
+
 body{
     font-family:Inter;
     background:#F5F7F9;
     margin:0;
+    display:none;
 }
 
 .header{
@@ -48,11 +51,22 @@ input{
     margin-bottom:10px;
 }
 
+.section-title{
+    font-weight:600;
+    margin-bottom:10px;
+}
+
 .check{
     display:flex;
     align-items:center;
     gap:10px;
     margin-bottom:8px;
+}
+
+.check input{
+    width:18px;
+    height:18px;
+    margin:0;
 }
 
 .btn{
@@ -64,6 +78,7 @@ input{
     color:#fff;
     font-weight:600;
     margin-bottom:10px;
+    cursor:pointer;
 }
 
 .btn-sec{
@@ -84,32 +99,38 @@ Grupo
 
 <div class="container">
 
+<!-- IDENTIDADE -->
 <div class="card">
-
 <input id="id" placeholder="ID (ex: recepcao)">
 <input id="nome" placeholder="Nome do grupo">
-
 </div>
 
+<!-- APP -->
 <div class="card">
-
-<strong>Permissões APP</strong><br><br>
+<div class="section-title">Permissões APP</div>
 
 <label class="check"><input type="checkbox" id="inicio"> Início</label>
 <label class="check"><input type="checkbox" id="clientes"> Clientes</label>
 <label class="check"><input type="checkbox" id="animais"> Animais</label>
 <label class="check"><input type="checkbox" id="atendimentos"> Atendimentos</label>
+<label class="check"><input type="checkbox" id="vacinas"> Vacinas</label>
+<label class="check"><input type="checkbox" id="internacao"> Internação</label>
+<label class="check"><input type="checkbox" id="agenda"> Agenda</label>
+<label class="check"><input type="checkbox" id="estoque"> Estoque</label>
+<label class="check"><input type="checkbox" id="vendas"> Vendas</label>
 <label class="check"><input type="checkbox" id="financeiro"> Financeiro</label>
-
+<label class="check"><input type="checkbox" id="relatorios"> Relatórios</label>
+<label class="check"><input type="checkbox" id="documentos"> Documentos</label>
+<label class="check"><input type="checkbox" id="config"> Config</label>
 </div>
 
+<!-- ADM -->
 <div class="card">
-
-<strong>Permissões ADM</strong><br><br>
+<div class="section-title">Permissões ADM</div>
 
 <label class="check"><input type="checkbox" id="adm_clinicas"> Clínicas</label>
 <label class="check"><input type="checkbox" id="adm_usuarios"> Usuários</label>
-
+<label class="check"><input type="checkbox" id="adm_grupos"> Grupos</label>
 </div>
 
 <button class="btn" onclick="salvar()">Salvar</button>
@@ -120,20 +141,76 @@ Grupo
 <script type="module">
 
 import { db } from "../js/firebase-init.js";
-import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-fetch("menu-adm.html")
-.then(r=>r.text())
-.then(html=>{
-    document.getElementById("menu-adm").innerHTML = html;
-    lucide.createIcons();
-});
+import {
+doc,
+getDoc,
+setDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+import {
+getAuth,
+onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const auth = getAuth();
 
 const params = new URLSearchParams(window.location.search);
 const idParam = params.get("id");
 
 let lista = [];
 
+/* 🔐 AUTH + PERMISSÃO */
+onAuthStateChanged(auth, async (user)=>{
+
+    if(!user){
+        window.location.href="../index.html";
+        return;
+    }
+
+    try{
+
+        const userSnap = await getDoc(doc(db,"usuarios",user.uid));
+
+        if(!userSnap.exists()) return;
+
+        const usuario = userSnap.data();
+
+        if(!usuario.ativo){
+            alert("Usuário inativo");
+            return;
+        }
+
+        const gruposSnap = await getDoc(doc(db,"config","grupos"));
+        const grupos = gruposSnap.data().lista;
+
+        const grupoUser = grupos.find(g => g.id === usuario.grupo);
+
+        if(!grupoUser?.permissoes?.adm?.grupos){
+            alert("Sem permissão");
+            window.location.href="../index.html";
+            return;
+        }
+
+        /* MENU */
+        fetch("menu-adm.html")
+        .then(r=>r.text())
+        .then(html=>{
+            document.getElementById("menu-adm").innerHTML = html;
+            lucide.createIcons();
+        });
+
+        document.body.style.display="block";
+
+        carregar();
+
+    }catch(e){
+        alert("Erro: " + e.message);
+    }
+
+});
+
+/* LOAD */
 async function carregar(){
 
     const ref = doc(db,"config","grupos");
@@ -157,18 +234,28 @@ async function carregar(){
         clientes.checked = p.app?.clientes || false;
         animais.checked = p.app?.animais || false;
         atendimentos.checked = p.app?.atendimentos || false;
+        vacinas.checked = p.app?.vacinas || false;
+        internacao.checked = p.app?.internacao || false;
+        agenda.checked = p.app?.agenda || false;
+        estoque.checked = p.app?.estoque || false;
+        vendas.checked = p.app?.vendas || false;
         financeiro.checked = p.app?.financeiro || false;
+        relatorios.checked = p.app?.relatorios || false;
+        documentos.checked = p.app?.documentos || false;
+        config.checked = p.app?.config || false;
 
         adm_clinicas.checked = p.adm?.clinicas || false;
         adm_usuarios.checked = p.adm?.usuarios || false;
+        adm_grupos.checked = p.adm?.grupos || false;
     }
 }
 
+/* SAVE */
 window.salvar = async ()=>{
 
     const novo = {
-        id: id.value,
-        nome: nome.value,
+        id: id.value.trim(),
+        nome: nome.value.trim(),
         sistema:false,
         permissoes:{
             app:{
@@ -176,11 +263,20 @@ window.salvar = async ()=>{
                 clientes: clientes.checked,
                 animais: animais.checked,
                 atendimentos: atendimentos.checked,
-                financeiro: financeiro.checked
+                vacinas: vacinas.checked,
+                internacao: internacao.checked,
+                agenda: agenda.checked,
+                estoque: estoque.checked,
+                vendas: vendas.checked,
+                financeiro: financeiro.checked,
+                relatorios: relatorios.checked,
+                documentos: documentos.checked,
+                config: config.checked
             },
             adm:{
                 clinicas: adm_clinicas.checked,
-                usuarios: adm_usuarios.checked
+                usuarios: adm_usuarios.checked,
+                grupos: adm_grupos.checked
             }
         }
     };
@@ -201,11 +297,12 @@ window.salvar = async ()=>{
     window.location.href="grupos.html";
 };
 
+/* VOLTAR */
 window.voltar = ()=>{
     window.location.href="grupos.html";
 };
 
-carregar();
+lucide.createIcons();
 
 </script>
 
