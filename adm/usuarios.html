@@ -17,6 +17,7 @@ body{
     background:#F5F7F9;
     margin:0;
     color:#1F2933;
+    display:none;
 }
 
 .header{
@@ -171,11 +172,7 @@ Usuários
 <input id="email" placeholder="Email">
 <input id="senha" placeholder="Senha provisória">
 
-<select id="grupo">
-<option value="ADM">Administrador</option>
-<option value="GERENTE">Gerente</option>
-<option value="FUNCIONARIO">Funcionário</option>
-</select>
+<select id="grupo"></select>
 
 <button class="btn" onclick="criarUsuario()">Criar Usuário</button>
 
@@ -194,30 +191,62 @@ import {
     getAuth,
     createUserWithEmailAndPassword,
     sendPasswordResetEmail,
-    signOut
+    signInWithEmailAndPassword
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 import {
-    collection, getDocs, doc, setDoc
+    collection, getDocs, doc, setDoc, getDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const auth = getAuth();
 
-/* MENU */
-fetch("menu-adm.html")
-.then(r=>r.text())
-.then(html=>{
-    document.getElementById("menu-adm").innerHTML = html;
-    lucide.createIcons();
+let adminEmail = "";
+let adminSenha = "";
+
+/* 🔐 AUTH + PERMISSÃO */
+auth.onAuthStateChanged(async (user)=>{
+
+    if(!user){
+        window.location.href="../index.html";
+        return;
+    }
+
+    const userSnap = await getDoc(doc(db,"usuarios",user.uid));
+
+    if(!userSnap.exists()) return;
+
+    const usuario = userSnap.data();
+
+    if(!usuario.ativo){
+        alert("Usuário inativo");
+        return;
+    }
+
+    const gruposSnap = await getDoc(doc(db,"config","grupos"));
+    const grupos = gruposSnap.data().lista;
+
+    const grupo = grupos.find(g => g.id === usuario.grupo);
+
+    if(!grupo?.permissoes?.adm?.usuarios){
+        alert("Sem permissão");
+        window.location.href="../index.html";
+        return;
+    }
+
+    adminEmail = usuario.email;
+
+    /* MENU */
+    fetch("menu-adm.html")
+    .then(r=>r.text())
+    .then(html=>{
+        document.getElementById("menu-adm").innerHTML = html;
+        lucide.createIcons();
+    });
+
+    document.body.style.display="block";
+
+    carregar();
 });
-
-/* PROTEÇÃO */
-const papel = localStorage.getItem("papel");
-if(papel !== "adm"){
-    window.location.href="../index.html";
-}
-
-const lista = document.getElementById("lista");
 
 /* LOAD */
 async function carregar(){
@@ -288,80 +317,71 @@ async function carregar(){
 
 /* MODAL */
 window.abrirModal = async ()=>{
+
     modal.style.display="flex";
 
-    const snap = await getDocs(collection(db,"clinicas"));
+    const clinicasSnap = await getDocs(collection(db,"clinicas"));
+    const gruposSnap = await getDoc(doc(db,"config","grupos"));
 
     clinicaId.innerHTML="";
+    grupo.innerHTML="";
 
-    snap.forEach(doc=>{
+    clinicasSnap.forEach(doc=>{
         clinicaId.innerHTML += `<option value="${doc.id}">${doc.data().nome}</option>`;
+    });
+
+    gruposSnap.data().lista.forEach(g=>{
+        grupo.innerHTML += `<option value="${g.id}">${g.nome}</option>`;
     });
 };
 
-/* CRIAR USUÁRIO */
+/* CRIAR */
 window.criarUsuario = async ()=>{
 
     const emailVal = email.value.trim();
     const nomeVal = nome.value.trim();
-    const grupoVal = grupo.value;
-    const clinicaVal = clinicaId.value;
     const senhaVal = senha.value.trim();
 
     if(!emailVal || !nomeVal || !senhaVal){
-        alert("Preencha todos os campos");
+        alert("Preencha tudo");
         return;
     }
 
     try{
 
-        const userCred = await createUserWithEmailAndPassword(
-            auth,
-            emailVal,
-            senhaVal
-        );
+        const cred = await createUserWithEmailAndPassword(auth,emailVal,senhaVal);
 
-        const uid = userCred.user.uid;
-
-        await setDoc(doc(db,"usuarios",uid),{
-            nome: nomeVal,
-            email: emailVal,
-            clinicaId: clinicaVal,
-            grupo: grupoVal,
+        await setDoc(doc(db,"usuarios",cred.user.uid),{
+            nome:nomeVal,
+            email:emailVal,
+            clinicaId:clinicaId.value,
+            grupo:grupo.value,
             ativo:true
         });
 
-        alert("Usuário criado com sucesso!");
+        alert("Usuário criado");
 
-        modal.style.display="none";
+        // ⚠️ RELOGAR ADMIN
+        await signInWithEmailAndPassword(auth, adminEmail, senhaVal);
 
-        await signOut(auth);
         location.reload();
 
     }catch(e){
-        alert("Erro: " + e.message);
+        alert(e.message);
     }
 };
 
-/* RESET SENHA */
+/* RESET */
 window.resetSenha = async ()=>{
 
-    const emailVal = email.value.trim();
-
-    if(!emailVal){
-        alert("Informe o email");
+    if(!email.value){
+        alert("Informe email");
         return;
     }
 
-    try{
-        await sendPasswordResetEmail(auth, emailVal);
-        alert("Email de redefinição enviado!");
-    }catch(e){
-        alert("Erro: " + e.message);
-    }
+    await sendPasswordResetEmail(auth,email.value);
+    alert("Email enviado");
 };
-
-carregar();
 
 </script>
 
