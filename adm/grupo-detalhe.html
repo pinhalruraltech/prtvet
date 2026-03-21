@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grupo | ADM</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<style>
+body{
+    font-family:Inter;
+    background:#F5F7F9;
+    margin:0;
+}
+
+.header{
+    background:#2D6A4F;
+    color:#fff;
+    padding:16px;
+    font-weight:600;
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.container{
+    padding:16px;
+    max-width:600px;
+    margin:auto;
+}
+
+.card{
+    background:#fff;
+    border-radius:14px;
+    padding:16px;
+    margin-bottom:16px;
+    border:1px solid #E5E7EB;
+}
+
+input{
+    width:100%;
+    padding:12px;
+    border-radius:10px;
+    border:1px solid #CBD5E1;
+    margin-bottom:10px;
+}
+
+.check{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:8px;
+}
+
+.btn{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:10px;
+    background:#2D6A4F;
+    color:#fff;
+    font-weight:600;
+    margin-bottom:10px;
+}
+
+.btn-sec{
+    background:#6B7280;
+}
+</style>
+
+</head>
+
+<body>
+
+<div id="menu-adm"></div>
+
+<div class="header">
+<i data-lucide="users"></i>
+Grupo
+</div>
+
+<div class="container">
+
+<div class="card">
+
+<input id="id" placeholder="ID (ex: recepcao)">
+<input id="nome" placeholder="Nome do grupo">
+
+</div>
+
+<div class="card">
+
+<strong>Permissões APP</strong><br><br>
+
+<label class="check"><input type="checkbox" id="inicio"> Início</label>
+<label class="check"><input type="checkbox" id="clientes"> Clientes</label>
+<label class="check"><input type="checkbox" id="animais"> Animais</label>
+<label class="check"><input type="checkbox" id="atendimentos"> Atendimentos</label>
+<label class="check"><input type="checkbox" id="financeiro"> Financeiro</label>
+
+</div>
+
+<div class="card">
+
+<strong>Permissões ADM</strong><br><br>
+
+<label class="check"><input type="checkbox" id="adm_clinicas"> Clínicas</label>
+<label class="check"><input type="checkbox" id="adm_usuarios"> Usuários</label>
+
+</div>
+
+<button class="btn" onclick="salvar()">Salvar</button>
+<button class="btn btn-sec" onclick="voltar()">Voltar</button>
+
+</div>
+
+<script type="module">
+
+import { db } from "../js/firebase-init.js";
+import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+fetch("menu-adm.html")
+.then(r=>r.text())
+.then(html=>{
+    document.getElementById("menu-adm").innerHTML = html;
+    lucide.createIcons();
+});
+
+const params = new URLSearchParams(window.location.search);
+const idParam = params.get("id");
+
+let lista = [];
+
+async function carregar(){
+
+    const ref = doc(db,"config","grupos");
+    const snap = await getDoc(ref);
+
+    if(!snap.exists()) return;
+
+    lista = snap.data().lista || [];
+
+    if(idParam){
+
+        const g = lista.find(x=>x.id === idParam);
+        if(!g) return;
+
+        id.value = g.id;
+        nome.value = g.nome;
+
+        const p = g.permissoes || {};
+
+        inicio.checked = p.app?.inicio || false;
+        clientes.checked = p.app?.clientes || false;
+        animais.checked = p.app?.animais || false;
+        atendimentos.checked = p.app?.atendimentos || false;
+        financeiro.checked = p.app?.financeiro || false;
+
+        adm_clinicas.checked = p.adm?.clinicas || false;
+        adm_usuarios.checked = p.adm?.usuarios || false;
+    }
+}
+
+window.salvar = async ()=>{
+
+    const novo = {
+        id: id.value,
+        nome: nome.value,
+        sistema:false,
+        permissoes:{
+            app:{
+                inicio: inicio.checked,
+                clientes: clientes.checked,
+                animais: animais.checked,
+                atendimentos: atendimentos.checked,
+                financeiro: financeiro.checked
+            },
+            adm:{
+                clinicas: adm_clinicas.checked,
+                usuarios: adm_usuarios.checked
+            }
+        }
+    };
+
+    const index = lista.findIndex(g=>g.id === novo.id);
+
+    if(index >= 0){
+        lista[index] = novo;
+    }else{
+        lista.push(novo);
+    }
+
+    await setDoc(doc(db,"config","grupos"),{
+        lista
+    });
+
+    alert("Grupo salvo!");
+    window.location.href="grupos.html";
+};
+
+window.voltar = ()=>{
+    window.location.href="grupos.html";
+};
+
+carregar();
+
+</script>
+
+</body>
+</html>
