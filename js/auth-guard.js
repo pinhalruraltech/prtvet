@@ -1,40 +1,99 @@
-import { auth, db } from "./firebase-init.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { db } from "./firebase-init.js";
 
 import {
-    onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-import {
-    collection, query, where, getDocs
+    doc,
+    getDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-onAuthStateChanged(auth, async (user) => {
+const auth = getAuth();
 
-    if (!user) {
-        window.location.href = "../login.html";
-        return;
-    }
+/**
+ * CONFIGURAÇÃO DA PÁGINA
+ * exemplo:
+ * area: "app" ou "adm"
+ * chave: "clientes", "usuarios", etc
+ */
+export async function protegerPagina(PERMISSAO_PAGINA){
 
-    const uid = user.uid;
+    return new Promise((resolve)=>{
 
-    // 🔎 busca usuário no banco
-    const q = query(
-        collection(db, "usuarios"),
-        where("uid", "==", uid)
-    );
+        onAuthStateChanged(auth, async (user)=>{
 
-    const snap = await getDocs(q);
+            if(!user){
+                window.location.href = "/index.html";
+                return;
+            }
 
-    if (snap.empty) {
-        alert("Usuário não encontrado");
-        return;
-    }
+            const uid = user.uid;
 
-    const data = snap.docs[0].data();
+            // 🔎 USUÁRIO
+            const userSnap = await getDoc(doc(db,"usuarios",uid));
 
-    // 🔐 garante sessão completa
-    localStorage.setItem("uid", uid);
-    localStorage.setItem("clinicaId", data.clinicaId);
-    localStorage.setItem("papel", data.grupo);
+            if(!userSnap.exists()){
+                alert("Usuário não encontrado");
+                return;
+            }
 
-});
+            const u = userSnap.data();
+
+            if(!u.ativo){
+                alert("Usuário inativo");
+                return;
+            }
+
+            const clinicaId = u.clinicaId;
+            const grupoId = u.grupo;
+
+            // 🔎 CLÍNICA
+            const clinicaSnap = await getDoc(doc(db,"clinicas",clinicaId));
+
+            if(!clinicaSnap.exists()){
+                alert("Clínica não encontrada");
+                return;
+            }
+
+            const clinica = clinicaSnap.data();
+
+            // 🔎 GRUPOS
+            const gruposSnap = await getDoc(doc(db,"config","grupos"));
+
+            const grupos = gruposSnap.data().lista || [];
+
+            const grupo = grupos.find(g=>g.id === grupoId);
+
+            if(!grupo){
+                alert("Grupo não encontrado");
+                return;
+            }
+
+            // 🔐 VALIDAÇÃO DUPLA
+
+            const area = PERMISSAO_PAGINA.area;
+            const chave = PERMISSAO_PAGINA.chave;
+
+            const permitidoClinica = clinica.modulos?.[chave];
+            const permitidoGrupo = grupo.permissoes?.[area]?.[chave];
+
+            if(!permitidoClinica || !permitidoGrupo){
+                alert("Acesso negado");
+                window.location.href = "/app/dashboard.html";
+                return;
+            }
+
+            // 💾 SALVA CONTEXTO GLOBAL
+            localStorage.setItem("uid", uid);
+            localStorage.setItem("clinicaId", clinicaId);
+            localStorage.setItem("grupo", grupoId);
+
+            resolve({
+                usuario: u,
+                clinica,
+                grupo
+            });
+
+        });
+
+    });
+
+}
