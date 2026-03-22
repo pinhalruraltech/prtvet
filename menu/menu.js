@@ -1,23 +1,39 @@
 import { db } from "../js/firebase-init.js";
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-/* TOGGLE */
+/* 🔥 BASE DINÂMICA */
+const BASE = location.hostname.includes("github.io") ? "/prtvet" : "";
+
+/* 🔥 INIT MENU (ESSENCIAL) */
+export function initMenu(){
+
+    /* LINKS DINÂMICOS */
+    document.querySelectorAll(".menu-item[data-path]").forEach(item=>{
+        item.addEventListener("click", ()=>{
+            const path = item.getAttribute("data-path");
+            window.location.href = BASE + path;
+        });
+    });
+
+}
+
+/* 🔥 TOGGLE */
 window.toggleMenu = function(){
     document.getElementById("menuHorizontal").classList.toggle("hidden");
 };
 
-/* LOGOUT */
+/* 🔥 LOGOUT */
 window.logout = function(){
     localStorage.clear();
-    window.location.href = "./login.html";
+    window.location.href = BASE + "/login.html";
 };
 
-/* PERFIL */
+/* 🔥 PERFIL */
 window.irPerfil = function(){
-    window.location.href = "./app/perfil.html";
+    window.location.href = BASE + "/app/perfil.html";
 };
 
-/* LOAD MENU */
+/* 🔥 CARREGAR DADOS DO MENU */
 export async function carregarMenu(){
 
     const uid = localStorage.getItem("uid");
@@ -27,7 +43,7 @@ export async function carregarMenu(){
 
     try{
 
-        /* 🔥 USUÁRIO (AGORA CERTO) */
+        /* 👤 USUÁRIO */
         const userSnap = await getDoc(doc(db,"usuarios",uid));
 
         if(userSnap.exists()){
@@ -39,7 +55,7 @@ export async function carregarMenu(){
             `;
         }
 
-        /* 🔥 CLÍNICA */
+        /* 🏥 CLÍNICA */
         const clinicaSnap = await getDoc(doc(db,"clinicas",clinicaId));
 
         if(clinicaSnap.exists()){
