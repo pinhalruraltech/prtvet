@@ -12,7 +12,7 @@
 
 <link rel="stylesheet" href="./menu/menu.css">
 
-<!-- 🔐 PERMISSÃO DA PÁGINA -->
+<!-- 🔐 PERMISSÃO -->
 <script>
 const PERMISSAO_PAGINA = {
     area: "app",
@@ -128,7 +128,6 @@ body{margin:0;font-family:'Inter';background:#F5F7F9;}
 
 import { db } from "./js/firebase-init.js";
 import { carregarClinica } from "./js/clinica-loader.js";
-import { carregarMenu } from "./menu/menu.js";
 
 import {
     collection, getDocs, query, where
@@ -142,15 +141,21 @@ if(!uid || !clinicaId){
     window.location.href = "./login.html";
 }
 
-/* 🔧 CARREGA CLÍNICA */
+/* 🔧 CLÍNICA */
 await carregarClinica();
 
-/* 🔥 CARREGA MENU (AGORA CORRETO) */
+/* 🔥 MENU (PADRÃO CORRETO) */
 fetch("./menu/menu.html")
 .then(res => res.text())
-.then(html => {
+.then(async html => {
 
     document.getElementById("menu-container").innerHTML = html;
+
+    /* IMPORT DINÂMICO (CORRETO) */
+    const menuModule = await import("./menu/menu.js");
+
+    menuModule.initMenu();        // 🔥 ESSENCIAL
+    await menuModule.carregarMenu();
 
     /* ATIVO */
     document.querySelectorAll(".menu-item").forEach(link=>{
@@ -159,13 +164,8 @@ fetch("./menu/menu.html")
         }
     });
 
-    /* 🔥 CHAMA MENU.JS */
-    carregarMenu();
-
-    setTimeout(()=>{
-        lucide.createIcons();
-        document.body.style.display = "block";
-    },100);
+    lucide.createIcons();
+    document.body.style.display = "block";
 
 });
 
@@ -223,7 +223,7 @@ async function carregarAgenda(){
     });
 }
 
-/* 🚀 INIT */
+/* INIT */
 carregarClientes();
 carregarAnimais();
 carregarAgenda();
