@@ -135,7 +135,10 @@ input, select{
 <div class="form-group"><label>Nome</label><input id="nome"></div>
 <div class="form-group"><label>Título</label><input id="titulo"></div>
 <div class="form-group"><label>Subtítulo</label><input id="subtitulo"></div>
-<div class="form-group"><label>Logo</label><input id="logo"></div>
+<div class="form-group">
+<label>Logo</label>
+<input type="file" id="logoFile" accept="image/*">
+</div>
 <div class="form-group"><label>Cor Primária</label><input id="corPrimaria"></div>
 
 </div>
@@ -221,6 +224,13 @@ import {
     getAuth, onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
+/* 🔥 STORAGE */
+import {
+    getStorage, ref, uploadBytes, getDownloadURL
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+
+const storage = getStorage();
+
 const auth = getAuth();
 
 const params = new URLSearchParams(window.location.search);
@@ -279,19 +289,18 @@ onAuthStateChanged(auth, async (user)=>{
 });
 
 /* LOAD */
-async function carregar(id){
+async function carregar(idVal){
 
-    const snap = await getDoc(doc(db,"clinicas",id));
+    const snap = await getDoc(doc(db,"clinicas",idVal));
 
     if(!snap.exists()) return;
 
     const c = snap.data();
 
-    id.value = id;
+    id.value = idVal;
     nome.value = c.nome || "";
     titulo.value = c.titulo || "";
     subtitulo.value = c.subtitulo || "";
-    logo.value = c.visual?.logo || "";
     corPrimaria.value = c.visual?.corPrimaria || "";
 
     tipo.value = c.tipo || "pj";
@@ -325,6 +334,22 @@ async function carregar(id){
     m_config.checked = m.config || false;
 }
 
+/* 🔥 UPLOAD LOGO */
+async function uploadLogo(idVal){
+
+    const file = document.getElementById("logoFile").files[0];
+
+    if(!file) return null;
+
+    const storageRef = ref(storage, `clinicas/logos/${idVal}`);
+
+    await uploadBytes(storageRef, file);
+
+    const url = await getDownloadURL(storageRef);
+
+    return url;
+}
+
 /* SAVE */
 window.salvar = async ()=>{
 
@@ -335,6 +360,19 @@ window.salvar = async ()=>{
         return;
     }
 
+    /* 🔥 UPLOAD */
+    const logoURL = await uploadLogo(idVal);
+
+    /* 🔥 SE NÃO ENVIOU NOVA LOGO, MANTÉM A ANTIGA */
+    let logoFinal = logoURL;
+
+    if(!logoFinal){
+        const snap = await getDoc(doc(db,"clinicas",idVal));
+        if(snap.exists()){
+            logoFinal = snap.data().visual?.logo || "";
+        }
+    }
+
     await setDoc(doc(db,"clinicas",idVal),{
 
         nome: nome.value,
@@ -342,7 +380,7 @@ window.salvar = async ()=>{
         subtitulo: subtitulo.value,
 
         visual:{
-            logo: logo.value,
+            logo: logoFinal,
             corPrimaria: corPrimaria.value
         },
 
