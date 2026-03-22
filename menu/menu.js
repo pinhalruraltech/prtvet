@@ -1,72 +1,65 @@
-/* TOGGLE MENU */
-function toggleMenu(){
-    const menu = document.getElementById("menuHorizontal");
-    const icon = document.getElementById("menuIcon");
+import { db } from "../js/firebase-init.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    menu.classList.toggle("hidden");
-
-    if(menu.classList.contains("hidden")){
-        icon.setAttribute("data-lucide", "chevron-down");
-    } else {
-        icon.setAttribute("data-lucide", "chevron-up");
-    }
-
-    lucide.createIcons();
-}
-
-/* USUÁRIO */
-function carregarUsuario(){
-    const nome = "👤 Venício"; // depois Firebase
-    const el = document.getElementById("usuarioNome");
-
-    if(el){
-        el.textContent = nome;
-    }
-}
-
-/* MENU ATIVO */
-function setActiveMenu(){
-
-    const path = window.location.pathname.toLowerCase();
-
-    let current = "";
-
-    if(path.includes("index")) current = "inicio";
-    else if(path.includes("clientes")) current = "clientes";
-    else if(path.includes("animais")) current = "animais";
-    else if(path.includes("atendimentos")) current = "atendimentos";
-    else if(path.includes("agenda")) current = "agenda";
-    else if(path.includes("financeiro")) current = "financeiro";
-    else if(path.includes("estoque")) current = "estoque";
-    else if(path.includes("relatorios")) current = "relatorios";
-    else if(path.includes("config")) current = "config";
-    else if(path.includes("vacinas")) current = "vacinas";
-    else if(path.includes("internacao")) current = "internacao";
-    else if(path.includes("vendas")) current = "vendas";
-    else if(path.includes("documentos")) current = "documentos";
-    else if(path.includes("lembretes")) current = "lembretes";
-
-    document.querySelectorAll(".menu-item").forEach(item=>{
-        if(item.dataset.link === current){
-            item.classList.add("active");
-        }
-    });
-}
+/* TOGGLE */
+window.toggleMenu = function(){
+    document.getElementById("menuHorizontal").classList.toggle("hidden");
+};
 
 /* LOGOUT */
-function logout(){
+window.logout = function(){
+    localStorage.clear();
+    window.location.href = "./login.html";
+};
 
-    const confirmar = confirm("Deseja realmente sair?");
+/* PERFIL */
+window.irPerfil = function(){
+    window.location.href = "./app/perfil.html";
+};
 
-    if(confirmar){
-        // depois você conecta com Firebase
-        window.location.href = "../login.html";
+/* LOAD MENU */
+export async function carregarMenu(){
+
+    const uid = localStorage.getItem("uid");
+    const clinicaId = localStorage.getItem("clinicaId");
+
+    if(!uid || !clinicaId) return;
+
+    try{
+
+        /* 🔥 USUÁRIO (AGORA CERTO) */
+        const userSnap = await getDoc(doc(db,"usuarios",uid));
+
+        if(userSnap.exists()){
+            const u = userSnap.data();
+
+            document.getElementById("usuarioNome").innerHTML = `
+                <i data-lucide="user"></i>
+                <span>${u.usuario || "Usuário"}</span>
+            `;
+        }
+
+        /* 🔥 CLÍNICA */
+        const clinicaSnap = await getDoc(doc(db,"clinicas",clinicaId));
+
+        if(clinicaSnap.exists()){
+            const c = clinicaSnap.data();
+
+            document.getElementById("tituloClinica").innerText = c.titulo || c.nome || "Clínica";
+            document.getElementById("subtituloClinica").innerText = c.subtitulo || "";
+
+            if(c.visual?.logo){
+                document.getElementById("logoClinica").src = c.visual.logo;
+            }
+
+            if(c.visual?.corPrimaria){
+                document.getElementById("menuWrapper").style.background = c.visual.corPrimaria;
+            }
+        }
+
+        lucide.createIcons();
+
+    }catch(e){
+        console.error("Erro menu:", e);
     }
-}
-
-/* INIT GLOBAL */
-function initMenu(){
-    carregarUsuario();
-    setActiveMenu();
-    lucide.createIcons();
 }
