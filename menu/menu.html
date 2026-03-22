@@ -35,7 +35,7 @@
             <i data-lucide="paw-print"></i><span>Animais</span>
         </a>
 
-        <a data-link="clientes" data-path="./app/clientes.html" class="menu-item">
+        <a data-link="clientes" data-path="/app/clientes.html" class="menu-item">
             <i data-lucide="users"></i><span>Clientes</span>
         </a>
 
@@ -156,34 +156,3 @@
     display:none;
 }
 </style>
-
-<script>
-
-/* 🔥 BASE DINÂMICA */
-const BASE = location.hostname.includes("github.io") ? "/prtvet" : "";
-
-/* 🔥 APPLY LINKS */
-document.querySelectorAll(".menu-item[data-path]").forEach(item=>{
-    item.addEventListener("click", ()=>{
-        const path = item.getAttribute("data-path");
-        window.location.href = BASE + path;
-    });
-});
-
-/* TOGGLE */
-function toggleMenu(){
-    document.getElementById("menuHorizontal").classList.toggle("hidden");
-}
-
-/* LOGOUT */
-function logout(){
-    localStorage.clear();
-    window.location.href = BASE + "/login.html";
-}
-
-/* PERFIL */
-function irPerfil(){
-    window.location.href = BASE + "/app/perfil.html";
-}
-
-</script>
