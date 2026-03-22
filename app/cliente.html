@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -103,7 +104,6 @@ input, select{
 
 .hidden{display:none;}
 
-/* MODAL */
 .modal{
     position:fixed;
     inset:0;
@@ -130,14 +130,13 @@ input, select{
 
 <div id="menu-container"></div>
 
-<div class="header">
+<div class="header" id="header">
     <i data-lucide="user"></i>
     Cliente
 </div>
 
 <div class="container">
 
-<!-- FOTO -->
 <div class="card">
     <div class="photo" id="fotoPreview"></div>
 
@@ -147,9 +146,7 @@ input, select{
     <input type="file" id="fotoInput" class="hidden">
 </div>
 
-<!-- DADOS -->
 <div class="card">
-
 <label>Tipo</label>
 <select id="tipoDoc">
 <option value="cpf">CPF</option>
@@ -161,12 +158,9 @@ input, select{
 
 <label>Nome</label>
 <input id="nome">
-
 </div>
 
-<!-- CONTATO -->
 <div class="card">
-
 <label>Telefone fixo</label>
 <input id="telefoneFixo">
 
@@ -175,12 +169,9 @@ input, select{
 
 <label>Email</label>
 <input id="email">
-
 </div>
 
-<!-- ENDEREÇO -->
 <div class="card">
-
 <label>CEP</label>
 <input id="cep">
 
@@ -198,27 +189,21 @@ input, select{
 
 <label>Estado</label>
 <input id="estado">
-
 </div>
 
-<!-- AÇÕES -->
 <div class="card">
 <button class="btn btn-primary hidden" id="btnSalvar">Salvar</button>
 <button class="btn btn-secondary hidden" id="btnCancelar">Cancelar</button>
 <button class="btn btn-primary" id="btnEditar">Editar</button>
 </div>
 
-<!-- ANIMAIS -->
 <div class="card">
-
 <strong>Animais</strong>
-
 <div id="listaAnimais"></div>
 
 <button class="btn btn-primary" onclick="abrirModalAnimal()">
 + Novo Animal
 </button>
-
 </div>
 
 </div>
@@ -286,6 +271,7 @@ import {
 ref,uploadBytes,getDownloadURL
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
+/* 🔐 CONTEXTO */
 const uid = localStorage.getItem("uid");
 const clinicaId = localStorage.getItem("clinicaId");
 
@@ -293,37 +279,41 @@ if(!uid || !clinicaId){
     window.location.href="../login.html";
 }
 
+/* 🔧 CLÍNICA */
 await carregarClinica();
 
-/* MENU */
+/* 🔥 MENU PADRÃO GLOBAL */
 fetch("../menu/menu.html")
-.then(r=>r.text())
-.then(async html=>{
-document.getElementById("menu-container").innerHTML=html;
+.then(res => res.text())
+.then(async html => {
 
-const m = await import("../menu/menu.js");
-m.initMenu();
-await m.carregarMenu();
+    document.getElementById("menu-container").innerHTML = html;
 
-document.querySelector('[data-link="clientes"]').classList.add("active");
+    const m = await import("../menu/menu.js");
 
-lucide.createIcons();
-document.body.style.display="block";
+    m.initMenu();
+    await m.carregarMenu();
+
+    document.querySelector('[data-link="clientes"]').classList.add("active");
+
+    /* 🔥 APLICA COR DA CLÍNICA NO HEADER */
+    const corMenu = document.getElementById("menuWrapper")?.style.background;
+    if(corMenu){
+        document.getElementById("header").style.background = corMenu;
+    }
+
+    lucide.createIcons();
+    document.body.style.display = "block";
 });
 
 /* CLIENTE */
 const urlParams = new URLSearchParams(window.location.search);
 const clienteId = urlParams.get("id");
 
-let clienteData={};
-
-/* CARREGAR */
 async function carregarCliente(){
 
 const snap = await getDoc(doc(db,"clientes",clienteId));
 const d = snap.data();
-
-clienteData=d;
 
 nome.value=d.nome||"";
 documento.value=d.documento||"";
@@ -350,16 +340,14 @@ if(confirm("Alterar foto?")) fotoInput.click();
 };
 
 fotoInput.onchange=async()=>{
-
 const file=fotoInput.files[0];
 if(!file)return;
 
-const refStorage=ref(storage,"clientes/"+Date.now());
-await uploadBytes(refStorage,file);
-const url=await getDownloadURL(refStorage);
+const r=ref(storage,"clientes/"+Date.now());
+await uploadBytes(r,file);
+const url=await getDownloadURL(r);
 
 await updateDoc(doc(db,"clientes",clienteId),{foto:url});
-
 carregarCliente();
 };
 
