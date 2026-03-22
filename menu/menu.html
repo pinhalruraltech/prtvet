@@ -169,23 +169,30 @@
 }
 </style>
 
-<script>
+<script type="module">
+
+import { db } from "./js/firebase-init.js";
+
+import {
+    doc,
+    getDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 /* 🔥 TOGGLE */
-function toggleMenu(){
+window.toggleMenu = function(){
     document.getElementById("menuHorizontal").classList.toggle("hidden");
-}
+};
 
 /* 🔥 LOGOUT */
-function logout(){
+window.logout = function(){
     localStorage.clear();
     window.location.href = "./login.html";
-}
+};
 
 /* 🔥 PERFIL */
-function irPerfil(){
+window.irPerfil = function(){
     window.location.href = "./app/perfil.html";
-}
+};
 
 /* 🔥 LOAD MENU */
 async function carregarMenu(){
@@ -195,42 +202,49 @@ async function carregarMenu(){
 
     if(!uid || !clinicaId) return;
 
-    const db = window.db;
+    try{
 
-    /* USUÁRIO */
-    const userSnap = await db.collection("usuarios").doc(uid).get();
+        /* 🔥 USUÁRIO */
+        const userSnap = await getDoc(doc(db,"usuarios",uid));
 
-    if(userSnap.exists){
-        const u = userSnap.data();
+        if(userSnap.exists()){
+            const u = userSnap.data();
 
-        document.getElementById("usuarioNome").innerHTML = `
-            <i data-lucide="user"></i>
-            <span>${u.nome || "Usuário"}</span>
-        `;
-    }
-
-    /* CLÍNICA */
-    const clinicaSnap = await db.collection("clinicas").doc(clinicaId).get();
-
-    if(clinicaSnap.exists){
-        const c = clinicaSnap.data();
-
-        document.getElementById("tituloClinica").innerText = c.titulo || c.nome || "Clínica";
-        document.getElementById("subtituloClinica").innerText = c.subtitulo || "";
-
-        if(c.visual && c.visual.logo){
-            document.getElementById("logoClinica").src = c.visual.logo;
+            document.getElementById("usuarioNome").innerHTML = `
+                <i data-lucide="user"></i>
+                <span>${u.nome || u.usuario || "Usuário"}</span>
+            `;
         }
 
-        if(c.visual && c.visual.corPrimaria){
-            document.getElementById("menuWrapper").style.background = c.visual.corPrimaria;
-        }
-    }
+        /* 🔥 CLÍNICA */
+        const clinicaSnap = await getDoc(doc(db,"clinicas",clinicaId));
 
-    lucide.createIcons();
+        if(clinicaSnap.exists()){
+            const c = clinicaSnap.data();
+
+            /* TEXTO */
+            document.getElementById("tituloClinica").innerText = c.titulo || c.nome || "Clínica";
+            document.getElementById("subtituloClinica").innerText = c.subtitulo || "";
+
+            /* 🔥 LOGO (AGORA FUNCIONA) */
+            if(c.visual && c.visual.logo){
+                document.getElementById("logoClinica").src = c.visual.logo;
+            }
+
+            /* COR */
+            if(c.visual && c.visual.corPrimaria){
+                document.getElementById("menuWrapper").style.background = c.visual.corPrimaria;
+            }
+        }
+
+        lucide.createIcons();
+
+    }catch(e){
+        console.error("Erro ao carregar menu:", e);
+    }
 }
 
-/* 🔥 GARANTE EXECUÇÃO APÓS FETCH */
-setTimeout(carregarMenu, 100);
+/* 🔥 EXECUTA */
+carregarMenu();
 
 </script>
