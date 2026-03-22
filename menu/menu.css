@@ -18,10 +18,12 @@
 
 /* 🔥 LOGO PADRÃO IGUAL LOGIN */
 .logo{
-    width:90px;
+    width:80%;
+    max-width:260px;
     height:auto;
-    margin:10px auto;
+    margin:10px auto 5px;
     display:block;
+    object-fit:contain;
 }
 
 /* TITULOS */
