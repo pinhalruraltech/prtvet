@@ -23,79 +23,64 @@
     <!-- GRID -->
     <div class="menu-grid hidden" id="menuHorizontal">
 
-        <a href="/prtvet/index.html" class="menu-item" data-link="inicio">
-            <i data-lucide="home"></i>
-            <span>Início</span>
+        <a data-link="inicio" data-path="/index.html" class="menu-item">
+            <i data-lucide="home"></i><span>Início</span>
         </a>
 
-        <a href="/prtvet/app/lembretes.html" class="menu-item" data-link="lembretes">
-            <i data-lucide="clipboard-list"></i>
-            <span>Lembretes</span>
+        <a data-link="lembretes" data-path="/app/lembretes.html" class="menu-item">
+            <i data-lucide="clipboard-list"></i><span>Lembretes</span>
         </a>
 
-        <a href="/prtvet/app/animais.html" class="menu-item" data-link="animais">
-            <i data-lucide="paw-print"></i>
-            <span>Animais</span>
+        <a data-link="animais" data-path="/app/animais.html" class="menu-item">
+            <i data-lucide="paw-print"></i><span>Animais</span>
         </a>
 
-        <a href="/prtvet/app/clientes.html" class="menu-item" data-link="clientes">
-            <i data-lucide="users"></i>
-            <span>Clientes</span>
+        <a data-link="clientes" data-path="/app/clientes.html" class="menu-item">
+            <i data-lucide="users"></i><span>Clientes</span>
         </a>
 
-        <a href="/prtvet/app/atendimentos.html" class="menu-item" data-link="atendimentos">
-            <i data-lucide="stethoscope"></i>
-            <span>Atendimentos</span>
+        <a data-link="atendimentos" data-path="/app/atendimentos.html" class="menu-item">
+            <i data-lucide="stethoscope"></i><span>Atendimentos</span>
         </a>
 
-        <a href="/prtvet/app/vacinas.html" class="menu-item" data-link="vacinas">
-            <i data-lucide="syringe"></i>
-            <span>Vacinas</span>
+        <a data-link="vacinas" data-path="/app/vacinas.html" class="menu-item">
+            <i data-lucide="syringe"></i><span>Vacinas</span>
         </a>
 
-        <a href="/prtvet/app/internacao.html" class="menu-item" data-link="internacao">
-            <i data-lucide="bed"></i>
-            <span>Internação</span>
+        <a data-link="internacao" data-path="/app/internacao.html" class="menu-item">
+            <i data-lucide="bed"></i><span>Internação</span>
         </a>
 
-        <a href="/prtvet/app/agenda.html" class="menu-item" data-link="agenda">
-            <i data-lucide="calendar"></i>
-            <span>Agenda</span>
+        <a data-link="agenda" data-path="/app/agenda.html" class="menu-item">
+            <i data-lucide="calendar"></i><span>Agenda</span>
         </a>
 
-        <a href="/prtvet/app/estoque.html" class="menu-item" data-link="estoque">
-            <i data-lucide="package"></i>
-            <span>Estoque</span>
+        <a data-link="estoque" data-path="/app/estoque.html" class="menu-item">
+            <i data-lucide="package"></i><span>Estoque</span>
         </a>
 
-        <a href="/prtvet/app/vendas.html" class="menu-item" data-link="vendas">
-            <i data-lucide="shopping-cart"></i>
-            <span>Vendas</span>
+        <a data-link="vendas" data-path="/app/vendas.html" class="menu-item">
+            <i data-lucide="shopping-cart"></i><span>Vendas</span>
         </a>
 
-        <a href="/prtvet/app/financeiro.html" class="menu-item" data-link="financeiro">
-            <i data-lucide="dollar-sign"></i>
-            <span>Financeiro</span>
+        <a data-link="financeiro" data-path="/app/financeiro.html" class="menu-item">
+            <i data-lucide="dollar-sign"></i><span>Financeiro</span>
         </a>
 
-        <a href="/prtvet/app/relatorios.html" class="menu-item" data-link="relatorios">
-            <i data-lucide="bar-chart"></i>
-            <span>Relatórios</span>
+        <a data-link="relatorios" data-path="/app/relatorios.html" class="menu-item">
+            <i data-lucide="bar-chart"></i><span>Relatórios</span>
         </a>
 
-        <a href="/prtvet/app/documentos.html" class="menu-item" data-link="documentos">
-            <i data-lucide="file-text"></i>
-            <span>Documentos</span>
+        <a data-link="documentos" data-path="/app/documentos.html" class="menu-item">
+            <i data-lucide="file-text"></i><span>Documentos</span>
         </a>
 
-        <a href="/prtvet/app/configuracoes.html" class="menu-item" data-link="config">
-            <i data-lucide="settings"></i>
-            <span>Config</span>
+        <a data-link="config" data-path="/app/configuracoes.html" class="menu-item">
+            <i data-lucide="settings"></i><span>Config</span>
         </a>
 
         <a href="#" class="menu-item" onclick="logout()">
-            <i data-lucide="log-out"></i>
-            <span>Sair</span>
+            <i data-lucide="log-out"></i><span>Sair</span>
         </a>
 
     </div>
@@ -159,6 +144,7 @@
     align-items:center;
     font-size:12px;
     gap:6px;
+    cursor:pointer;
 }
 
 .menu-item i{
@@ -173,6 +159,17 @@
 
 <script>
 
+/* 🔥 BASE DINÂMICA */
+const BASE = location.hostname.includes("github.io") ? "/prtvet" : "";
+
+/* 🔥 APPLY LINKS */
+document.querySelectorAll(".menu-item[data-path]").forEach(item=>{
+    item.addEventListener("click", ()=>{
+        const path = item.getAttribute("data-path");
+        window.location.href = BASE + path;
+    });
+});
+
 /* TOGGLE */
 function toggleMenu(){
     document.getElementById("menuHorizontal").classList.toggle("hidden");
@@ -181,12 +178,12 @@ function toggleMenu(){
 /* LOGOUT */
 function logout(){
     localStorage.clear();
-    window.location.href = "/prtvet/login.html";
+    window.location.href = BASE + "/login.html";
 }
 
 /* PERFIL */
 function irPerfil(){
-    window.location.href = "/prtvet/app/perfil.html";
+    window.location.href = BASE + "/app/perfil.html";
 }
 
 </script>
