@@ -12,7 +12,6 @@
 
 <link rel="stylesheet" href="../menu/menu.css">
 
-<!-- 🔐 PERMISSÃO -->
 <script>
 const PERMISSAO_PAGINA = {
     area: "app",
@@ -20,54 +19,56 @@ const PERMISSAO_PAGINA = {
 };
 </script>
 
-<!-- 🔐 AUTH -->
 <script type="module" src="../js/auth-guard.js"></script>
 
 <style>
-
-/* (SEU CSS ORIGINAL — NÃO ALTEREI NADA) */
-
 *{box-sizing:border-box;}
-
-body{
-    margin:0;
-    font-family:'Inter', sans-serif;
-    background:#F5F7F9;
-}
+body{margin:0;font-family:'Inter';background:#F5F7F9;}
 
 .header{
     background:#2D6A4F;
     color:#fff;
     padding:16px;
-    font-size:18px;
     font-weight:600;
+    display:flex;
+    align-items:center;
+    gap:8px;
 }
 
-.container{
-    padding:16px;
-}
+.container{padding:16px;}
 
 .card{
     background:#fff;
     border-radius:14px;
-    padding:16px;
-    margin-bottom:16px;
-    box-shadow:0 4px 10px rgba(0,0,0,0.04);
+    padding:14px;
+    margin-bottom:12px;
+    border:1px solid #E5E7EB;
 }
 
 label{
     font-size:13px;
     color:#6B7280;
     display:block;
-    margin-bottom:6px;
+    margin-bottom:4px;
 }
 
-input{
+input, select{
     width:100%;
-    padding:14px;
-    border-radius:12px;
-    border:1.8px solid #CBD5E1;
-    margin-bottom:12px;
+    padding:12px;
+    border-radius:10px;
+    border:1px solid #CBD5E1;
+    margin-bottom:10px;
+}
+
+.photo{
+    width:100px;
+    height:100px;
+    border-radius:50%;
+    background:#ddd;
+    background-size:cover;
+    background-position:center;
+    margin:auto;
+    margin-bottom:10px;
 }
 
 .btn{
@@ -79,36 +80,48 @@ input{
     margin-top:6px;
 }
 
-.btn-primary{
-    background:#2D6A4F;
-    color:#fff;
-}
-
-.btn-secondary{
-    background:#E5E7EB;
-}
-
-.photo{
-    width:100px;
-    height:100px;
-    border-radius:50%;
-    background:#ddd;
-    margin:auto;
-    margin-bottom:10px;
-}
+.btn-primary{background:#2D6A4F;color:#fff;}
+.btn-secondary{background:#E5E7EB;}
 
 .animal-item{
-    padding:12px;
-    border-radius:10px;
+    display:flex;
+    gap:10px;
     background:#F9FAFB;
+    padding:10px;
+    border-radius:10px;
     margin-bottom:8px;
     cursor:pointer;
 }
 
-.hidden{
-    display:none;
+.foto-animal{
+    width:45px;
+    height:45px;
+    border-radius:50%;
+    background:#ddd;
+    background-size:cover;
 }
 
+.hidden{display:none;}
+
+/* MODAL */
+.modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.5);
+    display:none;
+    align-items:center;
+    justify-content:center;
+}
+
+.modal-content{
+    background:#fff;
+    width:95%;
+    max-width:520px;
+    max-height:90vh;
+    overflow:auto;
+    border-radius:16px;
+    padding:16px;
+}
 </style>
 
 </head>
@@ -118,25 +131,60 @@ input{
 <div id="menu-container"></div>
 
 <div class="header">
+    <i data-lucide="user"></i>
     Cliente
 </div>
 
 <div class="container">
 
+<!-- FOTO -->
 <div class="card">
-    <div class="photo"></div>
-    <button class="btn btn-secondary">Alterar Foto</button>
+    <div class="photo" id="fotoPreview"></div>
+
+    <button class="btn btn-secondary" onclick="alterarFoto()">Alterar Foto</button>
+    <button class="btn btn-secondary" onclick="removerFoto()">Remover Foto</button>
+
+    <input type="file" id="fotoInput" class="hidden">
 </div>
 
+<!-- DADOS -->
 <div class="card">
+
+<label>Tipo</label>
+<select id="tipoDoc">
+<option value="cpf">CPF</option>
+<option value="cnpj">CNPJ</option>
+</select>
+
+<label>Documento</label>
+<input id="documento">
 
 <label>Nome</label>
 <input id="nome">
 
-<label>Telefone</label>
-<input id="telefone">
+</div>
 
-<label>Rua</label>
+<!-- CONTATO -->
+<div class="card">
+
+<label>Telefone fixo</label>
+<input id="telefoneFixo">
+
+<label>Celular</label>
+<input id="telefoneCelular">
+
+<label>Email</label>
+<input id="email">
+
+</div>
+
+<!-- ENDEREÇO -->
+<div class="card">
+
+<label>CEP</label>
+<input id="cep">
+
+<label>Logradouro</label>
 <input id="logradouro">
 
 <label>Número</label>
@@ -153,194 +201,241 @@ input{
 
 </div>
 
+<!-- AÇÕES -->
 <div class="card">
-
 <button class="btn btn-primary hidden" id="btnSalvar">Salvar</button>
 <button class="btn btn-secondary hidden" id="btnCancelar">Cancelar</button>
 <button class="btn btn-primary" id="btnEditar">Editar</button>
-
 </div>
 
+<!-- ANIMAIS -->
 <div class="card">
 
 <strong>Animais</strong>
 
 <div id="listaAnimais"></div>
 
-<button class="btn btn-primary" onclick="novoAnimal()">
-    + Novo Animal
+<button class="btn btn-primary" onclick="abrirModalAnimal()">
++ Novo Animal
 </button>
 
 </div>
 
 </div>
 
-<div style="text-align:center;padding:20px;font-size:12px;color:#6B7280;">
-Versão 1.0.0 • Desenvolvido por PRT Soluções
+<!-- MODAL ANIMAL -->
+<div class="modal" id="modalAnimal">
+<div class="modal-content">
+
+<h3>Cadastro de Animal</h3>
+
+<label>Nome</label>
+<input id="animalNome">
+
+<label>Espécie</label>
+<select id="especie">
+<option>Cachorro</option>
+<option>Gato</option>
+<option>Outro</option>
+</select>
+
+<label>Data de nascimento</label>
+<input type="date" id="nascimento">
+
+<label>Raça</label>
+<input id="raca">
+
+<label>Peso</label>
+<input id="peso">
+
+<label>Altura</label>
+<input id="altura">
+
+<label>Comprimento</label>
+<input id="comprimento">
+
+<label>Alergias</label>
+<input id="alergias">
+
+<label>Doenças crônicas</label>
+<input id="doencas">
+
+<label>Cirurgias</label>
+<input id="cirurgias">
+
+<label>Foto</label>
+<input type="file" id="fotoAnimal">
+
+<button class="btn btn-primary" onclick="salvarAnimal()">Salvar Animal</button>
+<button class="btn btn-secondary" onclick="modalAnimal.style.display='none'">Cancelar</button>
+
+</div>
 </div>
 
-<!-- 🔥 SCRIPT PRINCIPAL -->
 <script type="module">
 
-import { db } from "../js/firebase-init.js";
+import { db, storage } from "../js/firebase-init.js";
 import { carregarClinica } from "../js/clinica-loader.js";
 import { carregarMenu } from "../menu/menu.js";
 
 import {
-    doc,
-    getDoc,
-    updateDoc,
-    collection,
-    query,
-    where,
-    getDocs
+doc,getDoc,updateDoc,collection,query,where,getDocs,addDoc,serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-/* 🔐 CONTEXTO */
+import {
+ref,uploadBytes,getDownloadURL
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+
 const uid = localStorage.getItem("uid");
 const clinicaId = localStorage.getItem("clinicaId");
 
 if(!uid || !clinicaId){
-    window.location.href = "../login.html";
+    window.location.href="../login.html";
 }
 
-/* 🔧 CLÍNICA */
 await carregarClinica();
 
-/* 🔥 MENU */
+/* MENU */
 fetch("../menu/menu.html")
-.then(res => res.text())
-.then(html => {
+.then(r=>r.text())
+.then(async html=>{
+document.getElementById("menu-container").innerHTML=html;
 
-    document.getElementById("menu-container").innerHTML = html;
+const m = await import("../menu/menu.js");
+m.initMenu();
+await m.carregarMenu();
 
-    document.querySelectorAll(".menu-item").forEach(link=>{
-        if(link.getAttribute("data-link") === "clientes"){
-            link.classList.add("active");
-        }
-    });
+document.querySelector('[data-link="clientes"]').classList.add("active");
 
-    carregarMenu();
-
-    setTimeout(()=>{
-        lucide.createIcons();
-        document.body.style.display = "block";
-    },100);
-
+lucide.createIcons();
+document.body.style.display="block";
 });
 
-/* 🔥 LÓGICA DA PÁGINA */
+/* CLIENTE */
 const urlParams = new URLSearchParams(window.location.search);
 const clienteId = urlParams.get("id");
 
-let modoEdicao = false;
-let dadosOriginais = {};
+let clienteData={};
 
-/* CLIENTE */
+/* CARREGAR */
 async function carregarCliente(){
 
-    if(!clienteId) return;
+const snap = await getDoc(doc(db,"clientes",clienteId));
+const d = snap.data();
 
-    const ref = doc(db, "clientes", clienteId);
-    const snap = await getDoc(ref);
+clienteData=d;
 
-    const data = snap.data();
+nome.value=d.nome||"";
+documento.value=d.documento||"";
+telefoneFixo.value=d.telefoneFixo||"";
+telefoneCelular.value=d.telefoneCelular||"";
+email.value=d.email||"";
 
-    dadosOriginais = data;
+logradouro.value=d.endereco?.logradouro||"";
+numero.value=d.endereco?.numero||"";
+bairro.value=d.endereco?.bairro||"";
+cidade.value=d.endereco?.cidade||"";
+estado.value=d.endereco?.estado||"";
+cep.value=d.endereco?.cep||"";
 
-    nome.value = data.nome || "";
-    telefone.value = data.telefone || "";
+fotoPreview.style.backgroundImage=`url('${d.foto||""}')`;
 
-    logradouro.value = data.endereco?.logradouro || "";
-    numero.value = data.endereco?.numero || "";
-    bairro.value = data.endereco?.bairro || "";
-    cidade.value = data.endereco?.cidade || "";
-    estado.value = data.endereco?.estado || "";
 }
 
 carregarCliente();
 
+/* FOTO */
+window.alterarFoto=()=>{
+if(confirm("Alterar foto?")) fotoInput.click();
+};
+
+fotoInput.onchange=async()=>{
+
+const file=fotoInput.files[0];
+if(!file)return;
+
+const refStorage=ref(storage,"clientes/"+Date.now());
+await uploadBytes(refStorage,file);
+const url=await getDownloadURL(refStorage);
+
+await updateDoc(doc(db,"clientes",clienteId),{foto:url});
+
+carregarCliente();
+};
+
+window.removerFoto=async()=>{
+if(!confirm("Remover foto?")) return;
+
+await updateDoc(doc(db,"clientes",clienteId),{foto:""});
+carregarCliente();
+};
+
 /* ANIMAIS */
 async function carregarAnimais(){
 
-    const q = query(
-        collection(db,"animais"),
-        where("clienteId","==",clienteId)
-    );
+const q=query(collection(db,"animais"),where("clienteId","==",clienteId));
+const snap=await getDocs(q);
 
-    const snapshot = await getDocs(q);
+listaAnimais.innerHTML="";
 
-    listaAnimais.innerHTML = "";
+snap.forEach(docItem=>{
+const d=docItem.data();
 
-    snapshot.forEach(docItem=>{
-        const d = docItem.data();
+const div=document.createElement("div");
+div.className="animal-item";
 
-        const div = document.createElement("div");
-        div.className = "animal-item";
-        div.innerText = d.nome;
+div.innerHTML=`
+<div class="foto-animal" style="background-image:url('${d.foto||""}')"></div>
+<div>
+<strong>${(d.nome||"").toUpperCase()}</strong>
+<div class="sub">${d.especie||""}</div>
+</div>
+`;
 
-        div.onclick = ()=>{
-            window.location.href = `animal.html?id=${docItem.id}`;
-        };
+div.onclick=()=>window.location.href=`animal.html?id=${docItem.id}`;
 
-        listaAnimais.appendChild(div);
-    });
+listaAnimais.appendChild(div);
+});
+
 }
 
 carregarAnimais();
 
-/* EDITAR */
-btnEditar.onclick = ()=>{
-    modoEdicao = true;
-    toggleBotoes(true);
-};
+/* MODAL */
+window.abrirModalAnimal=()=>modalAnimal.style.display="flex";
 
-/* SALVAR */
-btnSalvar.onclick = async ()=>{
+/* SALVAR ANIMAL */
+window.salvarAnimal=async()=>{
 
-    if(!confirm("Salvar alterações?")) return;
+let fotoURL="";
+const file=fotoAnimal.files[0];
 
-    await updateDoc(doc(db,"clientes",clienteId),{
-        nome: nome.value,
-        telefone: telefone.value,
-        endereco:{
-            logradouro: logradouro.value,
-            numero: numero.value,
-            bairro: bairro.value,
-            cidade: cidade.value,
-            estado: estado.value
-        }
-    });
-
-    alert("Salvo com sucesso");
-
-    modoEdicao = false;
-    toggleBotoes(false);
-};
-
-/* CANCELAR */
-btnCancelar.onclick = ()=>{
-
-    if(!confirm("Cancelar alterações?")) return;
-
-    carregarCliente();
-
-    modoEdicao = false;
-    toggleBotoes(false);
-};
-
-/* BOTÕES */
-function toggleBotoes(editando){
-
-    btnSalvar.classList.toggle("hidden", !editando);
-    btnCancelar.classList.toggle("hidden", !editando);
-    btnEditar.classList.toggle("hidden", editando);
-
+if(file){
+const r=ref(storage,"animais/"+Date.now());
+await uploadBytes(r,file);
+fotoURL=await getDownloadURL(r);
 }
 
-/* NOVO ANIMAL */
-window.novoAnimal = ()=>{
-    window.location.href = `animal.html?clienteId=${clienteId}`;
+await addDoc(collection(db,"animais"),{
+clinicaId,
+clienteId,
+nome:animalNome.value,
+especie:especie.value,
+nascimento:nascimento.value,
+raca:raca.value,
+peso:peso.value,
+altura:altura.value,
+comprimento:comprimento.value,
+alergias:alergias.value,
+doencas:doencas.value,
+cirurgias:cirurgias.value,
+foto:fotoURL,
+createdAt:serverTimestamp()
+});
+
+modalAnimal.style.display="none";
+carregarAnimais();
+
 };
 
 </script>
