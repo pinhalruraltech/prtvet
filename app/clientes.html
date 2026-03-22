@@ -12,14 +12,16 @@
 
 <link rel="stylesheet" href="../menu/menu.css">
 
-<script type="module" src="../js/auth-guard.js"></script>
-
+<!-- 🔐 PERMISSÃO -->
 <script>
 const PERMISSAO_PAGINA = {
     area: "app",
     chave: "clientes"
 };
 </script>
+
+<!-- 🔐 AUTH -->
+<script type="module" src="../js/auth-guard.js"></script>
 
 <style>
 *{box-sizing:border-box;}
@@ -155,7 +157,7 @@ body{margin:0;font-family:'Inter';background:#F5F7F9;}
 
 </head>
 
-<body>
+<body style="display:none;">
 
 <div id="menu-container"></div>
 
@@ -251,26 +253,12 @@ body{margin:0;font-family:'Inter';background:#F5F7F9;}
     </div>
 </div>
 
-<!-- MENU -->
-<script>
-fetch("../menu/menu.html")
-.then(r=>r.text())
-.then(html=>{
-    document.getElementById("menu-container").innerHTML = html;
-
-    const script = document.createElement("script");
-    script.src = "../menu/menu.js";
-    document.body.appendChild(script);
-
-    setTimeout(()=>lucide.createIcons(),100);
-});
-</script>
-
-<!-- FIREBASE -->
+<!-- 🔥 SCRIPT PRINCIPAL -->
 <script type="module">
 
 import { db, storage } from "../js/firebase-init.js";
 import { carregarClinica } from "../js/clinica-loader.js";
+import { carregarMenu } from "../menu/menu.js";
 
 import {
     collection, getDocs, addDoc, query, where, serverTimestamp
@@ -280,35 +268,50 @@ import {
     ref, uploadBytes, getDownloadURL
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
+/* 🔐 CONTEXTO */
+const uid = localStorage.getItem("uid");
 const clinicaId = localStorage.getItem("clinicaId");
 
-if(!clinicaId){
-    alert("Erro: clínica não identificada");
+if(!uid || !clinicaId){
+    window.location.href = "../login.html";
 }
 
-// 🔧 carrega config da clínica
+/* 🔧 CLÍNICA */
 await carregarClinica();
 
-let clientes = [];
+/* 🔥 MENU */
+fetch("../menu/menu.html")
+.then(res => res.text())
+.then(html => {
 
-/* MODAL */
-document.getElementById("btnNovoCliente").addEventListener("click", ()=>{
-    modalCliente.style.display="flex";
+    document.getElementById("menu-container").innerHTML = html;
+
+    document.querySelectorAll(".menu-item").forEach(link=>{
+        if(link.getAttribute("data-link") === "clientes"){
+            link.classList.add("active");
+        }
+    });
+
+    carregarMenu();
+
+    setTimeout(()=>{
+        lucide.createIcons();
+        document.body.style.display = "block";
+    },100);
+
 });
 
-window.cancelar = ()=>{
-    modalCliente.style.display="none";
-};
+/* MODAL */
+btnNovoCliente.onclick = ()=> modalCliente.style.display="flex";
+window.cancelar = ()=> modalCliente.style.display="none";
+
+/* DADOS */
+let clientes = [];
 
 /* SALVAR */
 window.salvarCliente = async ()=>{
 
-    if(!clinicaId){
-        alert("Erro: clínica não identificada");
-        return;
-    }
-
-    const nomeVal = document.getElementById("nome").value.trim();
+    const nomeVal = nome.value.trim();
 
     if(!nomeVal){
         alert("Nome é obrigatório");
@@ -316,7 +319,7 @@ window.salvarCliente = async ()=>{
     }
 
     let fotoURL = "";
-    const file = document.getElementById("foto").files[0];
+    const file = foto.files[0];
 
     if(file){
         const storageRef = ref(storage, "clientes/"+Date.now());
@@ -328,20 +331,20 @@ window.salvarCliente = async ()=>{
 
         clinicaId,
         nome: nomeVal,
-        telefone: document.getElementById("telefone").value,
-        email: document.getElementById("email").value,
-        cpf: document.getElementById("cpf").value,
+        telefone: telefone.value,
+        email: email.value,
+        cpf: cpf.value,
         situacao: "ativo",
         codigo: "CLI-" + Date.now(),
         createdAt: serverTimestamp(),
 
         endereco:{
-            logradouro: document.getElementById("logradouro").value,
-            numero: document.getElementById("numero").value,
-            bairro: document.getElementById("bairro").value,
-            cidade: document.getElementById("cidade").value,
-            estado: document.getElementById("estado").value,
-            cep: document.getElementById("cep").value
+            logradouro: logradouro.value,
+            numero: numero.value,
+            bairro: bairro.value,
+            cidade: cidade.value,
+            estado: estado.value,
+            cep: cep.value
         },
 
         animais: [],
@@ -351,9 +354,7 @@ window.salvarCliente = async ()=>{
 
     alert("Cliente cadastrado!");
 
-    // limpa campos
     document.querySelectorAll("#modalCliente input").forEach(i=>i.value="");
-
     modalCliente.style.display="none";
 
     carregarClientes();
@@ -369,7 +370,7 @@ async function carregarClientes(){
 
     const snap = await getDocs(q);
 
-    clientes=[];
+    clientes = [];
 
     snap.forEach(doc=>{
         clientes.push({id:doc.id,...doc.data()});
@@ -409,17 +410,13 @@ function render(lista = clientes){
 /* BUSCA */
 busca.addEventListener("input", e=>{
     const t=e.target.value.toLowerCase();
-    render(clientes.filter(c=>
-        c.nome.toLowerCase().includes(t)
-    ));
+    render(clientes.filter(c=> c.nome.toLowerCase().includes(t)));
 });
 
 /* INIT */
 carregarClientes();
 
 </script>
-
-<script>lucide.createIcons();</script>
 
 </body>
 </html>
