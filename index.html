@@ -210,14 +210,24 @@ carregarAgenda();
 
 </script>
 
-<!-- 🔥 MENU (SEM menu.js EXTERNO) -->
+<!-- 🔥 MENU (CORRIGIDO) -->
 <script>
 
 fetch("./menu/menu.html")
 .then(res => res.text())
 .then(html => {
 
-    document.getElementById("menu-container").innerHTML = html;
+    const container = document.getElementById("menu-container");
+    container.innerHTML = html;
+
+    /* 🔥 EXECUTA SCRIPT DO MENU */
+    const scripts = container.querySelectorAll("script");
+
+    scripts.forEach(oldScript => {
+        const newScript = document.createElement("script");
+        newScript.textContent = oldScript.textContent;
+        document.body.appendChild(newScript);
+    });
 
     /* MARCAR LINK ATIVO */
     const links = document.querySelectorAll(".menu-item");
@@ -228,8 +238,7 @@ fetch("./menu/menu.html")
         }
     });
 
-    /* AGORA O SCRIPT DO MENU JÁ VEM EMBUTIDO */
-
+    /* FINALIZA */
     setTimeout(()=>{
         lucide.createIcons();
         document.body.style.display = "block";
