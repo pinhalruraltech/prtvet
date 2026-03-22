@@ -39,7 +39,7 @@ body{margin:0;font-family:'Inter';background:#F5F7F9;}
 
 .item{
     display:flex;
-    gap:10px;
+    gap:12px;
     background:#fff;
     padding:12px;
     border-radius:12px;
@@ -48,8 +48,8 @@ body{margin:0;font-family:'Inter';background:#F5F7F9;}
 }
 
 .foto{
-    width:50px;
-    height:50px;
+    width:55px;
+    height:55px;
     border-radius:50%;
     background:#ddd;
     background-size:cover;
@@ -89,7 +89,8 @@ body{margin:0;font-family:'Inter';background:#F5F7F9;}
     border-radius:14px;
     width:95%;
     max-width:520px;
-    overflow:hidden;
+    max-height:90vh;
+    overflow:auto;
 }
 
 .form-grid{
@@ -101,7 +102,6 @@ body{margin:0;font-family:'Inter';background:#F5F7F9;}
 .form-group{
     display:flex;
     flex-direction:column;
-    width:100%;
 }
 
 .form-group.full{
@@ -151,7 +151,7 @@ body{margin:0;font-family:'Inter';background:#F5F7F9;}
     <i data-lucide="plus"></i>
 </div>
 
-<!-- MODAL -->
+<!-- MODAL COMPLETO -->
 <div class="modal" id="modalCliente">
 <div class="modal-content">
 
@@ -160,11 +160,14 @@ body{margin:0;font-family:'Inter';background:#F5F7F9;}
 <div class="form-grid">
 
 <div class="form-group full">
+<label>Foto</label>
+<input type="file" id="foto">
+</div>
+
+<div class="form-group full">
 <label>Tipo</label>
-<div>
 <label><input type="radio" name="tipoDoc" value="cpf" checked> CPF</label>
 <label><input type="radio" name="tipoDoc" value="cnpj"> CNPJ</label>
-</div>
 </div>
 
 <div class="form-group full">
@@ -182,7 +185,32 @@ body{margin:0;font-family:'Inter';background:#F5F7F9;}
 <input id="telefone">
 </div>
 
+<div class="form-group">
+<label>Email</label>
+<input id="email">
+</div>
+
+<div class="form-group">
+<label>CEP</label>
+<input id="cep">
+</div>
+
 <div class="form-group full">
+<label>Logradouro</label>
+<input id="logradouro">
+</div>
+
+<div class="form-group">
+<label>Número</label>
+<input id="numero">
+</div>
+
+<div class="form-group">
+<label>Bairro</label>
+<input id="bairro">
+</div>
+
+<div class="form-group">
 <label>Cidade</label>
 <input id="cidade">
 </div>
@@ -204,12 +232,16 @@ body{margin:0;font-family:'Inter';background:#F5F7F9;}
 
 <script type="module">
 
-import { db } from "../js/firebase-init.js";
+import { db, storage } from "../js/firebase-init.js";
 import { carregarClinica } from "../js/clinica-loader.js";
 
 import {
 collection,getDocs,addDoc,query,where,serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+import {
+ref,uploadBytes,getDownloadURL
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
 const uid = localStorage.getItem("uid");
 const clinicaId = localStorage.getItem("clinicaId");
@@ -224,24 +256,22 @@ await carregarClinica();
 fetch("../menu/menu.html")
 .then(r=>r.text())
 .then(async html=>{
-
 document.getElementById("menu-container").innerHTML=html;
 
-const menuModule = await import("../menu/menu.js");
-menuModule.initMenu();
-await menuModule.carregarMenu();
+const m = await import("../menu/menu.js");
+m.initMenu();
+await m.carregarMenu();
 
 document.querySelector('[data-link="clientes"]').classList.add("active");
 
 lucide.createIcons();
 document.body.style.display="block";
-
 });
 
 /* MODAL */
 btnNovoCliente.onclick=()=>modalCliente.style.display="flex";
 
-/* MÁSCARA */
+/* MÁSCARA CPF/CNPJ */
 documento.addEventListener("input",()=>{
 let v=documento.value.replace(/\D/g,'');
 
@@ -267,13 +297,31 @@ let clientes=[];
 /* SALVAR */
 window.salvarCliente=async()=>{
 
+let fotoURL="";
+const file=foto.files[0];
+
+if(file){
+const storageRef=ref(storage,"clientes/"+Date.now());
+await uploadBytes(storageRef,file);
+fotoURL=await getDownloadURL(storageRef);
+}
+
 await addDoc(collection(db,"clientes"),{
 clinicaId,
 nome:nome.value,
+telefone:telefone.value,
+email:email.value,
 documento:documento.value,
+createdAt:serverTimestamp(),
+endereco:{
+logradouro:logradouro.value,
+numero:numero.value,
+bairro:bairro.value,
 cidade:cidade.value,
 estado:estado.value,
-createdAt:serverTimestamp()
+cep:cep.value
+},
+foto:fotoURL
 });
 
 modalCliente.style.display="none";
@@ -287,7 +335,7 @@ const q=query(collection(db,"clientes"),where("clinicaId","==",clinicaId));
 const snap=await getDocs(q);
 
 clientes=[];
-snap.forEach(doc=>clientes.push(doc.data()));
+snap.forEach(doc=>clientes.push({id:doc.id,...doc.data()}));
 
 render();
 
@@ -304,10 +352,11 @@ const div=document.createElement("div");
 div.className="item";
 
 div.innerHTML=`
+<div class="foto" style="background-image:url('${c.foto||""}')"></div>
 <div>
 <strong>${(c.nome||"").toUpperCase()}</strong>
-<div class="sub">${c.documento||""}</div>
-<div class="sub">${c.cidade||""} - ${c.estado||""}</div>
+<div class="sub">${c.documento||"-"}</div>
+<div class="sub">${c.endereco?.cidade||""} - ${c.endereco?.estado||""}</div>
 </div>
 `;
 
@@ -317,15 +366,15 @@ listaClientes.appendChild(div);
 
 }
 
-/* BUSCA */
+/* BUSCA COMPLETA */
 busca.addEventListener("input",e=>{
 const t=e.target.value.toLowerCase();
 
 render(clientes.filter(c=>
 (c.nome||"").toLowerCase().includes(t) ||
 (c.documento||"").includes(t) ||
-(c.cidade||"").toLowerCase().includes(t) ||
-(c.estado||"").toLowerCase().includes(t)
+(c.endereco?.cidade||"").toLowerCase().includes(t) ||
+(c.endereco?.estado||"").toLowerCase().includes(t)
 ));
 });
 
