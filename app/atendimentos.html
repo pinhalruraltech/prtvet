@@ -12,6 +12,14 @@
 
 <link rel="stylesheet" href="../menu/menu.css">
 
+<!-- 🔐 PERMISSÃO -->
+<script>
+const PERMISSAO_PAGINA = {
+    area: "app",
+    chave: "atendimentos"
+};
+</script>
+
 <!-- 🔐 AUTH -->
 <script type="module" src="../js/auth-guard.js"></script>
 
@@ -84,18 +92,13 @@ input, select, textarea{
     color:#fff;
 }
 
-.btn-option{
-    background:#E8F5E9;
-    color:#2D6A4F;
-}
-
 .hidden{display:none;}
 .section-title{font-weight:600;margin-bottom:10px;display:flex;gap:6px;}
 </style>
 
 </head>
 
-<body>
+<body style="display:none;">
 
 <div id="menu-container"></div>
 
@@ -150,26 +153,12 @@ input, select, textarea{
 
 </div>
 
-<!-- MENU -->
-<script>
-fetch("../menu/menu.html")
-.then(res => res.text())
-.then(data => {
-    document.getElementById("menu-container").innerHTML = data;
-
-    const script = document.createElement("script");
-    script.src = "../menu/menu.js";
-    document.body.appendChild(script);
-
-    setTimeout(()=>lucide.createIcons(),100);
-});
-</script>
-
 <!-- 🔥 SCRIPT PRINCIPAL -->
 <script type="module">
 
 import { db } from "../js/firebase-init.js";
 import { carregarClinica } from "../js/clinica-loader.js";
+import { carregarMenu } from "../menu/menu.js";
 
 import {
     collection,
@@ -180,16 +169,41 @@ import {
     serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+/* 🔐 CONTEXTO */
+const uid = localStorage.getItem("uid");
 const clinicaId = localStorage.getItem("clinicaId");
 
-if(!clinicaId){
-    alert("Erro: clínica não identificada");
+if(!uid || !clinicaId){
+    window.location.href = "../login.html";
 }
 
-/* 🔧 CARREGA CONFIG */
+/* 🔧 CLÍNICA */
 await carregarClinica();
 
-/* 🐶 ANIMAIS FILTRADOS POR CLÍNICA */
+/* 🔥 MENU (PADRÃO NOVO) */
+fetch("../menu/menu.html")
+.then(res => res.text())
+.then(html => {
+
+    document.getElementById("menu-container").innerHTML = html;
+
+    /* ATIVO */
+    document.querySelectorAll(".menu-item").forEach(link=>{
+        if(link.getAttribute("data-link") === "atendimentos"){
+            link.classList.add("active");
+        }
+    });
+
+    carregarMenu();
+
+    setTimeout(()=>{
+        lucide.createIcons();
+        document.body.style.display = "block";
+    },100);
+
+});
+
+/* 🐶 ANIMAIS */
 async function carregarAnimais(){
 
     const q = query(
@@ -219,7 +233,7 @@ carregarAnimais();
 window.salvarAtendimento = async function(){
 
     const data = {
-        clinicaId, // 🔴 ESSENCIAL
+        clinicaId,
         animalId: document.getElementById("animalSelect").value,
         tipo: document.getElementById("tipo").value,
         sintomas: document.getElementById("sintomas").value,
@@ -235,8 +249,6 @@ window.salvarAtendimento = async function(){
 };
 
 </script>
-
-<script>lucide.createIcons();</script>
 
 </body>
 </html>
