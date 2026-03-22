@@ -169,32 +169,28 @@
 }
 </style>
 
+<!-- 🔥 FUNÇÕES GLOBAIS (VOLTA A FUNCIONAR O CLICK) -->
+<script>
+function toggleMenu(){
+    document.getElementById("menuHorizontal").classList.toggle("hidden");
+}
+
+function logout(){
+    localStorage.clear();
+    window.location.href = "./login.html";
+}
+
+function irPerfil(){
+    window.location.href = "./app/perfil.html";
+}
+</script>
+
+<!-- 🔥 FIREBASE (MODULAR, MAS SEM QUEBRAR ESCOPO) -->
 <script type="module">
 
 import { db } from "./js/firebase-init.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-import {
-    doc,
-    getDoc
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-/* 🔥 TOGGLE */
-window.toggleMenu = function(){
-    document.getElementById("menuHorizontal").classList.toggle("hidden");
-};
-
-/* 🔥 LOGOUT */
-window.logout = function(){
-    localStorage.clear();
-    window.location.href = "./login.html";
-};
-
-/* 🔥 PERFIL */
-window.irPerfil = function(){
-    window.location.href = "./app/perfil.html";
-};
-
-/* 🔥 LOAD MENU */
 async function carregarMenu(){
 
     const uid = localStorage.getItem("uid");
@@ -204,7 +200,7 @@ async function carregarMenu(){
 
     try{
 
-        /* 🔥 USUÁRIO */
+        /* USUÁRIO */
         const userSnap = await getDoc(doc(db,"usuarios",uid));
 
         if(userSnap.exists()){
@@ -216,23 +212,20 @@ async function carregarMenu(){
             `;
         }
 
-        /* 🔥 CLÍNICA */
+        /* CLÍNICA */
         const clinicaSnap = await getDoc(doc(db,"clinicas",clinicaId));
 
         if(clinicaSnap.exists()){
             const c = clinicaSnap.data();
 
-            /* TEXTO */
             document.getElementById("tituloClinica").innerText = c.titulo || c.nome || "Clínica";
             document.getElementById("subtituloClinica").innerText = c.subtitulo || "";
 
-            /* 🔥 LOGO (AGORA FUNCIONA) */
-            if(c.visual && c.visual.logo){
+            if(c.visual?.logo){
                 document.getElementById("logoClinica").src = c.visual.logo;
             }
 
-            /* COR */
-            if(c.visual && c.visual.corPrimaria){
+            if(c.visual?.corPrimaria){
                 document.getElementById("menuWrapper").style.background = c.visual.corPrimaria;
             }
         }
@@ -240,11 +233,10 @@ async function carregarMenu(){
         lucide.createIcons();
 
     }catch(e){
-        console.error("Erro ao carregar menu:", e);
+        console.error("Erro menu:", e);
     }
 }
 
-/* 🔥 EXECUTA */
 carregarMenu();
 
 </script>
