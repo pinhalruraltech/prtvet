@@ -92,8 +92,12 @@ input, select, textarea{
     color:#fff;
 }
 
-.hidden{display:none;}
-.section-title{font-weight:600;margin-bottom:10px;display:flex;gap:6px;}
+.section-title{
+    font-weight:600;
+    margin-bottom:10px;
+    display:flex;
+    gap:6px;
+}
 </style>
 
 </head>
@@ -158,7 +162,6 @@ input, select, textarea{
 
 import { db } from "../js/firebase-init.js";
 import { carregarClinica } from "../js/clinica-loader.js";
-import { carregarMenu } from "../menu/menu.js";
 
 import {
     collection,
@@ -180,12 +183,17 @@ if(!uid || !clinicaId){
 /* 🔧 CLÍNICA */
 await carregarClinica();
 
-/* 🔥 MENU (PADRÃO NOVO) */
+/* 🔥 MENU (PADRÃO CORRETO) */
 fetch("../menu/menu.html")
 .then(res => res.text())
-.then(html => {
+.then(async html => {
 
     document.getElementById("menu-container").innerHTML = html;
+
+    const menuModule = await import("../menu/menu.js");
+
+    menuModule.initMenu();
+    await menuModule.carregarMenu();
 
     /* ATIVO */
     document.querySelectorAll(".menu-item").forEach(link=>{
@@ -194,12 +202,8 @@ fetch("../menu/menu.html")
         }
     });
 
-    carregarMenu();
-
-    setTimeout(()=>{
-        lucide.createIcons();
-        document.body.style.display = "block";
-    },100);
+    lucide.createIcons();
+    document.body.style.display = "block";
 
 });
 
@@ -215,6 +219,8 @@ async function carregarAnimais(){
 
     const select = document.getElementById("animalSelect");
 
+    select.innerHTML = "";
+
     snap.forEach(doc=>{
         const data = doc.data();
 
@@ -225,7 +231,18 @@ async function carregarAnimais(){
         select.appendChild(option);
     });
 
+    /* Atualiza nome */
+    atualizarNomeAnimal();
 }
+
+/* 🔄 NOME DO ANIMAL */
+function atualizarNomeAnimal(){
+    const select = document.getElementById("animalSelect");
+    const nome = select.options[select.selectedIndex]?.text || "-";
+    document.getElementById("animalNome").innerText = nome;
+}
+
+document.getElementById("animalSelect").addEventListener("change", atualizarNomeAnimal);
 
 carregarAnimais();
 
@@ -246,6 +263,9 @@ window.salvarAtendimento = async function(){
     await addDoc(collection(db, "atendimentos"), data);
 
     alert("Atendimento salvo!");
+
+    /* limpa */
+    document.querySelectorAll("textarea").forEach(t=>t.value="");
 };
 
 </script>
