@@ -128,11 +128,13 @@ body{margin:0;font-family:'Inter';background:#F5F7F9;}
 
 import { db } from "./js/firebase-init.js";
 import { carregarClinica } from "./js/clinica-loader.js";
+import { carregarMenu } from "./menu/menu.js";
 
 import {
     collection, getDocs, query, where
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+/* 🔐 DADOS */
 const uid = localStorage.getItem("uid");
 const clinicaId = localStorage.getItem("clinicaId");
 
@@ -140,8 +142,34 @@ if(!uid || !clinicaId){
     window.location.href = "./login.html";
 }
 
+/* 🔧 CARREGA CLÍNICA */
 await carregarClinica();
 
+/* 🔥 CARREGA MENU (AGORA CORRETO) */
+fetch("./menu/menu.html")
+.then(res => res.text())
+.then(html => {
+
+    document.getElementById("menu-container").innerHTML = html;
+
+    /* ATIVO */
+    document.querySelectorAll(".menu-item").forEach(link=>{
+        if(link.getAttribute("data-link") === "inicio"){
+            link.classList.add("active");
+        }
+    });
+
+    /* 🔥 CHAMA MENU.JS */
+    carregarMenu();
+
+    setTimeout(()=>{
+        lucide.createIcons();
+        document.body.style.display = "block";
+    },100);
+
+});
+
+/* 📊 CLIENTES */
 async function carregarClientes(){
     const q = query(
         collection(db,"clientes"),
@@ -152,6 +180,7 @@ async function carregarClientes(){
     document.getElementById("totalClientes").innerText = snap.size;
 }
 
+/* 🐶 ANIMAIS */
 async function carregarAnimais(){
     const q = query(
         collection(db,"animais"),
@@ -162,6 +191,7 @@ async function carregarAnimais(){
     document.getElementById("totalAnimais").innerText = snap.size;
 }
 
+/* 📅 AGENDA */
 async function carregarAgenda(){
     const q = query(
         collection(db,"agenda"),
@@ -193,54 +223,10 @@ async function carregarAgenda(){
     });
 }
 
+/* 🚀 INIT */
 carregarClientes();
 carregarAnimais();
 carregarAgenda();
-
-</script>
-
-<!-- 🔥 MENU (EXECUÇÃO CORRETA DOS SCRIPTS) -->
-<script>
-
-fetch("./menu/menu.html")
-.then(res => res.text())
-.then(html => {
-
-    const container = document.getElementById("menu-container");
-    container.innerHTML = html;
-
-    /* 🔥 EXECUTA TODOS OS SCRIPTS DO MENU CORRETAMENTE */
-    container.querySelectorAll("script").forEach(oldScript => {
-
-        const newScript = document.createElement("script");
-
-        if(oldScript.type){
-            newScript.type = oldScript.type;
-        }
-
-        if(oldScript.src){
-            newScript.src = oldScript.src;
-        }else{
-            newScript.textContent = oldScript.textContent;
-        }
-
-        document.body.appendChild(newScript);
-    });
-
-    /* ATIVO */
-    document.querySelectorAll(".menu-item").forEach(link=>{
-        if(link.getAttribute("data-link") === "inicio"){
-            link.classList.add("active");
-        }
-    });
-
-    /* FINALIZA */
-    setTimeout(()=>{
-        lucide.createIcons();
-        document.body.style.display = "block";
-    },150);
-
-});
 
 </script>
 
