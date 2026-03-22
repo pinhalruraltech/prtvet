@@ -1,110 +1,70 @@
 .menu-wrapper{
     background:#2D6A4F;
     color:#fff;
-}
-
-/* TOPO */
-.menu-top{
     text-align:center;
-    padding:24px 16px 12px;
-    position:relative;
+    padding:10px 10px 20px;
 }
 
-/* USUÁRIO NO TOPO DIREITO */
+/* 🔥 USER MAIS DISCRETO E NO TOPO */
 .menu-user{
-    position:absolute;
-    right:16px;
-    top:16px;
-    font-size:13px;
-    opacity:0.9;
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    gap:5px;
+    font-size:11px;
+    opacity:0.85;
+    margin-bottom:5px;
 }
 
-/* LOGO */
+/* 🔥 LOGO PADRÃO IGUAL LOGIN */
 .logo{
-    width:220px;
-    max-width:85%;
-    margin-bottom:8px;
+    width:90px;
+    height:auto;
+    margin:10px auto;
+    display:block;
 }
 
-/* TEXTO */
+/* TITULOS */
 .menu-info strong{
     display:block;
-    font-size:16px;
-    font-weight:600;
+    font-size:18px;
 }
 
 .menu-info span{
     font-size:13px;
-    opacity:0.85;
+    opacity:0.9;
 }
 
-/* SETA */
+/* TOGGLE */
 .menu-toggle{
-    margin-top:10px;
+    margin:10px 0;
     cursor:pointer;
-}
-
-.menu-toggle i{
-    width:26px;
-    height:26px;
 }
 
 /* GRID */
 .menu-grid{
     display:grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap:14px;
-    padding:16px;
-    text-align:center;
+    grid-template-columns:repeat(5,1fr);
+    gap:16px;
+    margin-top:15px;
 }
 
-/* ITENS */
+/* ITEM */
 .menu-item{
+    text-decoration:none;
+    color:#fff;
     display:flex;
     flex-direction:column;
     align-items:center;
-    justify-content:center;
-    text-decoration:none;
-    color:#fff;
     font-size:12px;
-    padding:8px 4px;
-    border-radius:10px;
-    transition:all 0.2s ease;
+    gap:6px;
 }
 
-/* ÍCONES */
 .menu-item i{
     width:22px;
     height:22px;
-    margin-bottom:4px;
 }
 
-/* HOVER / TOQUE */
-.menu-item:active{
-    background:rgba(255,255,255,0.15);
-}
-
-/* ATIVO (PÁGINA ATUAL) */
-.menu-item.active{
-    background:rgba(255,255,255,0.18);
-}
-
-.menu-item.active span{
-    font-weight:600;
-}
-
-.menu-item.active i{
-    transform:scale(1.1);
-}
-
-/* ESCONDIDO */
 .hidden{
     display:none;
-}
-
-/* RESPONSIVO (CELULAR MENOR) */
-@media (max-width:380px){
-    .menu-grid{
-        grid-template-columns: repeat(4, 1fr);
-    }
 }
