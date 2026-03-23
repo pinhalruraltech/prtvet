@@ -92,7 +92,7 @@ body{margin:0;font-family:'Inter';background:#F5F7F9;}
 
 <div class="filters">
 
-<input type="text" id="busca" placeholder="Buscar por nome">
+<input type="text" id="busca" placeholder="Buscar por nome ou tutor">
 
 <select id="filtroEspecie">
 <option value="">Todas espécies</option>
@@ -113,7 +113,6 @@ body{margin:0;font-family:'Inter';background:#F5F7F9;}
 
 import { db } from "../js/firebase-init.js";
 import { carregarClinica } from "../js/clinica-loader.js";
-import { carregarMenu } from "../menu/menu.js";
 
 import {
 collection, getDocs, query, where
@@ -130,34 +129,11 @@ if(!uid || !clinicaId){
 /* 🔧 CLÍNICA */
 await carregarClinica();
 
-/* 🔥 MENU */
-fetch("../menu/menu.html")
-.then(res => res.text())
-.then(async html => {
-
-    document.getElementById("menu-container").innerHTML = html;
-
-    const m = await import("../menu/menu.js");
-    m.initMenu();
-    await m.carregarMenu();
-
-    document.querySelector('[data-link="animais"]').classList.add("active");
-
-    /* cor dinâmica */
-    const corMenu = document.getElementById("menuWrapper")?.style.background;
-    if(corMenu){
-        document.getElementById("header").style.background = corMenu;
-    }
-
-    lucide.createIcons();
-    document.body.style.display = "block";
-});
-
 /* 🔥 DADOS */
 let animais = [];
 let clientesMap = {};
 
-/* 🔥 CARREGAR CLIENTES (para filtro e nome do tutor) */
+/* 🔥 CARREGAR CLIENTES */
 async function carregarClientes(){
 
     const snap = await getDocs(query(
@@ -166,6 +142,9 @@ async function carregarClientes(){
     ));
 
     const select = document.getElementById("filtroCliente");
+    select.innerHTML = `<option value="">Todos tutores</option>`;
+
+    clientesMap = {};
 
     snap.forEach(doc=>{
         const d = doc.data();
@@ -194,7 +173,6 @@ async function carregarAnimais(){
         animais.push({id:doc.id,...doc.data()});
     });
 
-    /* 🔥 ORDEM ALFABÉTICA */
     animais.sort((a,b)=>
         (a.nome||"").localeCompare(b.nome||"")
     );
@@ -259,13 +237,40 @@ function aplicarFiltros(){
     render(filtrado);
 }
 
-busca.addEventListener("input", aplicarFiltros);
-filtroEspecie.addEventListener("change", aplicarFiltros);
-filtroCliente.addEventListener("change", aplicarFiltros);
+document.getElementById("busca").addEventListener("input", aplicarFiltros);
+document.getElementById("filtroEspecie").addEventListener("change", aplicarFiltros);
+document.getElementById("filtroCliente").addEventListener("change", aplicarFiltros);
 
-/* 🚀 INIT */
-await carregarClientes();
-await carregarAnimais();
+/* 🔥 INIT GLOBAL */
+async function init(){
+
+    /* MENU */
+    const html = await fetch("../menu/menu.html").then(r=>r.text());
+    document.getElementById("menu-container").innerHTML = html;
+
+    const m = await import("../menu/menu.js");
+
+    m.initMenu();
+    await m.carregarMenu();
+
+    document.querySelector('[data-link="animais"]').classList.add("active");
+
+    /* COR DINÂMICA */
+    const corMenu = document.getElementById("menuWrapper")?.style.background;
+    if(corMenu){
+        document.getElementById("header").style.background = corMenu;
+    }
+
+    /* 🔥 DADOS (AGORA NO LUGAR CERTO) */
+    await carregarClientes();
+    await carregarAnimais();
+
+    lucide.createIcons();
+    document.body.style.display = "block";
+}
+
+/* 🚀 START */
+init();
 
 </script>
 
