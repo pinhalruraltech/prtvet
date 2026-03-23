@@ -1,1 +1,273 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
 
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Animais | AppVet</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<link rel="stylesheet" href="../menu/menu.css">
+
+<script>
+const PERMISSAO_PAGINA = {
+    area: "app",
+    chave: "animais"
+};
+</script>
+
+<script type="module" src="../js/auth-guard.js"></script>
+
+<style>
+*{box-sizing:border-box;}
+body{margin:0;font-family:'Inter';background:#F5F7F9;}
+
+.header{
+    background:#2D6A4F;
+    color:#fff;
+    padding:16px;
+    font-weight:600;
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.container{padding:12px;}
+
+.filters{
+    background:#fff;
+    padding:12px;
+    border-bottom:1px solid #E5E7EB;
+}
+
+.filters input, .filters select{
+    width:100%;
+    padding:10px;
+    border-radius:10px;
+    border:1px solid #CBD5E1;
+    margin-bottom:8px;
+}
+
+.lista{padding:10px;}
+
+.item{
+    display:flex;
+    gap:12px;
+    background:#fff;
+    padding:12px;
+    border-radius:12px;
+    margin-bottom:10px;
+    border:1px solid #E5E7EB;
+    cursor:pointer;
+}
+
+.foto{
+    width:55px;
+    height:55px;
+    border-radius:50%;
+    background:#ddd;
+    background-size:cover;
+    background-position:center;
+}
+
+.sub{
+    font-size:13px;
+    color:#6B7280;
+}
+</style>
+
+</head>
+
+<body style="display:none;">
+
+<div id="menu-container"></div>
+
+<div class="header" id="header">
+    <i data-lucide="paw-print"></i>
+    Animais
+</div>
+
+<div class="filters">
+
+<input type="text" id="busca" placeholder="Buscar por nome">
+
+<select id="filtroEspecie">
+<option value="">Todas espécies</option>
+<option>Cachorro</option>
+<option>Gato</option>
+<option>Outro</option>
+</select>
+
+<select id="filtroCliente">
+<option value="">Todos tutores</option>
+</select>
+
+</div>
+
+<div class="lista" id="listaAnimais"></div>
+
+<script type="module">
+
+import { db } from "../js/firebase-init.js";
+import { carregarClinica } from "../js/clinica-loader.js";
+import { carregarMenu } from "../menu/menu.js";
+
+import {
+collection, getDocs, query, where
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+/* 🔐 CONTEXTO */
+const uid = localStorage.getItem("uid");
+const clinicaId = localStorage.getItem("clinicaId");
+
+if(!uid || !clinicaId){
+    window.location.href="../login.html";
+}
+
+/* 🔧 CLÍNICA */
+await carregarClinica();
+
+/* 🔥 MENU */
+fetch("../menu/menu.html")
+.then(res => res.text())
+.then(async html => {
+
+    document.getElementById("menu-container").innerHTML = html;
+
+    const m = await import("../menu/menu.js");
+    m.initMenu();
+    await m.carregarMenu();
+
+    document.querySelector('[data-link="animais"]').classList.add("active");
+
+    /* cor dinâmica */
+    const corMenu = document.getElementById("menuWrapper")?.style.background;
+    if(corMenu){
+        document.getElementById("header").style.background = corMenu;
+    }
+
+    lucide.createIcons();
+    document.body.style.display = "block";
+});
+
+/* 🔥 DADOS */
+let animais = [];
+let clientesMap = {};
+
+/* 🔥 CARREGAR CLIENTES (para filtro e nome do tutor) */
+async function carregarClientes(){
+
+    const snap = await getDocs(query(
+        collection(db,"clientes"),
+        where("clinicaId","==",clinicaId)
+    ));
+
+    const select = document.getElementById("filtroCliente");
+
+    snap.forEach(doc=>{
+        const d = doc.data();
+
+        clientesMap[doc.id] = d.nome;
+
+        const option = document.createElement("option");
+        option.value = doc.id;
+        option.textContent = d.nome;
+
+        select.appendChild(option);
+    });
+}
+
+/* 🔥 CARREGAR ANIMAIS */
+async function carregarAnimais(){
+
+    const snap = await getDocs(query(
+        collection(db,"animais"),
+        where("clinicaId","==",clinicaId)
+    ));
+
+    animais = [];
+
+    snap.forEach(doc=>{
+        animais.push({id:doc.id,...doc.data()});
+    });
+
+    /* 🔥 ORDEM ALFABÉTICA */
+    animais.sort((a,b)=>
+        (a.nome||"").localeCompare(b.nome||"")
+    );
+
+    render();
+}
+
+/* 🔥 RENDER */
+function render(lista = animais){
+
+    listaAnimais.innerHTML = "";
+
+    if(lista.length === 0){
+        listaAnimais.innerHTML = "Nenhum animal encontrado";
+        return;
+    }
+
+    lista.forEach(a=>{
+
+        const tutor = clientesMap[a.clienteId] || "Tutor não identificado";
+
+        const div = document.createElement("div");
+        div.className = "item";
+
+        div.innerHTML = `
+            <div class="foto" style="background-image:url('${a.foto||""}')"></div>
+            <div>
+                <strong>${(a.nome||"").toUpperCase()}</strong>
+                <div class="sub">${a.especie || ""}</div>
+                <div class="sub">${tutor}</div>
+            </div>
+        `;
+
+        div.onclick = ()=>{
+            window.location.href = `animal.html?id=${a.id}`;
+        };
+
+        listaAnimais.appendChild(div);
+    });
+
+}
+
+/* 🔍 FILTROS */
+function aplicarFiltros(){
+
+    const busca = document.getElementById("busca").value.toLowerCase();
+    const especie = document.getElementById("filtroEspecie").value;
+    const cliente = document.getElementById("filtroCliente").value;
+
+    let filtrado = animais.filter(a=>{
+
+        const nome = (a.nome||"").toLowerCase();
+        const tutor = (clientesMap[a.clienteId]||"").toLowerCase();
+
+        return (
+            (!busca || nome.includes(busca) || tutor.includes(busca)) &&
+            (!especie || a.especie === especie) &&
+            (!cliente || a.clienteId === cliente)
+        );
+    });
+
+    render(filtrado);
+}
+
+busca.addEventListener("input", aplicarFiltros);
+filtroEspecie.addEventListener("change", aplicarFiltros);
+filtroCliente.addEventListener("change", aplicarFiltros);
+
+/* 🚀 INIT */
+await carregarClientes();
+await carregarAnimais();
+
+</script>
+
+</body>
+</html>
