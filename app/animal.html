@@ -99,17 +99,15 @@ input, select, textarea{
 
 <div class="container">
 
-<!-- FOTO -->
 <div class="card">
     <div class="photo" id="fotoPreview"></div>
 
-    <button class="btn btn-secondary" onclick="alterarFoto()">Alterar Foto</button>
-    <button class="btn btn-secondary" onclick="removerFoto()">Remover Foto</button>
+    <button class="btn btn-secondary" id="btnAlterarFoto">Alterar Foto</button>
+    <button class="btn btn-secondary" id="btnRemoverFoto">Remover Foto</button>
 
     <input type="file" id="fotoInput" class="hidden">
 </div>
 
-<!-- DADOS -->
 <div class="card">
 <label>Nome</label>
 <input id="nome">
@@ -137,7 +135,6 @@ input, select, textarea{
 <input id="comprimento">
 </div>
 
-<!-- CLÍNICO -->
 <div class="card">
 <label>Alergias</label>
 <textarea id="alergias"></textarea>
@@ -149,7 +146,6 @@ input, select, textarea{
 <textarea id="cirurgias"></textarea>
 </div>
 
-<!-- STATUS -->
 <div class="card">
 <label>Status</label>
 <select id="status">
@@ -164,16 +160,14 @@ input, select, textarea{
 </div>
 </div>
 
-<!-- AÇÕES -->
 <div class="card">
 <button class="btn btn-primary hidden" id="btnSalvar">Salvar</button>
 <button class="btn btn-secondary hidden" id="btnCancelar">Cancelar</button>
 <button class="btn btn-primary" id="btnEditar">Editar</button>
 </div>
 
-<!-- VOLTAR -->
 <div class="card">
-<button class="btn btn-secondary" onclick="voltar()">Voltar para lista de animais</button>
+<button class="btn btn-secondary" id="btnVoltar">Voltar para lista de animais</button>
 </div>
 
 </div>
@@ -199,16 +193,39 @@ if(!uid || !clinicaId){
     window.location.href="../login.html";
 }
 
-/* 🔧 CLÍNICA */
 await carregarClinica();
 
-/* 🔥 VARIÁVEIS */
+/* ELEMENTOS */
+const nome = document.getElementById("nome");
+const especie = document.getElementById("especie");
+const raca = document.getElementById("raca");
+const nascimento = document.getElementById("nascimento");
+const peso = document.getElementById("peso");
+const altura = document.getElementById("altura");
+const comprimento = document.getElementById("comprimento");
+
+const alergias = document.getElementById("alergias");
+const doencas = document.getElementById("doencas");
+const cirurgias = document.getElementById("cirurgias");
+
+const status = document.getElementById("status");
+const dataObito = document.getElementById("dataObito");
+const campoObito = document.getElementById("campoObito");
+
+const btnSalvar = document.getElementById("btnSalvar");
+const btnCancelar = document.getElementById("btnCancelar");
+const btnEditar = document.getElementById("btnEditar");
+
+const fotoPreview = document.getElementById("fotoPreview");
+const fotoInput = document.getElementById("fotoInput");
+const btnAlterarFoto = document.getElementById("btnAlterarFoto");
+const btnRemoverFoto = document.getElementById("btnRemoverFoto");
+
 const id = new URLSearchParams(window.location.search).get("id");
 
-/* 🔥 FUNÇÃO PRINCIPAL */
+/* MENU */
 async function init(){
 
-    /* MENU */
     const html = await fetch("../menu/menu.html").then(r=>r.text());
     document.getElementById("menu-container").innerHTML = html;
 
@@ -217,26 +234,29 @@ async function init(){
     m.initMenu();
     await m.carregarMenu();
 
-    /* ATIVO */
     document.querySelector('[data-link="animais"]').classList.add("active");
 
-    /* COR DINÂMICA */
     const cor = document.getElementById("menuWrapper")?.style.background;
     if(cor){
         document.getElementById("header").style.background = cor;
     }
 
-    /* 🔥 AGORA CARREGA DADOS */
     await carregarAnimal();
 
     lucide.createIcons();
     document.body.style.display="block";
 }
 
-/* 🔥 CARREGAR */
+/* CARREGAR */
 async function carregarAnimal(){
 
     const snap = await getDoc(doc(db,"animais",id));
+
+    if(!snap.exists()){
+        alert("Animal não encontrado");
+        return;
+    }
+
     const d = snap.data();
 
     nome.value=d.nome||"";
@@ -260,16 +280,14 @@ async function carregarAnimal(){
 }
 
 /* STATUS */
-status.onchange = toggleObito;
+status.addEventListener("change", toggleObito);
 
 function toggleObito(){
     campoObito.classList.toggle("hidden", status.value !== "falecido");
 }
 
 /* EDITAR */
-btnEditar.onclick = ()=>{
-    toggleBtns(true);
-};
+btnEditar.onclick = ()=> toggleBtns(true);
 
 /* SALVAR */
 btnSalvar.onclick = async ()=>{
@@ -277,7 +295,6 @@ btnSalvar.onclick = async ()=>{
     if(!confirm("Salvar alterações?")) return;
 
     await updateDoc(doc(db,"animais",id),{
-
         nome:nome.value,
         especie:especie.value,
         raca:raca.value,
@@ -285,14 +302,11 @@ btnSalvar.onclick = async ()=>{
         peso:peso.value,
         altura:altura.value,
         comprimento:comprimento.value,
-
         alergias:alergias.value,
         doencas:doencas.value,
         cirurgias:cirurgias.value,
-
         status:status.value,
         dataObito: status.value==="falecido" ? dataObito.value : ""
-
     });
 
     alert("Salvo!");
@@ -313,7 +327,7 @@ function toggleBtns(e){
 }
 
 /* FOTO */
-window.alterarFoto = ()=>{
+btnAlterarFoto.onclick = ()=>{
     if(confirm("Alterar foto?")) fotoInput.click();
 };
 
@@ -327,23 +341,20 @@ fotoInput.onchange = async ()=>{
     const url = await getDownloadURL(r);
 
     await updateDoc(doc(db,"animais",id),{foto:url});
-
     carregarAnimal();
 };
 
-window.removerFoto = async ()=>{
+btnRemoverFoto.onclick = async ()=>{
     if(!confirm("Remover foto?")) return;
-
     await updateDoc(doc(db,"animais",id),{foto:""});
     carregarAnimal();
 };
 
 /* VOLTAR */
-window.voltar = ()=>{
-    window.location.href = "animais.html";
+document.getElementById("btnVoltar").onclick = ()=>{
+    window.location.href="animais.html";
 };
 
-/* 🚀 START */
 init();
 
 </script>
