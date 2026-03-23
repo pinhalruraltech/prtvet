@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Animal | AppVet</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<link rel="stylesheet" href="../menu/menu.css">
+
+<script>
+const PERMISSAO_PAGINA = {
+    area: "app",
+    chave: "animais"
+};
+</script>
+
+<script type="module" src="../js/auth-guard.js"></script>
+
+<style>
+*{box-sizing:border-box;}
+body{margin:0;font-family:'Inter';background:#F5F7F9;}
+
+.header{
+    background:#2D6A4F;
+    color:#fff;
+    padding:16px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-weight:600;
+}
+
+.container{padding:16px;}
+
+.card{
+    background:#fff;
+    border-radius:14px;
+    padding:14px;
+    margin-bottom:12px;
+    border:1px solid #E5E7EB;
+}
+
+label{
+    font-size:13px;
+    color:#6B7280;
+    display:block;
+    margin-bottom:4px;
+}
+
+input, select, textarea{
+    width:100%;
+    padding:12px;
+    border-radius:10px;
+    border:1px solid #CBD5E1;
+    margin-bottom:10px;
+}
+
+.photo{
+    width:110px;
+    height:110px;
+    border-radius:50%;
+    background:#ddd;
+    background-size:cover;
+    background-position:center;
+    margin:auto;
+    margin-bottom:10px;
+}
+
+.btn{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:12px;
+    font-weight:600;
+    margin-top:6px;
+}
+
+.btn-primary{background:#2D6A4F;color:#fff;}
+.btn-secondary{background:#E5E7EB;}
+
+.hidden{display:none;}
+</style>
+
+</head>
+
+<body style="display:none;">
+
+<div id="menu-container"></div>
+
+<div class="header" id="header">
+    <i data-lucide="paw-print"></i>
+    Animal
+</div>
+
+<div class="container">
+
+<!-- FOTO -->
+<div class="card">
+    <div class="photo" id="fotoPreview"></div>
+
+    <button class="btn btn-secondary" onclick="alterarFoto()">Alterar Foto</button>
+    <button class="btn btn-secondary" onclick="removerFoto()">Remover Foto</button>
+
+    <input type="file" id="fotoInput" class="hidden">
+</div>
+
+<!-- DADOS -->
+<div class="card">
+<label>Nome</label>
+<input id="nome">
+
+<label>Espécie</label>
+<select id="especie">
+<option>Cachorro</option>
+<option>Gato</option>
+<option>Outro</option>
+</select>
+
+<label>Raça</label>
+<input id="raca">
+
+<label>Data de nascimento</label>
+<input type="date" id="nascimento">
+
+<label>Peso</label>
+<input id="peso">
+
+<label>Altura</label>
+<input id="altura">
+
+<label>Comprimento</label>
+<input id="comprimento">
+</div>
+
+<!-- CLÍNICO -->
+<div class="card">
+<label>Alergias</label>
+<textarea id="alergias"></textarea>
+
+<label>Doenças crônicas</label>
+<textarea id="doencas"></textarea>
+
+<label>Cirurgias</label>
+<textarea id="cirurgias"></textarea>
+</div>
+
+<!-- STATUS -->
+<div class="card">
+<label>Status</label>
+<select id="status">
+<option value="ativo">Ativo</option>
+<option value="inativo">Inativo</option>
+<option value="falecido">Falecido</option>
+</select>
+
+<div id="campoObito" class="hidden">
+<label>Data do óbito</label>
+<input type="date" id="dataObito">
+</div>
+</div>
+
+<!-- AÇÕES -->
+<div class="card">
+<button class="btn btn-primary hidden" id="btnSalvar">Salvar</button>
+<button class="btn btn-secondary hidden" id="btnCancelar">Cancelar</button>
+<button class="btn btn-primary" id="btnEditar">Editar</button>
+</div>
+
+<!-- VOLTAR -->
+<div class="card">
+<button class="btn btn-secondary" onclick="voltar()">Voltar para lista de animais</button>
+</div>
+
+</div>
+
+<script type="module">
+
+import { db, storage } from "../js/firebase-init.js";
+import { carregarClinica } from "../js/clinica-loader.js";
+
+import {
+doc,getDoc,updateDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+import {
+ref,uploadBytes,getDownloadURL
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+
+/* 🔐 CONTEXTO */
+const uid = localStorage.getItem("uid");
+const clinicaId = localStorage.getItem("clinicaId");
+
+if(!uid || !clinicaId){
+    window.location.href="../login.html";
+}
+
+/* 🔧 CLÍNICA */
+await carregarClinica();
+
+/* 🔥 VARIÁVEIS */
+const id = new URLSearchParams(window.location.search).get("id");
+
+/* 🔥 FUNÇÃO PRINCIPAL */
+async function init(){
+
+    /* MENU */
+    const html = await fetch("../menu/menu.html").then(r=>r.text());
+    document.getElementById("menu-container").innerHTML = html;
+
+    const m = await import("../menu/menu.js");
+
+    m.initMenu();
+    await m.carregarMenu();
+
+    /* ATIVO */
+    document.querySelector('[data-link="animais"]').classList.add("active");
+
+    /* COR DINÂMICA */
+    const cor = document.getElementById("menuWrapper")?.style.background;
+    if(cor){
+        document.getElementById("header").style.background = cor;
+    }
+
+    /* 🔥 AGORA CARREGA DADOS */
+    await carregarAnimal();
+
+    lucide.createIcons();
+    document.body.style.display="block";
+}
+
+/* 🔥 CARREGAR */
+async function carregarAnimal(){
+
+    const snap = await getDoc(doc(db,"animais",id));
+    const d = snap.data();
+
+    nome.value=d.nome||"";
+    especie.value=d.especie||"";
+    raca.value=d.raca||"";
+    nascimento.value=d.nascimento||"";
+    peso.value=d.peso||"";
+    altura.value=d.altura||"";
+    comprimento.value=d.comprimento||"";
+
+    alergias.value=d.alergias||"";
+    doencas.value=d.doencas||"";
+    cirurgias.value=d.cirurgias||"";
+
+    status.value=d.status||"ativo";
+    dataObito.value=d.dataObito||"";
+
+    fotoPreview.style.backgroundImage=`url('${d.foto||""}')`;
+
+    toggleObito();
+}
+
+/* STATUS */
+status.onchange = toggleObito;
+
+function toggleObito(){
+    campoObito.classList.toggle("hidden", status.value !== "falecido");
+}
+
+/* EDITAR */
+btnEditar.onclick = ()=>{
+    toggleBtns(true);
+};
+
+/* SALVAR */
+btnSalvar.onclick = async ()=>{
+
+    if(!confirm("Salvar alterações?")) return;
+
+    await updateDoc(doc(db,"animais",id),{
+
+        nome:nome.value,
+        especie:especie.value,
+        raca:raca.value,
+        nascimento:nascimento.value,
+        peso:peso.value,
+        altura:altura.value,
+        comprimento:comprimento.value,
+
+        alergias:alergias.value,
+        doencas:doencas.value,
+        cirurgias:cirurgias.value,
+
+        status:status.value,
+        dataObito: status.value==="falecido" ? dataObito.value : ""
+
+    });
+
+    alert("Salvo!");
+    toggleBtns(false);
+};
+
+/* CANCELAR */
+btnCancelar.onclick = ()=>{
+    if(!confirm("Cancelar alterações?")) return;
+    carregarAnimal();
+    toggleBtns(false);
+};
+
+function toggleBtns(e){
+    btnSalvar.classList.toggle("hidden",!e);
+    btnCancelar.classList.toggle("hidden",!e);
+    btnEditar.classList.toggle("hidden",e);
+}
+
+/* FOTO */
+window.alterarFoto = ()=>{
+    if(confirm("Alterar foto?")) fotoInput.click();
+};
+
+fotoInput.onchange = async ()=>{
+
+    const file = fotoInput.files[0];
+    if(!file) return;
+
+    const r = ref(storage,"animais/"+Date.now());
+    await uploadBytes(r,file);
+    const url = await getDownloadURL(r);
+
+    await updateDoc(doc(db,"animais",id),{foto:url});
+
+    carregarAnimal();
+};
+
+window.removerFoto = async ()=>{
+    if(!confirm("Remover foto?")) return;
+
+    await updateDoc(doc(db,"animais",id),{foto:""});
+    carregarAnimal();
+};
+
+/* VOLTAR */
+window.voltar = ()=>{
+    window.location.href = "animais.html";
+};
+
+/* 🚀 START */
+init();
+
+</script>
+
+</body>
+</html>
