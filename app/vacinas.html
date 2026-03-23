@@ -1,1 +1,332 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
 
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Vacinas | AppVet</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<link rel="stylesheet" href="../menu/menu.css">
+
+<script>
+const PERMISSAO_PAGINA = {
+    area: "app",
+    chave: "vacinas"
+};
+</script>
+
+<script type="module" src="../js/auth-guard.js"></script>
+
+<style>
+*{box-sizing:border-box;}
+body{margin:0;font-family:'Inter';background:#F5F7F9;}
+
+.header{
+    background:#2D6A4F;
+    color:#fff;
+    padding:16px;
+    font-weight:600;
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.container{padding:12px;}
+
+select,input{
+    width:100%;
+    padding:12px;
+    border-radius:10px;
+    border:1px solid #CBD5E1;
+    margin-bottom:10px;
+}
+
+.card{
+    background:#fff;
+    padding:12px;
+    border-radius:12px;
+    margin-bottom:10px;
+    border:1px solid #E5E7EB;
+}
+
+.card.warn{border-left:5px solid #F59E0B;}
+.card.danger{border-left:5px solid #EF4444;}
+
+.small{font-size:13px;color:#6B7280;}
+
+.btn{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:12px;
+    background:#2D6A4F;
+    color:#fff;
+    margin-top:10px;
+    font-weight:600;
+}
+
+.hidden{display:none;}
+</style>
+
+</head>
+
+<body style="display:none;">
+
+<div id="menu-container"></div>
+
+<div class="header" id="header">
+    <i data-lucide="syringe"></i>
+    Vacinas
+</div>
+
+<div class="container">
+
+<select id="clienteSelect"></select>
+<select id="animalSelect"></select>
+
+<button class="btn" id="btnNova">Nova Vacina</button>
+
+<div id="formVacina" class="card hidden">
+
+<input id="nome" placeholder="Nome da vacina">
+<input id="composicao" placeholder="Composição">
+<input id="via" placeholder="Via (SC, IM...)">
+<input id="dose" placeholder="Dose">
+<input type="date" id="dataAplicacao">
+<input type="date" id="proximaDose">
+
+<button class="btn" id="btnSalvarVacina">Salvar Vacina</button>
+
+</div>
+
+<div id="listaVacinas"></div>
+
+</div>
+
+<script type="module">
+
+import { db } from "../js/firebase-init.js";
+import { carregarClinica } from "../js/clinica-loader.js";
+
+import {
+collection,getDocs,addDoc,query,where,serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+/* 🔐 CONTEXTO */
+const uid = localStorage.getItem("uid");
+const clinicaId = localStorage.getItem("clinicaId");
+
+if(!uid || !clinicaId){
+    window.location.href="../login.html";
+}
+
+/* ELEMENTOS */
+const clienteSelect = document.getElementById("clienteSelect");
+const animalSelect = document.getElementById("animalSelect");
+const lista = document.getElementById("listaVacinas");
+const form = document.getElementById("formVacina");
+
+const btnNova = document.getElementById("btnNova");
+const btnSalvarVacina = document.getElementById("btnSalvarVacina");
+
+const nome = document.getElementById("nome");
+const composicao = document.getElementById("composicao");
+const via = document.getElementById("via");
+const dose = document.getElementById("dose");
+const dataAplicacao = document.getElementById("dataAplicacao");
+const proximaDose = document.getElementById("proximaDose");
+
+/* DADOS */
+let clientes = [];
+let animais = [];
+
+/* 🔥 INIT GLOBAL */
+async function init(){
+
+    try{
+
+        /* 🔧 CLÍNICA */
+        await carregarClinica();
+
+        /* 🔥 MENU */
+        const html = await fetch("../menu/menu.html").then(r=>r.text());
+        document.getElementById("menu-container").innerHTML = html;
+
+        const m = await import("../menu/menu.js");
+
+        m.initMenu();
+        await m.carregarMenu();
+
+        document.querySelector('[data-link="vacinas"]').classList.add("active");
+
+        /* 🎨 COR DINÂMICA */
+        const cor = document.getElementById("menuWrapper")?.style.background;
+        if(cor){
+            document.getElementById("header").style.background = cor;
+        }
+
+        /* 🔥 EVENTOS */
+        clienteSelect.addEventListener("change", loadAnimais);
+        animalSelect.addEventListener("change", loadVacinas);
+
+        btnNova.addEventListener("click", ()=>{
+            form.classList.toggle("hidden");
+        });
+
+        btnSalvarVacina.addEventListener("click", salvarVacina);
+
+        /* 🔥 DADOS */
+        await loadClientes();
+        await loadAnimais();
+
+        lucide.createIcons();
+        document.body.style.display="block";
+
+    }catch(e){
+        console.error("Erro na tela vacinas:", e);
+        alert("Erro ao carregar a página");
+    }
+}
+
+/* CLIENTES */
+async function loadClientes(){
+
+    const snap = await getDocs(query(
+        collection(db,"clientes"),
+        where("clinicaId","==",clinicaId)
+    ));
+
+    clienteSelect.innerHTML="";
+
+    snap.forEach(doc=>{
+        const d = doc.data();
+
+        clienteSelect.innerHTML += `
+            <option value="${doc.id}">${(d.nome||"").toUpperCase()}</option>
+        `;
+    });
+}
+
+/* ANIMAIS */
+async function loadAnimais(){
+
+    const clienteId = clienteSelect.value;
+
+    const snap = await getDocs(query(
+        collection(db,"animais"),
+        where("clienteId","==",clienteId)
+    ));
+
+    animalSelect.innerHTML="";
+
+    snap.forEach(doc=>{
+        const d = doc.data();
+
+        animalSelect.innerHTML += `
+            <option value="${doc.id}">${(d.nome||"").toUpperCase()}</option>
+        `;
+    });
+
+    loadVacinas();
+}
+
+/* VACINAS */
+async function loadVacinas(){
+
+    const animalId = animalSelect.value;
+
+    const snap = await getDocs(query(
+        collection(db,"vacinas"),
+        where("animalId","==",animalId)
+    ));
+
+    lista.innerHTML="";
+
+    snap.forEach(doc=>{
+        renderVacina(doc.data());
+    });
+}
+
+/* RENDER */
+function renderVacina(v){
+
+    let classe="";
+    let status="";
+
+    if(v.proximaDose){
+
+        const hoje = new Date();
+        const prox = new Date(v.proximaDose);
+
+        const diff = Math.ceil((prox-hoje)/(1000*60*60*24));
+
+        if(diff < 0){
+            classe="danger";
+            status=`Vacina atrasada há ${Math.abs(diff)} dias`;
+        }
+        else if(diff === 0){
+            classe="warn";
+            status="Reaplicar vacina hoje";
+        }
+        else if(diff <=5){
+            classe="warn";
+            status=`Reaplicar em ${diff} dias`;
+        }
+    }
+
+    lista.innerHTML += `
+        <div class="card ${classe}">
+            <strong>${v.nome}</strong>
+            <div class="small">${v.composicao}</div>
+            <div class="small">${v.via} | ${v.dose}</div>
+            <div class="small">Aplicada em: ${v.dataAplicacao}</div>
+            ${status ? `<div class="small">${status}</div>` : ""}
+        </div>
+    `;
+}
+
+/* SALVAR */
+async function salvarVacina(){
+
+    try{
+
+        await addDoc(collection(db,"vacinas"),{
+
+            clinicaId,
+            clienteId: clienteSelect.value,
+            animalId: animalSelect.value,
+
+            nome: nome.value,
+            composicao: composicao.value,
+            via: via.value,
+            dose: dose.value,
+            dataAplicacao: dataAplicacao.value,
+            proximaDose: proximaDose.value,
+
+            createdAt: serverTimestamp()
+        });
+
+        form.classList.add("hidden");
+
+        /* limpar */
+        document.querySelectorAll("#formVacina input").forEach(i=>i.value="");
+
+        loadVacinas();
+
+    }catch(e){
+        console.error("Erro ao salvar vacina:", e);
+        alert("Erro ao salvar vacina");
+    }
+}
+
+/* START */
+init();
+
+</script>
+
+</body>
+</html>
