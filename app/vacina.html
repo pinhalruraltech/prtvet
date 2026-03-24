@@ -185,7 +185,7 @@ import {
 doc,getDoc,updateDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-/* CONTEXTO */
+/* 🔐 CONTEXTO */
 const uid = localStorage.getItem("uid");
 const clinicaId = localStorage.getItem("clinicaId");
 
@@ -193,9 +193,27 @@ if(!uid || !clinicaId){
     window.location.href="../login.html";
 }
 
+/* 🔥 PEGAR ID */
 const id = new URLSearchParams(window.location.search).get("id");
 
-/* INIT GLOBAL */
+/* 🔥 ELEMENTOS (CORREÇÃO PRINCIPAL) */
+const nome = document.getElementById("nome");
+const tipoMedicacao = document.getElementById("tipoMedicacao");
+const composto = document.getElementById("composto");
+const dose = document.getElementById("dose");
+const unidadeDose = document.getElementById("unidadeDose");
+const dataAplicacao = document.getElementById("dataAplicacao");
+
+const status = document.getElementById("status");
+const reaplicar = document.getElementById("reaplicar");
+const proximaDose = document.getElementById("proximaDose");
+const blocoReaplicar = document.getElementById("blocoReaplicar");
+
+const btnSalvar = document.getElementById("btnSalvar");
+const btnCancelar = document.getElementById("btnCancelar");
+const btnEditar = document.getElementById("btnEditar");
+
+/* 🔧 INIT GLOBAL */
 async function init(){
 
     await carregarClinica();
@@ -220,10 +238,16 @@ async function init(){
     document.body.style.display="block";
 }
 
-/* CARREGAR */
+/* 🔥 CARREGAR */
 async function carregar(){
 
     const snap = await getDoc(doc(db,"vacinas",id));
+
+    if(!snap.exists()){
+        alert("Vacina não encontrada");
+        return;
+    }
+
     const d = snap.data();
 
     nome.value = d.nome || "";
@@ -240,8 +264,8 @@ async function carregar(){
     toggleReaplicar();
 }
 
-/* REAPLICAÇÃO AUTOMÁTICA */
-reaplicar.onchange = ()=>{
+/* 🔁 REAPLICAÇÃO */
+reaplicar.addEventListener("change", ()=>{
 
     if(!dataAplicacao.value || !reaplicar.value) return;
 
@@ -249,21 +273,21 @@ reaplicar.onchange = ()=>{
     base.setDate(base.getDate() + parseInt(reaplicar.value));
 
     proximaDose.value = base.toISOString().split("T")[0];
-};
+});
 
-/* STATUS */
-status.onchange = toggleReaplicar;
+/* 🔄 STATUS */
+status.addEventListener("change", toggleReaplicar);
 
 function toggleReaplicar(){
     blocoReaplicar.style.display = status.value === "pendente" ? "block" : "none";
 }
 
-/* EDITAR */
+/* ✏️ EDITAR */
 btnEditar.onclick = ()=>{
     toggle(true);
 };
 
-/* SALVAR */
+/* 💾 SALVAR */
 btnSalvar.onclick = async ()=>{
 
     if(!confirm("Salvar alterações?")) return;
@@ -287,24 +311,25 @@ btnSalvar.onclick = async ()=>{
     toggle(false);
 };
 
-/* CANCELAR */
+/* ❌ CANCELAR */
 btnCancelar.onclick = ()=>{
     if(!confirm("Cancelar alterações?")) return;
     carregar();
     toggle(false);
 };
 
-function toggle(e){
-    btnSalvar.classList.toggle("hidden",!e);
-    btnCancelar.classList.toggle("hidden",!e);
-    btnEditar.classList.toggle("hidden",e);
+function toggle(editando){
+    btnSalvar.classList.toggle("hidden",!editando);
+    btnCancelar.classList.toggle("hidden",!editando);
+    btnEditar.classList.toggle("hidden",editando);
 }
 
-/* VOLTAR */
+/* 🔙 VOLTAR */
 window.voltar = ()=>{
     window.location.href="vacinas.html";
 };
 
+/* 🚀 START */
 init();
 
 </script>
