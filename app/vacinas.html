@@ -50,23 +50,36 @@ body{margin:0;font-family:'Inter';background:#F5F7F9;}
     margin-bottom:8px;
 }
 
-/* CARD */
+/* 🔥 CARD MELHORADO */
 .card{
     background:#fff;
-    padding:14px;
-    border-radius:12px;
-    margin-bottom:10px;
-    border-left:6px solid #ccc;
-    border:1px solid #E5E7EB;
+    padding:16px;
+    border-radius:14px;
+    margin-bottom:12px;
+
+    border-left:12px solid #ccc;
+
+    border-top:1px solid #E5E7EB;
+    border-right:1px solid #E5E7EB;
+    border-bottom:1px solid #E5E7EB;
+
+    box-shadow:0 6px 12px rgba(0,0,0,0.05);
+    transition:0.2s;
 }
 
-.card.atrasado{border-left-color:#EF4444;}
+.card:hover{
+    transform:translateY(-2px);
+}
+
+/* CORES FORTES */
+.card.atrasado{border-left-color:#DC2626;}
 .card.pendente{border-left-color:#F59E0B;}
-.card.finalizado{border-left-color:#22C55E;}
+.card.finalizado{border-left-color:#16A34A;}
 
 .nome{
     font-weight:700;
     text-transform:uppercase;
+    font-size:15px;
 }
 
 .sub{
@@ -77,7 +90,7 @@ body{margin:0;font-family:'Inter';background:#F5F7F9;}
 .status{
     margin-top:6px;
     font-size:13px;
-    font-weight:500;
+    font-weight:600;
 }
 
 /* PAGINAÇÃO */
@@ -108,20 +121,16 @@ body{margin:0;font-family:'Inter';background:#F5F7F9;}
 </div>
 
 <div class="top">
-
 <input id="busca" placeholder="Buscar vacina, animal ou cliente">
-
 <select id="filtro">
 <option value="">Todas</option>
 <option value="atrasado">Atrasadas</option>
 <option value="pendente">Pendentes</option>
 <option value="finalizado">Finalizadas</option>
 </select>
-
 </div>
 
 <div class="container" id="lista"></div>
-
 <div class="paginacao" id="paginacao"></div>
 
 <script type="module">
@@ -140,13 +149,11 @@ if(!uid || !clinicaId){
     window.location.href="../login.html";
 }
 
-/* ELEMENTOS */
 const lista = document.getElementById("lista");
 const busca = document.getElementById("busca");
 const filtro = document.getElementById("filtro");
 const paginacao = document.getElementById("paginacao");
 
-/* DADOS */
 let vacinas = [];
 let clientesMap = {};
 let animaisMap = {};
@@ -154,7 +161,6 @@ let animaisMap = {};
 let paginaAtual = 1;
 const POR_PAGINA = 20;
 
-/* INIT GLOBAL */
 async function init(){
 
     await carregarClinica();
@@ -183,7 +189,7 @@ async function init(){
     document.body.style.display="block";
 }
 
-/* CLIENTES + ANIMAIS */
+/* MAPS */
 async function carregarRelacionamentos(){
 
     const clientesSnap = await getDocs(query(
@@ -242,19 +248,15 @@ function classificar(v){
     return "pendente";
 }
 
-/* ORDENAÇÃO */
+/* ORDEM */
 function ordenar(){
 
     vacinas.sort((a,b)=>{
 
+        const ordem = {atrasado:0,pendente:1,finalizado:2};
+
         const tipoA = classificar(a);
         const tipoB = classificar(b);
-
-        const ordem = {
-            atrasado:0,
-            pendente:1,
-            finalizado:2
-        };
 
         if(ordem[tipoA] !== ordem[tipoB]){
             return ordem[tipoA] - ordem[tipoB];
@@ -296,9 +298,7 @@ function render(listaFiltrada = vacinas){
     lista.innerHTML = "";
 
     const inicio = (paginaAtual-1)*POR_PAGINA;
-    const fim = inicio + POR_PAGINA;
-
-    const pagina = listaFiltrada.slice(inicio,fim);
+    const pagina = listaFiltrada.slice(inicio, inicio+POR_PAGINA);
 
     pagina.forEach(v=>{
 
@@ -306,6 +306,10 @@ function render(listaFiltrada = vacinas){
 
         const animal = animaisMap[v.animalId] || "-";
         const cliente = clientesMap[v.clienteId] || "-";
+
+        const tipoMed = v.tipoMedicacao || "-";
+        const dose = v.dose || "-";
+        const unidade = v.unidadeDose || "";
 
         let statusTexto = "";
 
@@ -327,10 +331,10 @@ function render(listaFiltrada = vacinas){
         div.className = `card ${tipo}`;
 
         div.innerHTML = `
-            <div class="nome">${v.nome}</div>
+            <div class="nome">${(v.nome||"").toUpperCase()}</div>
             <div class="sub">${animal} • ${cliente}</div>
-            <div class="sub">${v.tipoMedicacao} | ${v.dose} ${v.unidadeDose}</div>
-            <div class="sub">Aplicada: ${v.dataAplicacao}</div>
+            <div class="sub">${tipoMed} | ${dose} ${unidade}</div>
+            <div class="sub">Aplicada: ${v.dataAplicacao || "-"}</div>
             <div class="status">${statusTexto}</div>
         `;
 
