@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Vacina | AppVet</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<link rel="stylesheet" href="../menu/menu.css">
+
+<script>
+const PERMISSAO_PAGINA = {
+    area: "app",
+    chave: "vacinas"
+};
+</script>
+
+<script type="module" src="../js/auth-guard.js"></script>
+
+<style>
+*{box-sizing:border-box;}
+body{margin:0;font-family:'Inter';background:#F5F7F9;}
+
+.header{
+    padding:16px;
+    color:#fff;
+    font-weight:600;
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.container{padding:16px;}
+
+.card{
+    background:#fff;
+    border-radius:14px;
+    padding:16px;
+    margin-bottom:12px;
+    border:1px solid #E5E7EB;
+}
+
+label{
+    font-size:13px;
+    color:#6B7280;
+    display:block;
+    margin-bottom:4px;
+}
+
+input, select{
+    width:100%;
+    padding:12px;
+    border-radius:10px;
+    border:1px solid #CBD5E1;
+    margin-bottom:10px;
+}
+
+.btn{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:12px;
+    font-weight:600;
+    margin-top:6px;
+}
+
+.btn-primary{background:#2D6A4F;color:#fff;}
+.btn-secondary{background:#E5E7EB;}
+
+.hidden{display:none;}
+</style>
+
+</head>
+
+<body style="display:none;">
+
+<div id="menu-container"></div>
+
+<div class="header" id="header">
+    <i data-lucide="syringe"></i>
+    Vacina
+</div>
+
+<div class="container">
+
+<!-- DADOS -->
+<div class="card">
+
+<label>Nome da medicação</label>
+<input id="nome">
+
+<label>Tipo</label>
+<select id="tipoMedicacao">
+<option>Vacina</option>
+<option>Injeção</option>
+<option>Oral</option>
+<option>Intramamária</option>
+<option>Ocular</option>
+<option>Tópica</option>
+</select>
+
+<label>Composto ativo</label>
+<input id="composto">
+
+<label>Dose</label>
+<input id="dose">
+
+<label>Unidade</label>
+<select id="unidadeDose">
+<option>mg</option>
+<option>g</option>
+<option>kg</option>
+<option>ml</option>
+<option>l</option>
+<option>gotas</option>
+</select>
+
+<label>Data aplicação</label>
+<input type="date" id="dataAplicacao">
+
+</div>
+
+<!-- STATUS -->
+<div class="card">
+
+<label>Status</label>
+<select id="status">
+<option value="pendente">Pendente</option>
+<option value="finalizado">Finalizado</option>
+</select>
+
+<div id="blocoReaplicar">
+
+<label>Reaplicar em (dias)</label>
+<select id="reaplicar">
+<option value="">Não</option>
+<option>1</option>
+<option>2</option>
+<option>3</option>
+<option>5</option>
+<option>7</option>
+<option>15</option>
+<option>30</option>
+<option>45</option>
+<option>60</option>
+<option>90</option>
+<option>120</option>
+<option>150</option>
+<option>365</option>
+</select>
+
+<label>Próxima dose</label>
+<input type="date" id="proximaDose">
+
+</div>
+
+</div>
+
+<!-- AÇÕES -->
+<div class="card">
+
+<button class="btn btn-primary hidden" id="btnSalvar">Salvar</button>
+<button class="btn btn-secondary hidden" id="btnCancelar">Cancelar</button>
+<button class="btn btn-primary" id="btnEditar">Editar</button>
+
+</div>
+
+<!-- VOLTAR -->
+<div class="card">
+<button class="btn btn-secondary" onclick="voltar()">Voltar</button>
+</div>
+
+</div>
+
+<script type="module">
+
+import { db } from "../js/firebase-init.js";
+import { carregarClinica } from "../js/clinica-loader.js";
+
+import {
+doc,getDoc,updateDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+/* CONTEXTO */
+const uid = localStorage.getItem("uid");
+const clinicaId = localStorage.getItem("clinicaId");
+
+if(!uid || !clinicaId){
+    window.location.href="../login.html";
+}
+
+const id = new URLSearchParams(window.location.search).get("id");
+
+/* INIT GLOBAL */
+async function init(){
+
+    await carregarClinica();
+
+    const html = await fetch("../menu/menu.html").then(r=>r.text());
+    document.getElementById("menu-container").innerHTML = html;
+
+    const m = await import("../menu/menu.js");
+    m.initMenu();
+    await m.carregarMenu();
+
+    document.querySelector('[data-link="vacinas"]').classList.add("active");
+
+    const cor = document.getElementById("menuWrapper")?.style.background;
+    if(cor){
+        document.getElementById("header").style.background = cor;
+    }
+
+    await carregar();
+
+    lucide.createIcons();
+    document.body.style.display="block";
+}
+
+/* CARREGAR */
+async function carregar(){
+
+    const snap = await getDoc(doc(db,"vacinas",id));
+    const d = snap.data();
+
+    nome.value = d.nome || "";
+    tipoMedicacao.value = d.tipoMedicacao || "Vacina";
+    composto.value = d.composto || "";
+    dose.value = d.dose || "";
+    unidadeDose.value = d.unidadeDose || "ml";
+    dataAplicacao.value = d.dataAplicacao || "";
+
+    status.value = d.status || "pendente";
+    reaplicar.value = d.reaplicar || "";
+    proximaDose.value = d.proximaDose || "";
+
+    toggleReaplicar();
+}
+
+/* REAPLICAÇÃO AUTOMÁTICA */
+reaplicar.onchange = ()=>{
+
+    if(!dataAplicacao.value || !reaplicar.value) return;
+
+    const base = new Date(dataAplicacao.value);
+    base.setDate(base.getDate() + parseInt(reaplicar.value));
+
+    proximaDose.value = base.toISOString().split("T")[0];
+};
+
+/* STATUS */
+status.onchange = toggleReaplicar;
+
+function toggleReaplicar(){
+    blocoReaplicar.style.display = status.value === "pendente" ? "block" : "none";
+}
+
+/* EDITAR */
+btnEditar.onclick = ()=>{
+    toggle(true);
+};
+
+/* SALVAR */
+btnSalvar.onclick = async ()=>{
+
+    if(!confirm("Salvar alterações?")) return;
+
+    await updateDoc(doc(db,"vacinas",id),{
+
+        nome: nome.value,
+        tipoMedicacao: tipoMedicacao.value,
+        composto: composto.value,
+        dose: dose.value,
+        unidadeDose: unidadeDose.value,
+        dataAplicacao: dataAplicacao.value,
+
+        status: status.value,
+        reaplicar: reaplicar.value,
+        proximaDose: status.value === "pendente" ? proximaDose.value : ""
+
+    });
+
+    alert("Salvo com sucesso!");
+    toggle(false);
+};
+
+/* CANCELAR */
+btnCancelar.onclick = ()=>{
+    if(!confirm("Cancelar alterações?")) return;
+    carregar();
+    toggle(false);
+};
+
+function toggle(e){
+    btnSalvar.classList.toggle("hidden",!e);
+    btnCancelar.classList.toggle("hidden",!e);
+    btnEditar.classList.toggle("hidden",e);
+}
+
+/* VOLTAR */
+window.voltar = ()=>{
+    window.location.href="vacinas.html";
+};
+
+init();
+
+</script>
+
+</body>
+</html>
